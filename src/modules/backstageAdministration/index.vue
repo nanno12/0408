@@ -3,8 +3,12 @@
     <w-row  class="home-page-body">
       <w-col :span="15" >
         <div class="pd-right">
-          <div class="mb-15">项目列表</div>
-          <w-input v-model="value" placeholder="请输入内容"></w-input>
+          <div class="mb-15 title">项目列表</div>
+          <w-input v-model="value2" sufAppendIsButton>
+            <template slot="suf-append">
+              <i class="w-icon-search"></i>
+            </template>
+          </w-input>
           <span>成分大类</span>
           <w-select  v-model="optionsValue" placeholder="请选择成分大类">
             <w-option
@@ -48,7 +52,7 @@
       </w-col>
       <w-col :span="9">
         <div class="pl-15">
-          <div class="mb-15">费用明细列表</div>
+          <div class="mb-15 title">费用明细列表</div>
           <w-button class="fr mb-15" type="primary" @click="handleAdd('right')" plain>新增</w-button>
           <w-table :data="tableData" class="mt-15 " :border="true" style="width: 100%">
             <w-table-column prop="time" label="项目代码" width="100">
@@ -84,7 +88,7 @@
             <i class="w-icon-search"></i>
           </template>
         </w-input>
-        <w-table ref="multiTable" :data="tableData" class="mt-15" style="width: 100%"
+        <w-table ref="multiTable" :data="tableData" :border="true" class="mt-15" style="width: 100%"
           @selection-change="handleSelectionChange">
           <w-table-column type="selection" width="50">
           </w-table-column>
@@ -399,6 +403,10 @@ export default {
   background rgba(234,237,244,1)
   overflow-x auto
   overflow-y hidden
+  .title
+    font-weight 500;
+    font-size 14px;
+    color #000622;
   .home-page-body
     padding 16px
     background rgba(255,255,255,1)

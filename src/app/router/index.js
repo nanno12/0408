@@ -14,7 +14,8 @@ const nofind = r =>require.ensure([], () =>r(require('@/app/components/nofind'))
 const ceshi = r =>require.ensure([], () =>r(require('@/modules/ademo/ceshi')),'ceshi');
 // const specimenentry = r => require.ensure([], () => r(require('@/modules/pathological/specimenEntry'), 'specimenentry'));
 // const homepage = r => require.ensure([], () => r(require('@/modules/homepage'), 'homepage')); // 首页
-const backstageAdministration = r => require.ensure([], () => r(require('@/modules/backstageAdministration'), 'backstageAdministration')); // 后台管理
+const backstageAdministration = r => require.ensure([], () => r(require('@/modules/backstageAdministration'), 'backstageAdministration')); // 项目配置
+const authorityAudit = r => require.ensure([], () => r(require('@/modules/authorityAudit'), 'authorityAudit')); // 审核权限
 
 const router= new Router({
   routes: [
@@ -49,7 +50,8 @@ const router= new Router({
 		// 				}
 		//     ]
 		// },
-    { path: '/backstageAdministration', name: 'backstageAdministration', component: backstageAdministration } // 后台管理
+    { path: '/backstageAdministration', name: 'backstageAdministration', component: backstageAdministration }, // 后台管理
+    { path: '/authorityAudit', name: 'authorityAudit', component: authorityAudit } // 后台管理
   ]
 });
 
