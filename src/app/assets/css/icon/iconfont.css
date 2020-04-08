@@ -1,0 +1,85 @@
+
+@font-face {font-family: "iconfont";
+  src: url('iconfont.eot?t=1491355488290'); /* IE9*/
+  src: url('iconfont.eot?t=1491355488290#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1491355488290') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1491355488290') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1491355488290#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family:"iconfont" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-biji:before { content: "\e69b"; }
+
+.icon-tat:before { content: "\e69c"; }
+
+.icon-bgbd:before { content: "\e69d"; }
+
+.icon-bgbj:before { content: "\e69e"; }
+
+.icon-bgfz:before { content: "\e69f"; }
+
+.icon-bacu:before { content: "\e6a0"; }
+
+.icon-chxi:before { content: "\e6a1"; }
+
+.icon-cada:before { content: "\e6a2"; }
+
+.icon-chxu:before { content: "\e6a3"; }
+
+.icon-dayi:before { content: "\e6a4"; }
+
+.icon-dash:before { content: "\e6a5"; }
+
+.icon-erwm:before { content: "\e6a6"; }
+
+.icon-fabu:before { content: "\e6a7"; }
+
+.icon-gedu:before { content: "\e6a8"; }
+
+.icon-gubo:before { content: "\e6a9"; }
+
+.icon-guli:before { content: "\e6aa"; }
+
+.icon-jizh:before { content: "\e6ab"; }
+
+.icon-mima:before { content: "\e6ac"; }
+
+.icon-nv:before { content: "\e6ad"; }
+
+.icon-nan:before { content: "\e6ae"; }
+
+.icon-pifu:before { content: "\e6af"; }
+
+.icon-pllr:before { content: "\e6b0"; }
+
+.icon-quxi:before { content: "\e6b1"; }
+
+.icon-qubu:before { content: "\e6b2"; }
+
+.icon-shhe:before { content: "\e6b3"; }
+
+.icon-supi:before { content: "\e6b4"; }
+
+.icon-weji:before { content: "\e6b5"; }
+
+.icon-tixi:before { content: "\e6b6"; }
+
+.icon-tuch:before { content: "\e6b7"; }
+
+.icon-xiqi:before { content: "\e6b8"; }
+
+.icon-yiqi:before { content: "\e6b9"; }
+
+.icon-yula:before { content: "\e6ba"; }
+
+.icon-zdxm:before { content: "\e6bb"; }
+
+.icon-yuyi:before { content: "\e6bc"; }
+

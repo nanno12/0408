@@ -1,0 +1,191 @@
+.el-input__inner {
+  border-radius: 2px !important;
+}
+.el-form-item{
+  margin-bottom: 5px !important;
+}
+.el-date-editor.el-input {
+  width: 100% !important;
+}
+.el-input__inner {
+  padding: 3px 10px !important;
+  font-size: 12px !important;
+}
+.el-table {
+  color: #000000 !important;
+  font-size: 12px !important;
+}
+div.el-message{
+  top: 0;
+}
+.el-dialog{
+  margin-bottom: 0;
+}
+.el-dialog__header {
+  padding: 10px !important;
+  text-align: center;
+  background:#515B7D;
+}
+ .el-dialog__title {
+  color: #FFF !important;
+  font-weight: 500;
+}
+
+.el-dialog__body {
+  padding: 15px;
+  background :#F3F3F3
+}
+.el-dialog__footer {
+  padding: 15px;
+  background :#F3F3F3
+}
+/*表格左右固定，改变阴影距离和颜色,设置高度，方便为滚动条腾出空间*/
+.el-table__fixed{
+  height:calc(100% - 10px) !important;
+  overflow-y:hidden;
+  bottom:10px;
+  box-shadow: 1px 0 2px #eee !important;
+}
+.el-table__fixed-right{
+  box-shadow: -1px 0 2px #eee !important;
+  background:#F6F6F9
+}
+
+/*表格中鼠标移出滚动条颜色透明*/
+.el-table__body-wrapper::-webkit-scrollbar-thumb{
+  /* overflow: hidden !important; */
+  background:rgba(153,153,153,.2);
+}
+.el-table__body-wrapper:hover::-webkit-scrollbar-thumb{
+  background:rgba(153,153,153,1);
+}
+/*select 下拉选项字体大小12px*/
+.el-select-dropdown__item{
+  font-size: 12px !important;
+}
+/*input下拉选项字体大小12px*/
+.el-input__inner{
+  font-size: 12px !important;
+}
+@media screen and (min-width: 1366px) {
+  .el-dialog--large {
+    width: 1200px;
+    height: 600px;
+  }
+  .el-dialog--small {
+    width: 960px;
+    height: 560px;
+  }
+  .el-form-item__label {
+     width: 70px;
+    font-size: 12px;
+    color: #000000;
+  }
+}
+.el-form-item__content{
+  font-size: 12px !important;
+}
+@media screen and (max-width: 1366px) {
+  .el-dialog--large {
+    width: 1024px;
+    height: 560px;
+  }
+  .el-dialog--small {
+    width: 740px;
+    height: 480px;
+  }
+  .el-form-item__label {
+    padding-right: 4px;
+    width: 60px;
+    font-size: 12px;
+    color: #000000;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .el-dialog--large {
+    width: 1024px;
+    height: 560px;
+  }
+  .el-dialog--small {
+    width: 740px;
+    height: 480px;
+  }
+  .el-form-item__label {
+    padding-right: 4px;
+    width: 60px;
+    font-size: 12px;
+    color: #000000;
+  }
+}
+
+.el-popover {
+  min-width: 100px;
+  padding: 10px 0;
+}
+
+/*弹出框的标题*/
+.el-dialog__header{
+ 	text-align: left;
+}
+/*msgbox 按钮位置颠倒*/
+.el-message-box__btns{
+  display: flex;
+  flex-direction: row-reverse;
+}
+.el-message-box__btns .el-button{
+  margin-left: 10px;
+}
+/*表单样式重置*/
+.el-input__inner {
+  height: 26px;
+}
+.el-button {
+  padding: 8px 15px;
+  font-size: 12px;
+  min-width: 80px;
+}
+.el-form-item__label {
+  padding: 7px 12px 7px 0;
+}
+.el-input-group__append .el-button{
+  min-width: inherit;
+}
+.el-checkbox {
+  vertical-align: baseline;
+}
+
+.el-checkbox .el-checkbox__label {
+  font-size: 12px;
+}
+.el-radio__label{
+  font-size: 12px;
+}
+.el-form-item  .el-form-item__content {
+  line-height: 26px;
+}
+
+.el-table .el-table__body tr.current-row>td a{
+  color:#fff !important;
+}
+.el-table td, .el-table th.is-leaf{
+  border-bottom: 1px solid #eee
+}
+
+/* el-tree样式修改 */
+.el-tree .el-icon-caret-right:before {
+  content: '';
+}
+.el-tree .el-tree-node:focus {
+  outline: none;
+}
+
+.bbqs-fail .title p{
+  font-size: 16px!important;
+  font-weight: 600!important;
+  color: #f00!important;
+} 
+
+.el-message-box__message p{
+  word-break: break-all;
+}

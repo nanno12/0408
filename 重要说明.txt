@@ -1,0 +1,83 @@
+》服务的别名预先定义，为了避免发布的时候还要改配置文件：
+》发布的时候运行npm run deploy;对应发布文件到deploy文件夹中。
+》服务模式分为三种模式：debug、测试、发布，分别对应下面解释
+
+
+const config = require('../../../config');
+
+/** 是否进行本地调试*/
+const SYS_DEBUGMOD = false;
+
+/** 发布部署模式，动态读取构建命令 */
+const SYS_DEPLOY = process.env.ENV_DEPLOY;
+
+/** 是否进行通信加密,表示在post数据前是否进行加密处理数据*/
+const SYS_ENCRYPTION_FLAG = false;
+
+//本地服务前缀
+const mockUrl = process.env.NODE_ENV === 'production' ?
+  config.build.assetsPublicPath + config.build.assetsSubDirectory :
+  config.dev.assetsPublicPath + config.dev.assetsSubDirectory;
+
+
+/** 发布模式配置，前后端采用集中部署，前端走Ngix服务模式,名称和前缀预定义 */
+const SYS_API_DEPOLY = {
+  /**  常规系统*/
+  ROUTINE: { url: "api/routine/", apiDesc: "常规系统" },
+  /**  标本采集*/
+  COLLECTION: { url: "api/collection/", apiDesc: "标本采集" },
+  /**  his服务地址*/
+  HISSERVICE: { url: "api/hisservice/", apiDesc: "his服务地址" },
+  /**  配置管理*/
+  MANAGEMENT: { url: "api/management/", apiDesc: "配置管理" },
+  /**  智能服务*/
+  INTELLIGENTSERVICE: { url: "api/intelligentservice/", apiDesc: "智能服务" },
+  /**  质量管理*/
+  QUALITYCONTROL: { url: "api/qualitycontrol/", apiDesc: "质量管理" },
+};
+
+
+/** debug模式的时候，可以任意改地址入口，允许统一改，也允许单独改 */
+
+const DEBUGAPI = "http://localhost:15011/lis/";
+const SYS_API_DEBUG = {
+  /**  常规系统*/
+  ROUTINE: { url: DEBUGAPI, apiDesc: "常规系统" },
+  /**  标本采集*/
+  COLLECTION: { url: DEBUGAPI, apiDesc: "标本采集" },
+  /**  his服务地址*/
+  HISSERVICE: { url: DEBUGAPI, apiDesc: "his服务地址" },
+  /**  配置管理*/
+  MANAGEMENT: { url: DEBUGAPI, apiDesc: "配置管理" },
+  /**  智能服务*/
+  INTELLIGENTSERVICE: { url: DEBUGAPI, apiDesc: "智能服务" },
+  /**  质量管理*/
+  QUALITYCONTROL: { url: DEBUGAPI, apiDesc: "质量管理" },
+};
+
+/** 测试模式，前后端可以分开部署,允许统一改，也允许单独改*/
+const TESTAPI = "http://192.168.11.211:15011/lis/";
+const SYS_API_TEST = {
+  /**  常规系统*/
+  ROUTINE: { url: TESTAPI, apiDesc: "常规系统" },
+  /**  标本采集*/
+  COLLECTION: { url: TESTAPI, apiDesc: "标本采集" },
+  /**  his服务地址*/
+  HISSERVICE: { url: TESTAPI, apiDesc: "his服务地址" },
+  /**  配置管理*/
+  MANAGEMENT: { url: TESTAPI, apiDesc: "配置管理" },
+  /**  智能服务*/
+  INTELLIGENTSERVICE: { url: TESTAPI, apiDesc: "智能服务" },
+  /**  质量管理*/
+  QUALITYCONTROL: { url: TESTAPI, apiDesc: "质量管理" },
+};
+  
+
+/** 服务前缀*/
+let SYS_BASE_API = SYS_DEBUGMOD ? SYS_API_DEBUG : SYS_API_TEST;//服务器
+
+// npm run deploy 的时候，表示真正发布的时候，和Nginx一并部署。
+SYS_BASE_API = SYS_DEPLOY?SYS_API_DEPOLY:SYS_BASE_API;
+
+
+export {SYS_BASE_API};

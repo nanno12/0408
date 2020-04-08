@@ -1,0 +1,2 @@
+》此文件夹存放公用的组件，如头部，底部，
+如baseButtion,baseConfirm
