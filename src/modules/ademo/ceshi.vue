@@ -1,62 +1,124 @@
 <template>
-  <div ref="maxBlock" class="ceshi re minBlock" @mousemove="sliderMove" @mouseup="sliderMoveEnd">
-    <div ref="block1" class="box1 inlB"></div>
-    <div ref="block2" class="box2 inlB">
+  <div class="home-page-wrap-ba">
+    <div class="home-page-body">
+      <ul class="ul" style="display:inline-block;" >
+        <li
+          :class="active===index ? 'styleHover' : '' "
+          :key="index"
+          v-for="(item, index) in titleList" >
+          <w-button
+            @click="handleTab(item, index)"
+            class="title"
+            type="text"
+          >{{item.name}}</w-button>
+        </li>
+      </ul>
     </div>
-    <div ref="block3" class="box3 inlB"></div>
-    <div ref="slider1" @mousedown="(e) => {sliderMoveStart(e, 1)}" class="slider slider1 ab"></div>
-    <div ref="slider2" @mousedown="(e) => {sliderMoveStart(e, 2)}" class="slider slider2 ab"></div>
   </div>
 </template>
-<script>
-import autoResize from '@/app/components/autoResize';
 
+<script>
 export default {
-  mixins: [autoResize],
   data() {
     return {
-      // 模块Code
-      moduleCode: 'ceshi10086'
+      active: 0,
+      titleList: [
+        {
+          id: "SX0001",
+          name: "红细胞类"
+        },
+        {
+          id: "SX0002",
+          name: "冷沉淀"
+        },
+        {
+          id: "SX0003",
+          name: "血小板"
+        },
+        {
+          id: "SX0004",
+          name: "血浆类"
+        },
+        {
+          id: "SX0005",
+          name: "白细胞类"
+        }
+      ]
     };
   },
-  props: {
-
-  },
-  computed: {
-
-  },
-  watch: {
-
-  },
-  created() {
-
-  },
-  mounted() {
-
-  },
+  created() {},
   methods: {
-
+    handleTab(item, index) {
+      console.log(item, index);
+      this.active = index;
+    }
   }
 };
 </script>
+<style lang='stylus' scoped>
+.home-page-wrap-ba {
+  // height: 100%;
+  // padding: 12px 15px;
+  // background: rgba(234, 237, 244, 1);
+  // overflow-x: auto;
+  // overflow-y: hidden;
 
-<style lang="stylus" scoped>
-.ceshi
-  height 100%
-  background #fff
-  font-size 0
-  .inlB
-    height 100%
-  .box1
-    width 100px
-    background #999
-  .box2
-    width calc(100% - 200px)
-  .box3
-    width 100px
-    background #ddd
-  .slider:hover
-    background red
+  .home-page-body {
+    padding: 16px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 2px;
+    position: relative;
+
+    .ul {
+      position: absolute;
+      top: 0;
+      left: 20px;
+    }
+
+    .table {
+      width: calc(100% - 200px);
+      margin-left: 200px;
+    }
+
+    .title {
+      text-align: center;
+      display: inline-block;
+      margin: 16px 0px;
+      width: 180px;
+      height: 52px;
+      background: rgba(243, 245, 249, 1);
+      border-radius: 2px;
+    }
+  }
+}
+
+.styleHover {
+  color: #666;
+}
 </style>
-<style lang="stylus">
+<style lang='stylus'>
+.w-input {
+  width: 200px !important;
+}
+
+.ul {
+  .w-button:hover, .w-button:focus {
+    background: rgba(207, 224, 255, 1) !important;
+  }
+
+  .w-button--text:hover {
+    color: #0F49ED;
+  }
+
+  .w-button--text {
+    color: #000622;
+  }
+
+  .styleHover {
+    .w-button {
+      color: #0F49ED;
+      background: rgba(207, 224, 255, 1) !important;
+    }
+  }
+}
 </style>
