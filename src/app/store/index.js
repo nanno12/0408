@@ -6,7 +6,6 @@ import Vuex from 'vuex'
 import globle from './globle.js'
 //通知消息模块
 import noticesocket from './noticesocket/index'
-import HomePage from '@/modules/homepage/store/'
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -16,7 +15,6 @@ export default new Vuex.Store({
   //state,mutations,actions,//全局的
   modules: {
     globle,
-    noticesocket,
-    HomePage
+    noticesocket
   }
 })

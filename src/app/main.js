@@ -10,32 +10,32 @@ import store from './store'
 import 'vxe-table/lib/index.css'
 import '../theme/theme-default/index.css'
 import WuedUI from 'wn-tech-ui'
-import "@/app/assets/css/bootstrap.min.css"
-import "@/app/assets/css/reset.css"
-import "@/app/assets/css/common.css"
+// import "@/app/assets/css/bootstrap.min.css"
+// import "@/app/assets/css/reset.css"
+// import "@/app/assets/css/common.css"
 import "@/app/assets/css/public.css"
-import "@/app/assets/css/bgsh.css"
-import "@/app/assets/css/element-reset.css"
-import test from './utils/mylog'
-import BaseButton from './components/BaseButton';
+// import "@/app/assets/css/bgsh.css"
+// import "@/app/assets/css/element-reset.css"
+// import test from './utils/mylog'
+// import BaseButton from './components/BaseButton';
 import EllipsisLable from './components/EllipsisLable';
-import BaseDialog from './components/dialog/index';
+// import BaseDialog from './components/dialog/index';
 import BaseSelect from './components/select/';
-import BaseOption from './components/option/';
-import BaseAutoItem from './components/base-auto-item/index';
+// import BaseOption from './components/option/';
+// import BaseAutoItem from './components/base-auto-item/index';
 
-import BaseAgeInput from './components/BaseAgeInput';
-import BaseInputSupport from './components/BaseInputSupport';
-import MultiSelectInput from './components/MultiSelectInput';
-import InstSelect from './components/InstSelect';
-import InstSelectMore from './components/InstSelectMore';
+// import BaseAgeInput from './components/BaseAgeInput';
+// import BaseInputSupport from './components/BaseInputSupport';
+// import MultiSelectInput from './components/MultiSelectInput';
+// import InstSelect from './components/InstSelect';
+// import InstSelectMore from './components/InstSelectMore';
 
-import * as layerUtils from '@techCommon/utils/layerUtils'
-import KeyCode from './enums/KeyCode' 
-import smartClientUtils from "@techCommon/utils/smartClientUtils";
-import uuidUtils from "./utils/uuidUtils";
-import utils from "./utils/utils";
-import * as dateUtils from "./utils/dateUtils";
+// import * as layerUtils from '@techCommon/utils/layerUtils'
+// import KeyCode from './enums/KeyCode' 
+// import smartClientUtils from "@techCommon/utils/smartClientUtils";
+// import uuidUtils from "./utils/uuidUtils";
+// import utils from "./utils/utils";
+// import * as dateUtils from "./utils/dateUtils";
 import VueLazyload from 'vue-lazyload' 
 import VueClipboard from 'vue-clipboard2'
 import echarts from 'echarts'
@@ -55,39 +55,39 @@ import 'babel-polyfill' // 解决IE10+兼容问题
 const registerComponent = () => {
   console.log("注册组件:registerComponent")
   /* istanbul ignore next */ 
-  BaseButton.install = function (Vue) {
-    Vue.component(BaseButton.name, BaseButton);
-  };
+  // BaseButton.install = function (Vue) {
+  //   Vue.component(BaseButton.name, BaseButton);
+  // };
 
 
   /* istanbul ignore next */
-  //基础年龄输入框
-  BaseAgeInput.install = function (Vue) {
-    Vue.component(BaseAgeInput.name, BaseAgeInput);
-  };
+  // //基础年龄输入框
+  // BaseAgeInput.install = function (Vue) {
+  //   Vue.component(BaseAgeInput.name, BaseAgeInput);
+  // };
 
-  //基础年龄输入框
-  BaseInputSupport.install = function (Vue) {
-    Vue.component(BaseInputSupport.name, BaseInputSupport);
-  };
+  // //基础年龄输入框
+  // BaseInputSupport.install = function (Vue) {
+  //   Vue.component(BaseInputSupport.name, BaseInputSupport);
+  // };
 
-  /* 仪器单选组件 */
-  InstSelect.install = function (Vue) {
-    Vue.component(InstSelect.name, InstSelect);
-  };
-  /* 仪器多选组件 */
-  InstSelectMore.install = function (Vue) {
-    Vue.component(InstSelectMore.name, InstSelectMore);
-  };
+  // /* 仪器单选组件 */
+  // InstSelect.install = function (Vue) {
+  //   Vue.component(InstSelect.name, InstSelect);
+  // };
+  // /* 仪器多选组件 */
+  // InstSelectMore.install = function (Vue) {
+  //   Vue.component(InstSelectMore.name, InstSelectMore);
+  // };
 
-  MultiSelectInput.install = function (Vue) {
-    Vue.component(MultiSelectInput.name, MultiSelectInput);
-  };
+  // MultiSelectInput.install = function (Vue) {
+  //   Vue.component(MultiSelectInput.name, MultiSelectInput);
+  // };
 
-  /* istanbul ignore next */
-  BaseDialog.install = function (Vue) {
-    Vue.component(BaseDialog.name, BaseDialog);
-  };
+  // /* istanbul ignore next */
+  // BaseDialog.install = function (Vue) {
+  //   Vue.component(BaseDialog.name, BaseDialog);
+  // };
 
   /* 内容文字显示，自动省略号，超出后悬停显示 */
   EllipsisLable.install = function (Vue) {
@@ -101,14 +101,14 @@ const registerComponent = () => {
   // import { Message, MessageBox,Notification } from 'wued-ui';
   /**  弹框模块导入*/
   Vue.use(VueClipboard)
-  Vue.use(BaseButton);
-  Vue.use(BaseDialog);
-  Vue.use(BaseAgeInput);
-  Vue.use(BaseInputSupport);
-  Vue.use(MultiSelectInput);
+  // Vue.use(BaseButton);
+  // Vue.use(BaseDialog);
+  // Vue.use(BaseAgeInput);
+  // Vue.use(BaseInputSupport);
+  // Vue.use(MultiSelectInput);
   //仪器选择组件
-  Vue.use(InstSelect);
-  Vue.use(InstSelectMore);
+  // Vue.use(InstSelect);
+  // Vue.use(InstSelectMore);
   Vue.use(EllipsisLable);
   Vue.use(VueLazyload, {
     error: 'static/image/loading.gif',
@@ -118,10 +118,10 @@ const registerComponent = () => {
   });
 
   Vue.use(BaseSelect);
-  Vue.use(BaseOption);
-  Vue.use(BaseAutoItem);
-  Vue.use(WuedUI);
-  Vue.use(test);
+  // Vue.use(BaseOption);
+  // Vue.use(BaseAutoItem);
+  // Vue.use(WuedUI);
+  // Vue.use(test);
   VXETable.setup(PARAME_VXETABLE_OPTIONS);
 
   Vue.use(VXETable);
@@ -141,12 +141,12 @@ const registerPrototype = () => {
   // Vue.prototype.$MY = WuedUI;
   //let layerUtilsReal = window.top.$layerUtils||layerUtils;
   //s_xd:挂载属性,暂定，尚未决定是否保留
-  Vue.prototype.$smartClientUtils = smartClientUtils;
-  Vue.prototype.$layerUtils = layerUtils;
-  Vue.prototype.$uuidUtils = uuidUtils;
-  Vue.prototype.$dateUtils = dateUtils;
-  Vue.prototype.$utils = utils;
-  Vue.prototype.$vxetable = VXETable;
+  // Vue.prototype.$smartClientUtils = smartClientUtils;
+  // Vue.prototype.$layerUtils = layerUtils;
+  // Vue.prototype.$uuidUtils = uuidUtils;
+  // Vue.prototype.$dateUtils = dateUtils;
+  // Vue.prototype.$utils = utils;
+  // Vue.prototype.$vxetable = VXETable;
 
   Vue.prototype.$setNoticeSocketInstance = (noticeSocket) => {
     Vue.prototype.$noticeSocket = noticeSocket
@@ -178,12 +178,12 @@ const registerEvent = () => {
 
 
     //符合才去广播，否则不广播
-    if (!dispatchKeyCode || dispatchKeyCode.some((item) => {
-        return item == code
-      })) {
-      //layerUtils.showMessage("您按了"+event.keyCode);
-      rootVue.eventHub.$emit("keyupEvent", event);
-    }
+    // if (!dispatchKeyCode || dispatchKeyCode.some((item) => {
+    //     return item == code
+    //   })) {
+    //   //layerUtils.showMessage("您按了"+event.keyCode);
+    //   rootVue.eventHub.$emit("keyupEvent", event);
+    // }
     // event.preventDefault();
   };
 }
@@ -362,13 +362,13 @@ var EventUtil = {
 };
 
 
-//window.top.$layerUtils.showMessage("woshinidada");
-// EventUtil.addHandler(window, "online", function() {
-//   console("Online---正常工作");
-// });
-// EventUtil.addHandler(window, "offline", function() {
-//   alert("Offline ---离线工作");
-// });
+window.top.$layerUtils.showMessage("woshinidada");
+EventUtil.addHandler(window, "online", function() {
+  console("Online---正常工作");
+});
+EventUtil.addHandler(window, "offline", function() {
+  alert("Offline ---离线工作");
+});
 
 //初始化获取计算机信息
 // smartClientUtils.getClientInfo().then(data=>{
