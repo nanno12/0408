@@ -4,7 +4,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router);
-const index = r => require.ensure([], () => r(require('@/modules/index')), 'index');
+// const index = r => require.ensure([], () => r(require('@/modules/index')), 'index');
 const nofind = r => require.ensure([], () => r(require('@/app/components/nofind')), 'nofind');
 const backstageAdministration = r => require.ensure([], () => r(require('@/modules/backstageAdministration'), 'backstageAdministration')); // 项目配置
 const userAudit = r => require.ensure([], () => r(require('@/modules/userAudit'), 'userAudit')); // 角色权限
@@ -18,11 +18,11 @@ const application = r =>require.ensure([], () =>r(require('@/modules/application
 const ceshi = r => require.ensure([], () => r(require('@/modules/ademo/ceshi')), 'ceshi');
 
 const router = new Router({
-  routes: [{
-      path: '/index',
-      name: 'index',
-      component: index
-    }, // 首页
+  routes: [
+    //   path: '/index',
+    //   name: 'index',
+    //   component: index
+    // }, // 首页
     {
       path: '/404',
       name: 'nofind',
