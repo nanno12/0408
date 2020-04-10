@@ -11,7 +11,8 @@ const userAudit = r => require.ensure([], () => r(require('@/modules/userAudit')
 const authorityAudit = r => require.ensure([], () => r(require('@/modules/authorityAudit'), 'authorityAudit')); // 审核权限
 const bloodEvidence = r => require.ensure([], () => r(require('@/modules/bloodEvidence')), 'bloodEvidence'); // 输血指证
 const testProject = r => require.ensure([], () => r(require('@/modules/testProject')), 'testProject'); // 检验项目
-// const applicationform = r =>require.ensure([], () =>r(require('@/modules/applicationform')),'applicationform'); // 申请单
+const informationSpecimen = r => require.ensure([], () => r(require('@/modules/informationSpecimen')), 'informationSpecimen'); // 信息标本
+const application = r =>require.ensure([], () =>r(require('@/modules/application')),'application'); // 申请单
 // const bloodaudit = r =>require.ensure([], () =>r(require('@/modules/bloodaudit')),'bloodaudit'); // 用血审核
 // const pathological = r => require.ensure([], () => r(require('@/modules/pathological'), 'pathological'));
 const ceshi = r => require.ensure([], () => r(require('@/modules/ademo/ceshi')), 'ceshi');
@@ -52,13 +53,13 @@ const router = new Router({
       name: 'testProject',
       component: testProject
     }, // 检验项目
+    { path: '/informationSpecimen', name: 'informationSpecimen', component: informationSpecimen }, // 信息标本
+    { path: '/application', name: 'application', component: application }, // 申请单
     {
       path: '/ceshi',
       name: 'ceshi',
       component: ceshi
     }, // ceshi
-    // { path: '/applicationform', name: 'applicationform', component: applicationform }, // 申请单
-    // { path: '/bloodaudit', name: 'bloodaudit', component: bloodaudit }, // 用血审核
     // { path: '/pathological', name: 'pathological', component: pathological },
     // { path: '/specimenentry', name: 'specimenentry', component: specimenentry },
     // { path: '/homepage', name: 'homepage', component: homepage }, // 首页
