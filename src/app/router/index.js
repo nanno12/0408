@@ -7,6 +7,7 @@ Vue.use(Router);
 const index = r => require.ensure([], () => r(require('@/modules/index')), 'index');
 const nofind = r => require.ensure([], () => r(require('@/app/components/nofind')), 'nofind');
 const backstageAdministration = r => require.ensure([], () => r(require('@/modules/backstageAdministration'), 'backstageAdministration')); // 项目配置
+const userAudit = r => require.ensure([], () => r(require('@/modules/userAudit'), 'userAudit')); // 角色权限
 const authorityAudit = r => require.ensure([], () => r(require('@/modules/authorityAudit'), 'authorityAudit')); // 审核权限
 const bloodEvidence = r => require.ensure([], () => r(require('@/modules/bloodEvidence')), 'bloodEvidence'); // 输血指证
 const testProject = r => require.ensure([], () => r(require('@/modules/testProject')), 'testProject'); // 检验项目
@@ -31,6 +32,11 @@ const router = new Router({
       name: 'backstageAdministration',
       component: backstageAdministration
     }, // 后台管理
+    {
+      path: '/userAudit',
+      name: 'userAudit',
+      component: userAudit
+    }, // 角色权限
     {
       path: '/authorityAudit',
       name: 'authorityAudit',

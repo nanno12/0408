@@ -190,6 +190,23 @@
         <w-row>
           <w-col :span="24">
             <w-form-item label="规则生效条件"></w-form-item>
+            <div>
+              <w-checkbox-group v-model="value">
+                <w-checkbox :label="1">
+                  <div>我的患者</div>
+                  <w-select v-model="value" placeholder="请选择">
+                    <w-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </w-option>
+                  </w-select>
+                </w-checkbox>
+                <w-checkbox :label="2">本科室</w-checkbox>
+                <w-checkbox :label="3">本地区</w-checkbox>
+              </w-checkbox-group>
+            </div>
           </w-col>
         </w-row>
       </w-form>

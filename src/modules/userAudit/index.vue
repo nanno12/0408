@@ -1,19 +1,18 @@
 <template>
-  <div class="home-page-wrap-us">
+  <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
       <w-col :span="12" >
-        <div class="mb-15 title">审核流程列表</div>
+        <div class="mb-15 title">角色列表（5）</div>
         <w-button @click="handleAdd('left')" class="fr mb-15" type="primary" plain>新增</w-button>
         <w-table class="mt-15" :data="tableData" :border="true" style="width: 100%">
-          <w-table-column prop="time" label="审核名称">
+          <w-table-column type="index" width="70" label="序号">
           </w-table-column>
-          <w-table-column prop="name" label="审核范围" width="100">
+          <w-table-column prop="time" label="角色代码">
           </w-table-column>
-          <w-table-column prop="name" label="描述" width="100">
+          <w-table-column prop="name" label="角色名称" width="100">
           </w-table-column>
           <w-table-column fixed="right" label="操作" width="120" reference-cell>
             <template slot-scope="scope">
-                <w-button type="text" @click="handleModify(scope.row)">修改</w-button>
                 <w-popconfirm  title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"
                   @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
@@ -27,20 +26,24 @@
       </w-col>
       <w-col :span="12">
         <div class="pl-15 pd-right">
-          <div class="mb-15 title">流程明细列表</div>
+          <div class="mb-15 title">医生列表（13）</div>
+           <w-input v-model="value2" sufAppendIsButton>
+            <template slot="suf-append">
+              <i class="w-icon-search"></i>
+            </template>
+          </w-input>
           <w-button class="fr mb-15" type="primary" @click="handleAdd('right')" plain>新增</w-button>
           <w-table :data="tableData" class="mt-15 " :border="true" style="width: 100%">
-            <w-table-column type="index" label="步骤" width="80">
+            <w-table-column type="index" width="70" label="序号">
             </w-table-column>
-            <w-table-column prop="name" label="步骤名称">
+            <w-table-column prop="time" label="医生姓名" width="100">
             </w-table-column>
-            <w-table-column prop="status" label="操作角色">
+            <w-table-column prop="name" label="医生工号">
             </w-table-column>
-            <w-table-column prop="status" label="描述">
+            <w-table-column prop="status" label="职称">
             </w-table-column>
-            <w-table-column label="操作" width="120">
+            <w-table-column label="操作" width="80">
               <template slot-scope="scope">
-                <w-button type="text" @click="handleModify(scope.row)">修改</w-button>
                 <w-popconfirm  title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"
                   @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
@@ -54,100 +57,56 @@
         </div>
       </w-col>
     </w-row>
-      <w-modal
-      :close-on-click-modal="false"
+    <w-modal  :visible.sync="visible"
       :title="title"
-      :visible.sync="visible"
-      width="60%" >
-      <w-form
-        :model="form"
-        :rules="rules"
-        label-align="right"
-        label-width="100px"
-        ref="form" >
-        <w-row>
-          <w-col :span="12">
-            <w-form-item
-              label="审核名称"
-              prop="region"
-            >
-              <w-input
-                v-if="title !=='新增明细流程'"
-                placeholder="请输入审核名称"
-                showCounter
-                v-model="form.name"
-              ></w-input>
-              <w-select v-else v-model="form.region" placeholder="请选择操作角色">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12" v-if="title ==='新增明细流程'">
-            <w-form-item label="步骤序号" prop="name" required>
-              <w-input-number v-model="numVal"></w-input-number>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row v-if="title ==='新增明细流程'">
-          <w-col :span="12">
-            <w-form-item label="步骤名称" prop="name" required>
-              <w-input
-                placeholder="请输入步骤名称"
-                v-model="form.name"
-              ></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item label="操作角色" prop="name" required>
-              <w-select v-model="form.region" placeholder="请选择操作角色">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
-              <i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row v-else>
-          <w-col :span="12">
-            <w-form-item label="最小量" prop="name" required>
-              <w-input-number v-model="numVal"></w-input-number>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item label="最大量" prop="name" required>
-              <w-input-number v-model="operationVal"></w-input-number>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col>
-             <w-form-item
-              label="描述"
-              prop="region"
-            >
-              <w-input v-model="value" placeholder="请输入描述" type="textarea" showCounter></w-input>
-             </w-form-item>
-          </w-col>
-        </w-row>
-      </w-form>
-      <span
-        class="dialog-footer"
-        slot="footer"
-      >
+      :close-on-click-modal="false"
+      width="40%">
+      <div v-if="title !=='新增角色'" class="pd-right">
+        <span>科室</span>
+        <w-select v-model="region" placeholder="请选择科室">
+          <w-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </w-option>
+        </w-select>
+        <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
+          <template slot="suf-append">
+            <i class="w-icon-search"></i>
+          </template>
+        </w-input>
+        <w-table ref="multiTable" :data="tableData"
+          :border="true" class="mt-15" style="width: 100%"
+          :default-sort = "{prop: 'date', order: 'descending'}"
+          @selection-change="handleSelectionChange">
+          <w-table-column type="selection" width="50">
+          </w-table-column>
+          <w-table-column prop="time" label="姓名">
+          </w-table-column>
+          <w-table-column sortable prop="name" label="职称" width="150">
+          </w-table-column>
+          <w-table-column sortable prop="status" label="工号" width="150">
+          </w-table-column>
+          <w-table-column prop="type" label="科室">
+          </w-table-column>
+          <w-table-column  label="操作"  width="100">
+            <template slot-scope="scope">
+                <w-popconfirm  title="确认删除这条内容吗? "
+                  @document-click="handleCancel(scope.$index)"
+                  @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
+                  <span class="popconfirm-reference" slot="reference">
+                    <w-button type="text" @click="handleDelete(scope.row)">删除</w-button>
+                  </span>
+                </w-popconfirm>
+            </template>
+          </w-table-column>
+        </w-table>
+      </div>
+      <w-input v-else></w-input>
+      <span slot="footer" class="dialog-footer">
         <w-button @click="reset">取 消</w-button>
-        <w-button
-          @click="submit"
-          type="primary"
-        >确 定</w-button>
+        <w-button type="primary" @click="submit">确 定</w-button>
       </span>
     </w-modal>
   </div>
@@ -164,25 +123,10 @@ export default {
   data() {
     return {
       visible: false,
-      operationVal: 1, // 加减量
-      numVal: 1, // 默认数量
       title: '', // 模态框标题
-      value: '', // 描述值
       value2: '', // 模态框表格搜索
       region: '', // 请选择科室值
       selection: [],
-      form: {
-        name:'',
-        region: ''
-      },
-      rules: {
-        region: [{
-          required: true, message: '请选择区域', trigger: 'change'
-        }],
-        name: [{
-          required: true, message: '请选择区域', trigger: 'change'
-        }]
-      },
       options: [
         {
           value: '选项1',
@@ -239,9 +183,6 @@ export default {
   mounted() {
   },
   methods: {
-    handlePlus () {
-
-    },
     // 模态框表格多选值
     handleSelectionChange (val) {
       this.selection = val
@@ -270,10 +211,10 @@ export default {
     // 新增按钮
     handleAdd (title) {
       if (title === 'left') {
-        this.title = '新增审核'
+        this.title = '新增角色'
         this.visible = true
       } else {
-        this.title = '新增明细流程'
+        this.title = '新增医生'
         this.visible = true
       }
       console.log(title)
@@ -287,7 +228,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.home-page-wrap-us
+.home-page-wrap-ba
   height 100%
   padding 12px 15px
   background rgba(234,237,244,1)
