@@ -20,7 +20,7 @@
           </w-table-column>
           <w-table-column prop="name" label="项目标识">
           </w-table-column>
-          <w-table-column label="操作" width="80">
+          <w-table-column label="操作" align="center" width="80">
              <template slot-scope="scope">
                 <w-popconfirm  title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"

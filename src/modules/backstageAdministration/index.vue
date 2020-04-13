@@ -21,7 +21,7 @@
           <w-button @click="handleAdd('left')" class="fr" type="primary" plain>新增</w-button>
         </div>
         <w-table class="mt-15" :data="tableData" :border="true" style="width: 100%">
-          <w-table-column type="index" width="70" label="序号">
+          <w-table-column type="index" width="70" align="center" label="序号">
           </w-table-column>
           <w-table-column prop="time" label="项目名称">
           </w-table-column>
@@ -35,7 +35,7 @@
           </w-table-column>
           <w-table-column prop="type" label="成份小类">
           </w-table-column>
-          <w-table-column fixed="right" label="操作" width="120" reference-cell>
+          <w-table-column fixed="right" label="操作" align="center" width="120" reference-cell>
             <template slot-scope="scope">
                 <w-button type="text"
                   @click="onEditing(scope)">修改</w-button>
@@ -63,7 +63,7 @@
             </w-table-column>
             <w-table-column prop="type" label="使用范围">
             </w-table-column>
-            <w-table-column fixed="right" label="操作" width="80">
+            <w-table-column fixed="right" label="操作" align="center" width="80">
               <template slot-scope="scope">
                 <w-popconfirm  title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"

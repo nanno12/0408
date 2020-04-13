@@ -11,7 +11,7 @@
           </w-table-column>
           <w-table-column prop="name" label="描述" width="100">
           </w-table-column>
-          <w-table-column fixed="right" label="操作" width="120" reference-cell>
+          <w-table-column fixed="right" label="操作" align="center" width="120" reference-cell>
             <template slot-scope="scope">
                 <w-button type="text" @click="handleModify(scope.row)">修改</w-button>
                 <w-popconfirm  title="确认删除这条内容吗? "
@@ -38,7 +38,7 @@
             </w-table-column>
             <w-table-column prop="status" label="描述">
             </w-table-column>
-            <w-table-column label="操作" width="120">
+            <w-table-column label="操作"  align="center" width="120">
               <template slot-scope="scope">
                 <w-button type="text" @click="handleModify(scope.row)">修改</w-button>
                 <w-popconfirm  title="确认删除这条内容吗? "
@@ -88,7 +88,7 @@
             </w-form-item>
           </w-col>
           <w-col :span="12" v-if="title ==='新增明细流程'">
-            <w-form-item label="步骤序号" prop="name" required>
+            <w-form-item label="步骤序号" align="center" width="120px" prop="name" required>
               <w-input-number v-model="numVal"></w-input-number>
             </w-form-item>
           </w-col>

@@ -50,6 +50,8 @@ import WinDesign from 'win-design'
 import 'win-design/lib/themes/default.css' // 默认主题样式文件
 import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图标
 import 'babel-polyfill' // 解决IE10+兼容问题
+
+import './components/WinCard'
  
 /** 注册组件的动作放在此 */ 
 const registerComponent = () => {
