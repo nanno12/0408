@@ -49,10 +49,10 @@ import sortTable from '@techCommon/components/sortTable'
 import WinDesign from 'win-design'
 import 'win-design/lib/themes/default.css' // 默认主题样式文件
 import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图标
-import 'babel-polyfill' // 解决IE10+兼容问题
+// import 'babel-polyfill' // 解决IE10+兼容问题
 import '../theme/layout/uiIndex.scss' // 解决IE10+兼容问题
 
-import './components/WinCard'
+// import './components/WinCard'
  
 /** 注册组件的动作放在此 */ 
 const registerComponent = () => {
@@ -92,9 +92,9 @@ const registerComponent = () => {
   // };
 
   /* 内容文字显示，自动省略号，超出后悬停显示 */
-  EllipsisLable.install = function (Vue) {
-    Vue.component(EllipsisLable.name, EllipsisLable);
-  };
+  // EllipsisLable.install = function (Vue) {
+  //   Vue.component(EllipsisLable.name, EllipsisLable);
+  // };
   /*自定义表格 */
   sortTable.install = function (Vue) {
     Vue.component(sortTable.name, sortTable);
@@ -111,7 +111,7 @@ const registerComponent = () => {
   //仪器选择组件
   // Vue.use(InstSelect);
   // Vue.use(InstSelectMore);
-  Vue.use(EllipsisLable);
+  // Vue.use(EllipsisLable);
   Vue.use(VueLazyload, {
     error: 'static/image/loading.gif',
     loading: 'static/image/loading.gif',

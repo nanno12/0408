@@ -15,7 +15,7 @@
     <!-- </div> -->
     <!--menu-->
     <div class="wrapper-menu">
-    	<v-menu></v-menu>
+    	<!-- <v-menu></v-menu> -->
     </div>
     <!--footer-->
     <div class="footer">
@@ -25,7 +25,7 @@
 <script>
 import "../assets/js/lis60";
 import head from "./head.vue";
-import menu from "./menu.vue";
+// import menu from "./menu.vue";
 import Common from "../api/common.js";
 import * as layerUtils from "@techCommon/utils/layerUtils";
 import * as KeyCode from "../enums/KeyCode";
@@ -177,7 +177,7 @@ export default {
   },
   components: {
     "v-head": head,
-    "v-menu": menu
+    // "v-menu": menu
   }
 };
 </script>
