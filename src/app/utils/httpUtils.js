@@ -201,8 +201,6 @@ let catchErrorEvtTechSvr = function (err, type) {
 	} else if (err.message == 'Network Error') {
 		//messageDesc = '网络出现故障，请检查网络连接情况。'
 	}
-
-	console.log(err);
 	type = type || "";
 	//rootVue.$message.error("请求错误服务错误："+err.message);
 	layerUtils.showMessage("请求" + type + "服务错误,请检查TechSvr是否启动：" + err.message + '>>' + messageDesc, layerUtils.messageType.ERROR);
@@ -247,7 +245,6 @@ const httpUtils = {
 		let responseType = requestOptions.responseType || 'json';
 
 		return new Promise((resolve, reject) => {
-			console.time(requestDesc + ":" + requestUrl);
 			axios({
 				url: requestUrl,
 				method: 'post',
@@ -299,7 +296,6 @@ const httpUtils = {
 						detailOption: result
 					});
 					reject(res.data);
-					//layerUtils.showMessage(vnode, layerUtils.messageType.ERROR);
 				} else {
 					// 请求文件流后，直接返回res
 					if(responseType === 'blob') {
@@ -308,7 +304,6 @@ const httpUtils = {
 					}
 					resolve(res.data);
 				}
-				console.timeEnd(requestDesc + ":" + requestUrl);
 				httpUtils.toLogin(result);
 			})
 				.catch(error => {
@@ -338,7 +333,6 @@ postJsonRequest: function (requestOptions, params = {}, loadingFlag = false) {
 	let requestDesc = requestOptions.desc || "";
 
 	return new Promise((resolve, reject) => {
-		console.time(requestDesc + ":" + requestUrl);
 		axios({
 			url: requestUrl,
 			method: 'post',
@@ -368,7 +362,6 @@ postJsonRequest: function (requestOptions, params = {}, loadingFlag = false) {
 			} else {
 				resolve(res.data);
 			}
-			console.timeEnd(requestDesc + ":" + requestUrl);
 			httpUtils.toLogin(result);
 		})
 		  .catch(error => {
@@ -391,9 +384,7 @@ postForSmartClient: function (requestOptions, params = {}) {
     }
 let requestUrl = requestOptions.url;
 let requestDesc = requestOptions.desc || "";
-console.log(params);
 return new Promise((resolve, reject) => {
-	console.time(requestDesc + ":" + requestUrl);
 	axios({
 		url: requestUrl,
 		method: 'post',
@@ -423,7 +414,6 @@ return new Promise((resolve, reject) => {
 			resolve(res.data);
 			//layerUtils.showMessage("请求【"+requestDesc+"】错误：" + result.message, layerUtils.messageType.ERROR);
 		}
-		console.timeEnd(requestDesc + ":" + requestUrl);
 	})
 	.catch(error => {
 		catchErrorEvtTechSvr(error, "【智能客户端TechSvr】");
@@ -449,7 +439,6 @@ let requestUrl = requestOptions.url;
 let requestDesc = requestOptions.desc||"";
 
 return new Promise((resolve, reject) => {
-	console.time(requestDesc+":"+requestUrl);
 	axios({
 		url: requestUrl,
 		method: 'get',
@@ -460,7 +449,6 @@ return new Promise((resolve, reject) => {
 		}
 	}).then(res => {
 		resolve(res.data);
-		console.timeEnd(requestDesc+":"+requestUrl);
 		httpUtils.toLogin(res.data);
 	}).catch(error => {
 		catchErrorEvt(error, params);
@@ -484,7 +472,6 @@ put: function (requestOptions, params = {}, majorKey = '') {
 	let requestDesc = requestOptions.desc||"";
 
 	return new Promise((resolve, reject) => {
-		console.time(requestDesc+":"+requestUrl);
 		axios({
 			url: requestUrl,
 			method: 'put',
@@ -494,7 +481,6 @@ put: function (requestOptions, params = {}, majorKey = '') {
 			}
 		}).then(res => {
 			resolve(res.data);
-			console.timeEnd(requestDesc+":"+requestUrl);
 			httpUtils.toLogin(res.data);
 		}).catch(error => {
 			catchErrorEvt(error, params);
@@ -517,7 +503,6 @@ put: function (requestOptions, params = {}, majorKey = '') {
   	let requestDesc = requestOptions.desc||"";
 
   	return new Promise((resolve, reject) => {
-  		console.time(requestDesc+":"+requestUrl);
   		axios({
   			url: requestUrl,
   			method: 'delete',
@@ -526,7 +511,6 @@ put: function (requestOptions, params = {}, majorKey = '') {
   			}
   		}).then(res => {
   			resolve(res.data);
-  			console.timeEnd(requestDesc+":"+requestUrl);
   			httpUtils.toLogin(res.data);
   		}).catch(error => {
   			catchErrorEvt(error, params);
@@ -545,7 +529,6 @@ put: function (requestOptions, params = {}, majorKey = '') {
   	let requestDesc = requestOptions.desc || "";
 
   	return new Promise((resolve, reject) => {
-  		console.time(requestDesc + ":" + requestUrl);
   		axios({
   			url: requestUrl,
   			method: 'options'
@@ -590,7 +573,6 @@ fileUtils: {
 			let requestUrl = requestOptions.url
 			let requestDesc = requestOptions.desc || ''
 			return new Promise((resolve, reject) => {
-				console.time(requestDesc + ':' + requestUrl)
 				axios({
 					url: requestUrl,
 					method: 'post',
@@ -617,7 +599,6 @@ fileUtils: {
 					} else {
 						resolve(res.data)
 					}
-					console.timeEnd(requestDesc + ':' + requestUrl);
 					httpUtils.toLogin(result);
 				})
 				.catch(error => {

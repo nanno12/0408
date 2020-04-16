@@ -1,0 +1,66 @@
+// border
+.border {
+  border: 1px solid #DCE2E9;
+}
+.bor{
+  border: 1px solid #5584FF ;
+}
+//清除浮动
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+// float
+.fl {
+  &_left {
+    float: left;
+  }
+  &_right {
+    float: right;
+  }
+}
+// font
+.ft {
+  &_0 {
+    font-size: 0 !important;
+  }
+  @for $i from 10 to 30 {
+    &_#{$i} {
+      font-size: #{$i}px !important;
+    }
+  }
+}
+.strong {
+  font-weight: bold;
+}
+// display
+.block {
+  display: block
+}
+.hide {
+  display: none;
+}
+.inline {
+  display: inline;
+  &-block {
+    display: inline-block;
+  }
+}
+// align
+.item {
+  &-center {
+    align-items: center;
+  }
+  &-start {
+    align-items: flex-start;
+  }
+  &-end {
+    align-items: flex-end;
+  }
+}

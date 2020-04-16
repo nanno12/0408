@@ -1,0 +1,40 @@
+$mainBule: #5175F4;
+$mainOrange: #F5A623;
+$mainRed: #ED4141;
+// $mainBule: #C0C4CC;
+$mainBg:#edf2ff;
+$textColor:#2D55E6;
+
+$colors: (
+  (key: 333, val: #666),
+  (key: text-color, val: $textColor),
+  (key: f666, val: #666),
+  (key: fff, val: #fff),
+  (key: main-red, val: $mainRed),
+  (key: main-orange, val: $mainOrange),
+  (key: main-bule, val: $mainBule),
+);
+
+$bgColors: (
+  (key: f666, val: #666),
+  (key: e6, val: #e6e6e6),
+  (key: fff, val: #fff),
+  (key:main-bg, val: $mainBg),
+  (key: main-red, val: $mainRed),
+  (key: main-orange, val: $mainOrange),
+  (key: main-bule, val: $mainBule),
+);
+
+@for $i from 1 through length($colors) {
+  $item: nth($colors, $i);
+  .co_#{map-get($item, key)} {
+    color: map-get($item, val);
+  }
+}
+
+@for $i from 1 through length($bgColors) {
+  $item: nth($bgColors, $i);
+  .bg-co_#{map-get($item, key)} {
+    background-color: map-get($item, val);
+  }
+}

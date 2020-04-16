@@ -1,6 +1,6 @@
 <template>
-  <div class="home-page-wrap-pl">
-    <div class="home-page-body">
+  <div class="home-page-wrap-pl  pd_16">
+    <div class="home-page-body pd_16">
       <w-input
         sufAppendIsButton
         v-model="value2"
@@ -27,26 +27,36 @@
       ></w-table-column>
       <w-table-column
         label="申请单名称"
-        prop="time"
+        width="150px"
+        prop="TEMPLATE_NAME"
       ></w-table-column>
       <w-table-column
         label="包含元素"
-        prop="name"
-        width="180"
-      ></w-table-column>
+        prop="name" >
+        <template slot-scope="scope">
+          <span v-for="(item,index) in scope.row.doctorAdvice" :key="index">
+            {{index+1 + "、"}}{{item.ITEM_NAME}}
+          </span>
+        </template>
+      </w-table-column>
       <w-table-column
         label="适用检查"
-        prop="status"
-        width="180"
-      ></w-table-column>
+        prop="TEMPLATE_NAME">
+        <template slot-scope="scope">
+          <span v-for="(item,index) in scope.row.doctorAdvice" :key="index">
+            {{index+1 + "、"}}{{item.ITEM_NAME}}
+          </span>
+        </template>
+      </w-table-column>
       <w-table-column
         label="申请单模版"
-        prop="type"
+        width="120"
+        prop="APPLY_DEPT_NAME"
       ></w-table-column>
       <w-table-column
         align="center"
         label="操作"
-        width="230"
+        width="120"
       >
         <template slot-scope="scope">
           <w-button type="text">修改</w-button>
@@ -150,6 +160,7 @@
 </template>
 
 <script>
+import apiData from './api/api'
 export default {
   data() {
     return {
@@ -198,58 +209,35 @@ export default {
         region: ""
       },
       rules: {
-        region: [
-          {
-            required: true,
-            message: "请选择区域",
-            trigger: "change"
-          }
-        ],
-        name: [
-          {
-            required: true,
-            message: "请选择区域",
-            trigger: "change"
-          }
-        ]
+        // region: [
+        //   {
+        //     required: true,
+        //     message: "请选择区域",
+        //     trigger: "change"
+        //   }
+        // ],
+        // name: [
+        //   {
+        //     required: true,
+        //     message: "请选择区域",
+        //     trigger: "change"
+        //   }
+        // ]
       },
-      tableData: [
-        {
-          time: "2019.05.12 11:02:33",
-          status: "其他区签约",
-          name: "赵宇翔",
-          type: "其他"
-        },
-        {
-          time: "2019.05.12 12:24:30",
-          status: "未签约",
-          name: "肖新宇",
-          type: "本地医保"
-        },
-        {
-          time: "2019.05.13 08:15:10",
-          status: "已签约",
-          name: "陈慕杰",
-          type: "本地医保"
-        },
-        {
-          time: "2019.05.14 09:23:09",
-          status: "未签约",
-          name: "李自然",
-          type: "本地医保"
-        },
-        {
-          time: "2019.05.15 08:45:48",
-          status: "未签约",
-          name: "尤道礼",
-          type: "本地医保"
-        }
-      ]
+      tableData: []
     };
   },
-  created() {},
+  created() {
+    this.list()
+  },
   methods: {
-    submit() {},
+    async list () {
+      const res = await apiData.getQuery()
+      this.tableData = res.data
+    },
+    submit() {
+
+    },
     reset() {},
     // 界面新增按钮
     handleAdd() {

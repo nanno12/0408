@@ -7,11 +7,11 @@
           <w-button type="text" class="fr" @click="handleAdd('器官/系统')">+新增</w-button>
         </div>
         <div>
-          <div v-for="(item,index) in organList" @click="handle(item,'器官/系统')" class="tab-style" :key="index">
-            <span>{{item.name}}</span>
+          <div v-for="(item,index) in organList" @click="handle(item,'器官/系统',index)" class="tab-style" :key="index">
+            <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr">
-              <w-button type="text" @click="handleEdit(item,'器官/系统')">修改</w-button>
-              <w-button type="text" @click="handleDelete(item,'器官/系统')">删除</w-button>
+              <span type="text" @click.stop="handleEdit(item,'器官/系统')">修改</span>
+              <span type="text" @click.stop="handleDelete(item,'器官/系统')">删除</span>
             </div>
           </div>
         </div>
@@ -21,12 +21,12 @@
           <span>标本部位</span>
           <w-button type="text" class="fr" @click="handleAdd('标本部位')">+新增</w-button>
         </div>
-        <div v-if="title ==='器官/系统' || title ==='标本部位'">
+        <div>
           <div v-for="(item,index) in positionList"  @click="handle(item,'标本部位')" class="tab-style" :key="index">
-            <span>{{item.name}}</span>
+            <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr">
-              <w-button type="text" @click="handleEdit(item,'标本部位')">修改</w-button>
-              <w-button type="text" @click="handleDelete(item,'标本部位')">删除</w-button>
+              <span type="text" @click.stop="handleEdit(item,'标本部位')">修改</span>
+              <span type="text" @click.stop="handleDelete(item,'标本部位')">删除</span>
             </div>
           </div>
         </div>
@@ -36,41 +36,41 @@
           <span>标本名称</span>
           <w-button type="text" class="fr" @click="handleAdd('标本名称')">+新增</w-button>
         </div>
-        <div v-if="title ==='标本部位' || title ==='标本名称' ">
+        <div v-show="show">
           <div v-for="(item,index) in nameList" @click="handle(item,'标本名称')" class="tab-style" :key="index">
-            <span>{{item.name}}</span>
+            <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr">
-              <w-button type="text" @click="handleEdit(item,'标本名称')">修改</w-button>
-              <w-button type="text" @click="handleDelete(item,'标本名称')">删除</w-button>
+              <span type="text" @click.stop="handleEdit(item,'标本名称')">修改</span>
+              <span type="text" @click.stop="handleDelete(item,'标本名称')">删除</span>
             </div>
           </div>
         </div>
       </w-col>
     </w-row>
     <w-modal  :visible.sync="visible"
-      :title="'新增'+ title"
+      :title="h + title"
       :close-on-click-modal="false"
       class="home-page-body"
       width="50%">
       <w-form :model="form" ref="form">
         <w-form-item v-if="editVal">
-            <w-input v-model="form.editVal" @input="handleChangeInput"></w-input>
-          </w-form-item>
+          <w-input v-model="form.editVal"></w-input>
+        </w-form-item>
         <template v-else v-for="(item, index) of form.dynamicArr">
           <w-form-item
             :key="index"
-            :prop="`dynamicArr.${index}.value`"
-            :label="item.label"
+            :prop="`dynamicArr.${index}.specimenName`"
+            label=""
             >
           <!-- :rules="[{
               required: true, message: '请至少输入一项', trigger: ['blur']
             }]" -->
-            <w-input v-model="form.dynamicArr[index].value" @input="handleChangeInput"></w-input>
+            <w-input v-model="form.dynamicArr[index].specimenName" @input="handleChangeInput"></w-input>
           </w-form-item>
         </template>
         <w-form-item style="text-align: right;">
           <w-button @click="reset">重 置</w-button>
-          <w-button type="primary" @click="submit">发 送</w-button>
+          <w-button type="primary" @click="submit(h)">发 送</w-button>
         </w-form-item>
       </w-form>
     </w-modal>
@@ -78,78 +78,158 @@
 </template>
 
 <script>
+import * as layerUtils from 'app/utils/layerUtils';
+import apiData from './api/api.js';
 export default {
   data(){
     return{
       visible: false,
-      title: '器官/系统' && '标本部位',
+      title: '',
       editVal: false,
+      show: true,
+      h: '',
+      idVal: '',
       form: {
         editVal: '',
-        dynamicArr: [{
-          label: ' ',
-          value: ''
-        },{
-          label: ' ',
-          value: ''
-        }]
+        dynamicArr: []
       },
-      organList:[{name:'泌尿系统'},{name:'内分泌系统'}],
-      positionList:[{name:'全肺'},{name:'左肺'}],
-      nameList:[{name:'左肺'},{name:'右肺'}]    
+      organList:[],
+      positionList:[],
+      nameList:[]    
     }
   },
   created(){
-        
+    this.getOrganList()
   },
   watch: {
-    // handleChangeInput (o, n) {
-    //     console.log(o, n)
-    //   },
     'title' (o, n) {
       console.log(o, n)
     },
-    // 'form.dynamicArr[index].value' (o, n) {
-    //   console.log(o, n)
-    // }
   },
   methods:{
-    handle (item, title) {
-      console.log(item)
+    async handle (item, title, index) {
+      console.log(title, item);
       this.isTitle(title)
+      if (title === "器官/系统") {
+        const res = await apiData.getQuery({id:item.ID})
+        this.positionList = res.data
+      } else if (title === "标本部位") {
+        console.log(item);
+        const res = await apiData.getQuery({id:item.ID})
+        this.nameList = res.data
+      } else {}
+    },
+    // 获取首页list接口
+    async getOrganList (id) {
+      let positionList = []
+      let nameList = []
+      const res = await apiData.getQuery({id:id})
+      this.organList = res.data
+      res.data.map(item => {
+        item.children.map(it => {
+           positionList.push(it)
+           it.children.map(ite => {
+            nameList.push(ite)
+           }) 
+        })
+      })
+      
+      this.positionList = positionList
+      this.nameList = nameList
     },
     handleAdd (title) {
-      this.isTitle(title)
-      if (title === '器官/系统') {
-        this.title = '器官/系统' && '标本部位'
-      }
       this.visible = true
+      let dynamicArr = []
+      this.isTitle(title)
+      this.h = '新增'
+      this.form.dynamicArr.push({
+          pafTemplateId:'',
+          specimenName:'',
+          pafSpecimenFid:title === '器官/系统'?
+            this.organList[0].PAF_SPECIMEN_FID:(title === '标本部位'?this.positionList[0].PAF_SPECIMEN_FID:this.nameList[0].PAF_SPECIMEN_FID),
+          seqNo:title === '器官/系统'?
+            this.organList.length:(title === '标本部位'? this.positionList.length:this.nameList.length)+this.form.dynamicArr.length + 1,
+          specimenType:title === '器官/系统'?
+            this.organList[0].SPECIMEN_TYPE:(title === '标本部位'?this.positionList[0].SPECIMEN_TYPE:this.nameList[0].SPECIMEN_TYPE)
+        })
+        console.log(title);
     },
-    handleEdit (item) {
+    async handleEdit (item) {
       console.log(item)
-      this.form.editVal = item.name
+      this.h = '修改'
+      this.form.editVal = item.SPECIMEN_NAME
+      this.idVal = item.ID
       this.editVal = true
       this.visible = true
 
     },
-    handleDelete () {
-
+    async handleDelete (item, title) {
+      const res = await apiData.getDelete({id: item.ID})
+      this.getOrganList()
     },
-    handleChangeInput (e) {
-      console.log(this.form.dynamicArr[this.form.dynamicArr.length - 1].value, e)
-      if (this.form.dynamicArr[this.form.dynamicArr.length - 1].value !== '' ) {
+    handleChangeInput (val) {
+      const dynamicArr = []
+      console.log(this.title, val);
+      const params = {
+        type:'specimen',
+        name:val
+      }
+      let res = apiData.isHaveReName(params)
+      console.log(res);
+      
+      if (this.form.dynamicArr[this.form.dynamicArr.length - 1].specimenName !== '' ) {
         this.form.dynamicArr.push({
-          label: ' ',
-          value: ''
+          pafTemplateId:'',
+          specimenName:'',
+          pafSpecimenFid:this.title === '器官/系统'?
+            this.organList[0].PAF_SPECIMEN_FID:(this.title === '标本部位'?this.positionList[0].PAF_SPECIMEN_FID:this.nameList[0].PAF_SPECIMEN_FID),
+          seqNo:this.title === '器官/系统'?
+            this.organList.length:(this.title === '标本部位'? this.positionList.length:this.nameList.length) + this.form.dynamicArr.length + 1,
+          specimenType:this.title === '器官/系统'?
+            this.organList[0].SPECIMEN_TYPE:(this.title === '标本部位'?this.positionList[0].SPECIMEN_TYPE:this.nameList[0].SPECIMEN_TYPE)
         })
       }
+      console.log(this.form.dynamicArr,this.form.dynamicArr.length);
     },
-    submit () {
-      this.$refs.form.validateForm((valid) => {
-        console.log(valid)
+    int () {
+      this.form.dynamicArr = []
+    },
+    submit (title) {
+      this.$refs.form.validateForm(async (valid) => {
+        console.log(valid,title)
         if (valid) {
           // 通过验证
-          console.log('submit !')
+          if (title ==='新增') {
+              const dynamicArr = []
+              console.log(this.form.dynamicArr);
+              
+              this.form.dynamicArr.find(item => {
+              if (item.specimenName !== '') {
+                console.log(item);
+                dynamicArr.push(item)
+              }
+            })
+            const res = await apiData.getAdd(dynamicArr)
+          } else {
+            let params = {
+              id: this.idVal,
+              specimenName: this.form.editVal
+            }
+            const res = await apiData.getUpdate(params)
+            console.log(res)
+          }
+
+        //   const dynamicArr = []
+        //   this.form.dynamicArr.find(item => {
+        //   if (item.specimenName !== '') {
+        //     console.log(item);
+        //     dynamicArr.push(item)
+        //   }
+        // })
+        // const res = await apiData.getAdd(dynamicArr)
+          this.visible = false
+          this.int()
+          this.getOrganList()
         } else {
           // 未通过
           console.log('invalid form !')
@@ -158,15 +238,18 @@ export default {
     },
     reset () {
       this.$refs.form.resetFields()
+      this.int()
       this.visible = false
     },
     isTitle (title) {
       if (title ==='器官/系统') {
+        this.show = false
         this.title = '器官/系统'
       } else if (title ==='标本部位') {
+        this.show = true
         this.title = '标本部位'
       }  else {
-        // this.title = '标本名称' || ''
+        this.title = '标本名称'
       }
     }
   }
@@ -180,6 +263,9 @@ export default {
     background rgba(234, 237, 244, 1)
     overflow-x auto
     overflow-y hidden
+    .w-row 
+      height: 100%;
+      overflow: auto;
     .tab-style 
       // width:410px;
       height:40px
@@ -196,6 +282,10 @@ export default {
       border-bottom none
     .button-style
       display inline-block
+      color #0F49ED
+      font-size 14px
+      cursor pointer
+
     .title-style
       padding 16px 16px 0
 

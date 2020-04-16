@@ -1,6 +1,6 @@
 <template>
   <div class="home-page-wrap-us">
-    <w-row  class="home-page-body">
+    <w-row  class="home-page-body ">
       <w-col :span="12" >
         <div class="mb-15 title">审核流程列表</div>
         <w-button @click="handleAdd('left')" class="fr mb-15" type="primary" plain>新增</w-button>
