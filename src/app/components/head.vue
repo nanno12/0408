@@ -2,7 +2,7 @@
   <div class="header clearfix">
     <img  alt="logo"
           title="logo"
-          src="../assets/image/logo.png"/>
+          src=""/>
     <ul class="nav-l">
       <li v-for="item in routerLink" :class="item.active ? 'active':''">
         <router-link :to="item.link">{{ item.text }}</router-link>

@@ -7,13 +7,13 @@ import Vue from 'vue'
 import App from './components/App'
 import router from './router'
 import store from './store'
-import 'vxe-table/lib/index.css'
-import '../theme/theme-default/index.css'
+// import 'vxe-table/lib/index.css'
+// import '../theme/theme-default/index.css'
 import WuedUI from 'wn-tech-ui'
 // import "@/app/assets/css/bootstrap.min.css"
 // import "@/app/assets/css/reset.css"
 // import "@/app/assets/css/common.css"
-import "@/app/assets/css/public.css"
+// import "@/app/assets/css/public.css"
 // import "@/app/assets/css/bgsh.css"
 // import "@/app/assets/css/element-reset.css"
 // import test from './utils/mylog'
@@ -50,7 +50,7 @@ import WinDesign from 'win-design'
 import 'win-design/lib/themes/default.css' // 默认主题样式文件
 import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图标
 // import 'babel-polyfill' // 解决IE10+兼容问题
-import '../theme/layout/uiIndex.scss' // 解决IE10+兼容问题
+import './assets/layout/uiIndex.scss' // 解决IE10+兼容问题
 
 // import './components/WinCard'
  

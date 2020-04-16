@@ -12,7 +12,7 @@ import * as layerUtils from './layerUtils';
 import smartClientUtils from '@techCommon/utils/smartClientUtils';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import store from '@/app/store';
+// import store from '@/app/store';
 Vue.use(Vuex);
 
 const getUrlKey = function (name) {
@@ -622,7 +622,7 @@ toLogin: function (result) {
 		layerUtils.alertMessage(result.message, '提示', 'warning', {
 			showClose: false
 		}).then(() => {
-			store.commit('SET_TOKEN', '');
+			// store.commit('SET_TOKEN', '');
 			top.window.location.reload();
 			once = true;
 		})

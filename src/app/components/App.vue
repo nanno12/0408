@@ -23,7 +23,7 @@
   </div>
 </template>
 <script>
-import "../assets/js/lis60";
+// import "../assets/js/lis60";
 import head from "./head.vue";
 // import menu from "./menu.vue";
 import Common from "../api/common.js";
@@ -32,12 +32,12 @@ import * as layerUtils from "@techCommon/utils/layerUtils";
 import browserUtils from '@techCommon/utils/browserUtils'
 import config from "../../../config/";
 
-import NoticeSocket from './NoticeSocket'
+// import NoticeSocket from './NoticeSocket'
 import { mapActions } from 'vuex'
 import debounce from 'throttle-debounce/debounce';
 
 export default {
-  mixins: [NoticeSocket],
+  // mixins: [NoticeSocket],
   data() {
     return {
       unique: "",
