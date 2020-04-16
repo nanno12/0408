@@ -1,6 +1,0 @@
-build/
-config/
-deploy/
-*.js
-src/app
-src/modules

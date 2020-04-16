@@ -56,7 +56,6 @@ import './components/WinCard'
  
 /** 注册组件的动作放在此 */ 
 const registerComponent = () => {
-  console.log("注册组件:registerComponent")
   /* istanbul ignore next */ 
   // BaseButton.install = function (Vue) {
   //   Vue.component(BaseButton.name, BaseButton);
@@ -135,7 +134,6 @@ const registerComponent = () => {
  
 /** 注册属性的动作放在此 */
 const registerPrototype = () => {
-  console.log("注册挂载VUE属性:registerPrototype")
   Vue.prototype.$GLOBLE = {
     _USERNAME: "tesxt"
   };
@@ -158,7 +156,6 @@ const registerPrototype = () => {
 
 /** 注册相关事件的处理放在此处 */
 const registerEvent = () => {
-  console.log("注册事件监听:registerEvent")
   /**
    * 键盘快捷键方案描述：
    * 1、window统一监听，并通过eventHub进行分发，因为app是一个整体，无法按照页面监听
@@ -193,7 +190,6 @@ const registerEvent = () => {
 
 /** 注册处理相关全局的指令 */
 const registerDirective = () => {
-  console.log("注册自定义指令:registerDirective")
   // v-focus-next-on-enter 用于enter换行
   Vue.directive('focusNextOnEnter', {
     bind: function (el, {
@@ -367,7 +363,6 @@ var EventUtil = {
 
 window.top.$layerUtils.showMessage("woshinidada");
 EventUtil.addHandler(window, "online", function() {
-  console("Online---正常工作");
 });
 EventUtil.addHandler(window, "offline", function() {
   alert("Offline ---离线工作");

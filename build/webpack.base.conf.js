@@ -60,12 +60,6 @@ module.exports = {
         options: {
           name: utils.assetsPath('static/fonts/[name].[ext]')
         }
-      },
-      {
-        test: /\.vue$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/,
-        enforce: 'pre'
       }
     ]
   },
