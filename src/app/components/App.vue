@@ -28,7 +28,7 @@ import head from "./head.vue";
 // import menu from "./menu.vue";
 import Common from "../api/common.js";
 import * as layerUtils from "@techCommon/utils/layerUtils";
-import * as KeyCode from "../enums/KeyCode";
+// import * as KeyCode from "../enums/KeyCode";
 import browserUtils from '@techCommon/utils/browserUtils'
 import config from "../../../config/";
 

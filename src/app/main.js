@@ -20,7 +20,7 @@ import "@/app/assets/css/public.css"
 // import BaseButton from './components/BaseButton';
 import EllipsisLable from './components/EllipsisLable';
 // import BaseDialog from './components/dialog/index';
-import BaseSelect from './components/select/';
+// import BaseSelect from './components/select/';
 // import BaseOption from './components/option/';
 // import BaseAutoItem from './components/base-auto-item/index';
 
@@ -40,7 +40,7 @@ import VueLazyload from 'vue-lazyload'
 import VueClipboard from 'vue-clipboard2'
 import echarts from 'echarts'
 import html2canvas from 'html2canvas'
-import { PARAME_VXETABLE_OPTIONS } from "@/app/settings/vexTableOptions";
+// import { PARAME_VXETABLE_OPTIONS } from "@/app/settings/vexTableOptions";
  
 import 'xe-utils'
 import VXETable from 'vxe-table' 
@@ -119,12 +119,12 @@ const registerComponent = () => {
     attempt: 2
   });
 
-  Vue.use(BaseSelect);
+  // Vue.use(BaseSelect);
   // Vue.use(BaseOption);
   // Vue.use(BaseAutoItem);
   // Vue.use(WuedUI);
   // Vue.use(test);
-  VXETable.setup(PARAME_VXETABLE_OPTIONS);
+  // VXETable.setup(PARAME_VXETABLE_OPTIONS);
 
   Vue.use(VXETable);
   Vue.use(sortTable);
