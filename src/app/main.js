@@ -18,7 +18,7 @@ import WuedUI from 'wn-tech-ui'
 // import "@/app/assets/css/element-reset.css"
 // import test from './utils/mylog'
 // import BaseButton from './components/BaseButton';
-import EllipsisLable from './components/EllipsisLable';
+// import EllipsisLable from './components/EllipsisLable';
 // import BaseDialog from './components/dialog/index';
 // import BaseSelect from './components/select/';
 // import BaseOption from './components/option/';
@@ -30,7 +30,7 @@ import EllipsisLable from './components/EllipsisLable';
 // import InstSelect from './components/InstSelect';
 // import InstSelectMore from './components/InstSelectMore';
 
-// import * as layerUtils from '@techCommon/utils/layerUtils'
+import * as layerUtils from '@techCommon/utils/layerUtils'
 // import KeyCode from './enums/KeyCode' 
 // import smartClientUtils from "@techCommon/utils/smartClientUtils";
 // import uuidUtils from "./utils/uuidUtils";
@@ -143,7 +143,7 @@ const registerPrototype = () => {
   //let layerUtilsReal = window.top.$layerUtils||layerUtils;
   //s_xd:挂载属性,暂定，尚未决定是否保留
   // Vue.prototype.$smartClientUtils = smartClientUtils;
-  // Vue.prototype.$layerUtils = layerUtils;
+  Vue.prototype.$layerUtils = layerUtils;
   // Vue.prototype.$uuidUtils = uuidUtils;
   // Vue.prototype.$dateUtils = dateUtils;
   // Vue.prototype.$utils = utils;
@@ -361,7 +361,7 @@ var EventUtil = {
 };
 
 
-window.top.$layerUtils.showMessage("woshinidada");
+// window.top.$layerUtils.showMessage("woshinidada");
 EventUtil.addHandler(window, "online", function() {
 });
 EventUtil.addHandler(window, "offline", function() {

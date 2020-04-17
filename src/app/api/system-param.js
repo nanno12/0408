@@ -114,5 +114,4 @@ let SYS_BASE_API = SYS_API_DEBUG;//服务器
 
 // npm run deploy 的时候，表示真正发布的时候，和Nginx一并部署。
 SYS_BASE_API = SYS_DEPLOY ? SYS_API_DEPOLY : SYS_BASE_API;
-console.log(SYS_BASE_API);
 export { SYS_BASE_API,SYS_SYSCODE };

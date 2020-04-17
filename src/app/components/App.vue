@@ -49,28 +49,28 @@ export default {
     };
   },
   // var businessGroupArray = []
-  created() {
-    this.$nextTick(() => {
-      let browser = browserUtils.checkBrowser();
-      //检测浏览器的支持，非框架下才进行提示，框架下，框架已经做了该提示，则不做二次提示
-      if(window.top == window.self){
-        //最佳
-        if(browser=="wn-tech-client"||window.nw){
+  // created() {
+  //   this.$nextTick(() => {
+  //     let browser = browserUtils.checkBrowser();
+  //     //检测浏览器的支持，非框架下才进行提示，框架下，框架已经做了该提示，则不做二次提示
+  //     if(window.top == window.self){
+  //       //最佳
+  //       if(browser=="wn-tech-client"||window.nw){
 
-        }
-        else if(browser=="Chrome"){
-            this.$layerUtils.showMessage("建议您使用客户端进行访问,以获取最佳体验！",this.$layerUtils.messageType.WARNING);
-        }else{
-            this.$layerUtils.alertMessage("本系统不支持当前浏览器，请使用LIS6.0客户端或者Chrome浏览器进行访问","提示",this.$layerUtils.messageType.WARNING);
-        }
-      }
+  //       }
+  //       else if(browser=="Chrome"){
+  //           this.$layerUtils.showMessage("建议您使用客户端进行访问,以获取最佳体验！",this.$layerUtils.messageType.WARNING);
+  //       }else{
+  //           this.$layerUtils.alertMessage("本系统不支持当前浏览器，请使用LIS6.0客户端或者Chrome浏览器进行访问","提示",this.$layerUtils.messageType.WARNING);
+  //       }
+  //     }
       
-      //执行初始化
-      this.init();
-      this.resetRefresh();
-      window.addEventListener('message', this.handleMessage)
-    });
-  },
+  //     //执行初始化
+  //     // this.init();
+  //     this.resetRefresh();
+  //     window.addEventListener('message', this.handleMessage)
+  //   });
+  // },
   beforeCreate() {},
   watch: {
     menuTagsChange() {
@@ -126,27 +126,27 @@ export default {
       } ,2000);//用户登录后的下一个整点执行。
     },
     //初始化
-    init() {
-      this.getServerTime();
-      //layerUtils.loadMask("正在校验【智能客户端】可用端口...");
-      this.$smartClientUtils.checkService().then(() => {
-        //layerUtils.loadMask("正在始化获取计算机信息...");
-        //初始化计算机信息
-        this.$smartClientUtils
-          .getInitClientInfo()
-          .then(() => {
-            layerUtils.closeLoadMask();
-            //this.layerUtils.showMessage("已初始化获取计算机信息...",this.layerUtils.messageType.SUCCESS);
-          })
-          .catch((error, _this) => {
-            layerUtils.closeLoadMask();
-          }).finally(()=>{
-            //layerUtils.loadMask("正在初始化消息服务...");
-            console.log("正在初始化消息服务...");
-            this.initNoticeSocket();
-          });
-      });
-    },
+    // init() {
+    //   this.getServerTime();
+    //   //layerUtils.loadMask("正在校验【智能客户端】可用端口...");
+    //   this.$smartClientUtils.checkService().then(() => {
+    //     //layerUtils.loadMask("正在始化获取计算机信息...");
+    //     //初始化计算机信息
+    //     this.$smartClientUtils
+    //       .getInitClientInfo()
+    //       .then(() => {
+    //         layerUtils.closeLoadMask();
+    //         //this.layerUtils.showMessage("已初始化获取计算机信息...",this.layerUtils.messageType.SUCCESS);
+    //       })
+    //       .catch((error, _this) => {
+    //         layerUtils.closeLoadMask();
+    //       }).finally(()=>{
+    //         //layerUtils.loadMask("正在初始化消息服务...");
+    //         console.log("正在初始化消息服务...");
+    //         this.initNoticeSocket();
+    //       });
+    //   });
+    // },
     sentMessage:debounce(300,(e)=>{
       // console.log(e)
       if(e.target.classList.contains('thisFocusInput') == true) {

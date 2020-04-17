@@ -77,7 +77,6 @@ router.beforeEach((to, from, next) => {
     next(false);
     return false;
   }
-  console.log("路由from【" + from.name + ":" + from.path + "】to 【" + to.name + ":" + to.path + "】");
   //在此处可以去获取token校验等，进行判断是否有权限进入新的模块
   next();
 
