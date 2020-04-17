@@ -37,6 +37,7 @@
 
     <w-modal  :visible.sync="visible"
       title="新增"
+      :showClose="false"
       :close-on-click-modal="false"
       class="home-page-body"
       width="50%">

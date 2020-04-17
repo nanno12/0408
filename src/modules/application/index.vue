@@ -66,6 +66,7 @@
     </w-table>
     <w-modal
       :close-on-click-modal="false"
+      :showClose="false"
       :title="title"
       :visible.sync="visible"
       width="60%"

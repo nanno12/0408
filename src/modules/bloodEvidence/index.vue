@@ -92,6 +92,7 @@
     <w-modal
       :close-on-click-modal="false"
       :title="title"
+      :showClose="false"
       :visible.sync="visible"
       width="60%"
     >

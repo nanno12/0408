@@ -453,6 +453,7 @@ return new Promise((resolve, reject) => {
 	}).catch(error => {
 		catchErrorEvt(error, params);
 		reject(error);
+		
 	});
 });
 },

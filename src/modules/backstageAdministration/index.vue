@@ -80,6 +80,7 @@
     </w-row>
     <w-modal  :visible.sync="visible"
       :title="title"
+      :showClose="false"
       :close-on-click-modal="false"
       width="50%">
       <div v-if="title ==='明细新增'">

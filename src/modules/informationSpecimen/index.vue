@@ -2,46 +2,48 @@
   <div class='home-page-wrap-in'>
     <w-row style="background:rgba(255,255,255,1);">
       <w-col :span="8">
-        <div class="title-style">
-          <span>器官/系统</span>
-          <w-button type="text" class="fr" @click="handleAdd('器官/系统')">+新增</w-button>
-        </div>
-        <div>
-          <div v-for="(item,index) in organList" @click="handle(item,'器官/系统',index)" class="tab-style" :key="index">
-            <span>{{item.SPECIMEN_NAME}}</span>
-            <div class="button-style fr">
-              <span type="text" @click.stop="handleEdit(item,'器官/系统')">修改</span>
-              <span type="text" @click.stop="handleDelete(item,'器官/系统')">删除</span>
-            </div>
+        <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">器官/系统</span>
+          <w-button class="po_ab top_16 right_8" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
+        </title-style>
+        <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
+          :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
+          @mouseover="hoverIndex = index"
+          @mouseout="hoverIndex = -1" :key="index">
+          <span>{{item.SPECIMEN_NAME}}</span>
+          <div class="button-style fr" v-if="hoverIndex === index || clickIndex === index">
+            <span type="text" @click="handleEdit(item,'器官/系统')">修改</span>
+            <span type="text" @click="handleDelete(item,'器官/系统')">删除</span>
           </div>
         </div>
       </w-col>
       <w-col :span="8"  class="center">
-        <div class="title-style">
-          <span>标本部位</span>
-          <w-button type="text" class="fr" @click="handleAdd('标本部位')">+新增</w-button>
-        </div>
-        <div>
-          <div v-for="(item,index) in positionList"  @click="handle(item,'标本部位')" class="tab-style" :key="index">
-            <span>{{item.SPECIMEN_NAME}}</span>
-            <div class="button-style fr">
-              <span type="text" @click.stop="handleEdit(item,'标本部位')">修改</span>
-              <span type="text" @click.stop="handleDelete(item,'标本部位')">删除</span>
-            </div>
+        <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本部位</span>
+          <w-button type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
+        </title-style>
+        <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
+          @click="handle(item,'标本部位',index)" class="tab-style"
+          @mouseover="hoverIndex1 = index"
+          @mouseout="hoverIndex1 = -1" :key="index">
+          <span>{{item.SPECIMEN_NAME}}</span>
+          <div class="button-style fr" v-if="hoverIndex1 === index || clickIndex1 === index">
+            <span type="text" @click="handleEdit(item,'标本部位')">修改</span>
+            <span type="text" @click="handleDelete(item,'标本部位')">删除</span>
           </div>
         </div>
       </w-col>
       <w-col :span="8" >
-        <div class="title-style">
-          <span>标本名称</span>
-          <w-button type="text" class="fr" @click="handleAdd('标本名称')">+新增</w-button>
-        </div>
+        <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本名称</span>
+          <w-button type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
+        </title-style>
         <div v-show="show">
-          <div v-for="(item,index) in nameList" @click="handle(item,'标本名称')" class="tab-style" :key="index">
+          <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
+            :class="{'clickBg':index==clickIndex2,'hoverBg':index==hoverIndex2}"
+            @mouseover="hoverIndex2 = index"
+            @mouseout="hoverIndex2 = -1">
             <span>{{item.SPECIMEN_NAME}}</span>
-            <div class="button-style fr">
-              <span type="text" @click.stop="handleEdit(item,'标本名称')">修改</span>
-              <span type="text" @click.stop="handleDelete(item,'标本名称')">删除</span>
+            <div class="button-style fr" v-if="hoverIndex2 === index || clickIndex2 === index">
+              <span type="text" @click="handleEdit(item,'标本名称')">修改</span>
+              <span type="text" @click="handleDelete(item,'标本名称')">删除</span>
             </div>
           </div>
         </div>
@@ -49,28 +51,27 @@
     </w-row>
     <w-modal  :visible.sync="visible"
       :title="h + title"
+      :showClose="false"
       :close-on-click-modal="false"
       class="home-page-body"
       width="50%">
       <w-form :model="form" ref="form">
-        <w-form-item v-if="editVal">
+        <w-form-item v-if="editVal" prop="editVal" :rules="rules.test">
           <w-input v-model="form.editVal"></w-input>
         </w-form-item>
         <template v-else v-for="(item, index) of form.dynamicArr">
           <w-form-item
             :key="index"
             :prop="`dynamicArr.${index}.specimenName`"
-            label=""
+            :rules="rules.test"
             >
-          <!-- :rules="[{
-              required: true, message: '请至少输入一项', trigger: ['blur']
-            }]" -->
-            <w-input v-model="form.dynamicArr[index].specimenName" @input="handleChangeInput"></w-input>
+            <w-input v-model="form.dynamicArr[index].specimenName"
+              @input="handleChangeInput"></w-input>
           </w-form-item>
         </template>
         <w-form-item style="text-align: right;">
-          <w-button @click="reset">重 置</w-button>
-          <w-button type="primary" @click="submit(h)">发 送</w-button>
+          <w-button @click="reset">取 消</w-button>
+          <w-button type="primary" @click="submit(h)">保 存</w-button>
         </w-form-item>
       </w-form>
     </w-modal>
@@ -82,9 +83,32 @@ import * as layerUtils from 'app/utils/layerUtils';
 import apiData from './api/api.js';
 export default {
   data(){
+    let checkOrgTypeCode = async (rule, value, callback) => {
+      console.log(value)
+      if (value) {
+         const params = {
+          type:'specimen',
+          name:value
+        }
+        const res = await apiData.isHaveReName(params)
+        // const { data } = res
+        console.log(res);
+        if (res.type !== 'SUCCESS') {
+          return callback(new Error('该名称已存在！'))
+        } else {
+          callback()
+        }
+      }
+    }
     return{
       visible: false,
       title: '',
+      hoverIndex: 0,
+      clickIndex: 0,
+      hoverIndex1: 0,
+      clickIndex1: 0,
+      hoverIndex2: -1,
+      clickIndex2: -1, 
       editVal: false,
       show: true,
       h: '',
@@ -92,6 +116,12 @@ export default {
       form: {
         editVal: '',
         dynamicArr: []
+      },
+     rules: {
+      'test': [
+        // { required: true, message: '所选项不能为空'},
+        { validator: checkOrgTypeCode,  trigger: ['blur', 'change'] }
+      ]
       },
       organList:[],
       positionList:[],
@@ -105,19 +135,29 @@ export default {
     'title' (o, n) {
       console.log(o, n)
     },
+    //  (o, n) {
+
+    // }
   },
   methods:{
     async handle (item, title, index) {
-      console.log(title, item);
+      console.log(title, item, index);
+
       this.isTitle(title)
       if (title === "器官/系统") {
+        this.clickIndex = index;
+        this.hoverIndex1 = 0
+        this.clickIndex1 = 0
         const res = await apiData.getQuery({id:item.ID})
         this.positionList = res.data
       } else if (title === "标本部位") {
+        this.clickIndex1 = index;
         console.log(item);
         const res = await apiData.getQuery({id:item.ID})
         this.nameList = res.data
-      } else {}
+      } else {
+        this.clickIndex2 = index;
+      }
     },
     // 获取首页list接口
     async getOrganList (id) {
@@ -139,6 +179,7 @@ export default {
     },
     handleAdd (title) {
       this.visible = true
+      this.editVal = false
       let dynamicArr = []
       this.isTitle(title)
       this.h = '新增'
@@ -167,16 +208,17 @@ export default {
       const res = await apiData.getDelete({id: item.ID})
       this.getOrganList()
     },
-    handleChangeInput (val) {
+    async handleChangeInput (val) {
       const dynamicArr = []
       console.log(this.title, val);
-      const params = {
-        type:'specimen',
-        name:val
-      }
-      let res = apiData.isHaveReName(params)
-      console.log(res);
-      
+      // const params = {
+      //   type:'specimen',
+      //   name:val
+      // }
+      // let res = await apiData.isHaveReName(params)
+      // if (res.type !== "SUCCESS") {
+      //   console.log(res.type);
+      // }
       if (this.form.dynamicArr[this.form.dynamicArr.length - 1].specimenName !== '' ) {
         this.form.dynamicArr.push({
           pafTemplateId:'',
@@ -193,6 +235,7 @@ export default {
     },
     int () {
       this.form.dynamicArr = []
+      this.form.editVal = ''
     },
     submit (title) {
       this.$refs.form.validateForm(async (valid) => {
@@ -257,22 +300,35 @@ export default {
 
 </script>
 <style lang='stylus' scoped>
+.styleHover 
+  background rgba(207,224,255,1)!important;
+  color #0F49ED;
+.hoverBg
+   background rgba(207,224,255,1)!important;
+   color #0F49ED;
+ 
+ .clickBg
+   background rgba(207,224,255,1)!important;
+   color #0F49ED;
+ 
 .home-page-wrap-in
     height 100%
     // padding 12px 15px
     background rgba(234, 237, 244, 1)
     overflow-x auto
     overflow-y hidden
+    
     .w-row 
       height: 100%;
       overflow: auto;
     .tab-style 
-      // width:410px;
-      height:40px
+      // width 410px;
+      height 40px
       line-height 40px
       padding 0 16px
-      background:rgba(243,245,249,1)
-      border-radius:2px
+      background rgba(243,245,249,1)
+      border-radius 2px
+      cursor pointer
       margin 16px 10px 16px
     .center 
       // height 100%

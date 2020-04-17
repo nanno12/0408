@@ -59,6 +59,7 @@
     </w-row>
     <w-modal  :visible.sync="visible"
       :title="title"
+      :showClose="false"
       :close-on-click-modal="false"
       width="40%">
       <div v-if="title !=='新增角色'" class="pd-right">

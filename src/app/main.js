@@ -51,6 +51,7 @@ import 'win-design/lib/themes/default.css' // 默认主题样式文件
 import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图标
 // import 'babel-polyfill' // 解决IE10+兼容问题
 import './assets/layout/uiIndex.scss' // 解决IE10+兼容问题
+import Loading  from '../modules/components'
 
 // import './components/WinCard'
  
@@ -102,6 +103,7 @@ const registerComponent = () => {
 
   // import { Message, MessageBox,Notification } from 'wued-ui';
   /**  弹框模块导入*/
+  Vue.use(Loading);
   Vue.use(VueClipboard)
   // Vue.use(BaseButton);
   // Vue.use(BaseDialog);
