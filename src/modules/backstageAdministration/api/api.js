@@ -27,22 +27,22 @@ const url = {
 export default {
   // 获取中间信息
   getMouldItems(params) {
-    return httpUtils.post(url.getMouldItems,params);
+    return httpUtils.postJsonRequest(url.getMouldItems,params);
   },
   getMoulds(params) {
-    return httpUtils.post(url.getMoulds,params);
+    return httpUtils.postJsonRequest(url.getMoulds,params);
   },
   getAddMould(params) {
-    return httpUtils.post(url.getAddMould,params);
+    return httpUtils.postJsonRequest(url.getAddMould,params);
   },
   getAddMouldItem(params) {
-    return httpUtils.post(url.getAddMouldItem,params);
+    return httpUtils.postJsonRequest(url.getAddMouldItem,params);
   },
   getRemoveMouldItem(params) {
-    return httpUtils.post(url.getRemoveMouldItem,params);
+    return httpUtils.postJsonRequest(url.getRemoveMouldItem,params);
   },
   getRemoveMould(params) {
-    return httpUtils.post(url.getRemoveMould,params);
+    return httpUtils.postJsonRequest(url.getRemoveMould,params);
   },
   getAddMainComponentType(params) {
     return httpUtils.post(url.getAddMainComponentType,params);

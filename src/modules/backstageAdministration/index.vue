@@ -2,36 +2,22 @@
   <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
       <w-col :span="6" >
-        <title-style class="pd_22 po_re"><span slot="header">申请单列表</span>
+        <title-style class="pd-y_22 po_re"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_16 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
         </title-style>
-          <!-- <w-input v-model="value2" sufAppendIsButton>
-            <template slot="suf-append">
-              <i class="w-icon-search"></i>
-            </template>
-          </w-input> -->
-          <!-- <span>成分大类</span>
-          <w-select  v-model="optionsValue" placeholder="请选择成分大类">
-            <w-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </w-option>
-          </w-select> -->
         <w-table class="mt-15" :data="listMoulds" :border="true" style="width: 100%">
           <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
           <w-table-column prop="MOULD_TYPE" label="类型"></w-table-column>
           <w-table-column prop="MOULD_NAME" label="名称" width="100"></w-table-column>
           <w-table-column fixed="right" label="操作" align="center" width="150" reference-cell>
             <template slot-scope="scope">
-                <w-button type="text" @click="onEditing(scope.row)">修改</w-button>
+                <w-button type="text" @click="onEditing(scope.row,'left')">修改</w-button>
                 <w-button type="text" @click="handleClone(scope.row)">复制</w-button>
                 <w-popconfirm  title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"
-                  @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
+                  @confirm="handleConfirm(scope.row, 'left', scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
                   <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text" @click="handleDelete(scope.row)">删除</w-button>
+                    <w-button type="text">删除</w-button>
                   </span>
                 </w-popconfirm>
             </template>
@@ -40,7 +26,7 @@
       </w-col>
       <w-col :span="18">
         <div class="pd-left_15">
-          <title-style class="pd_22  po_re"><span slot="header">项目列表</span>
+          <title-style class="pd-y_22  po_re"><span slot="header">项目列表</span>
             <w-button class="po_ab top_16 right_0" @click="handleAdd('right')"  type="primary" plain>新增</w-button>
           </title-style>
           <w-table :data="listMouldItems"  :border="true" style="width: 100%">
@@ -61,12 +47,12 @@
             <w-table-column prop="ITEM_REMARK" label="备注"> </w-table-column>
             <w-table-column fixed="right" label="操作" reference-cell align="center" width="120">
               <template slot-scope="scope">
-                <w-button type="text" @click="onEditing(scope.row)">修改</w-button>
+                <w-button type="text" @click="onEditing(scope.row,'right')">修改</w-button>
                 <w-popconfirm  title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"
-                  @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
+                   @confirm="handleConfirm(scope.row, 'right', scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
                   <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text" @click="handleDelete(scope.row)">删除</w-button>
+                    <w-button type="text">删除</w-button>
                   </span>
                 </w-popconfirm>
               </template>
@@ -76,176 +62,155 @@
       </w-col>
     </w-row>
     <w-modal  :visible.sync="visible"
-      :title="modalTitle"
+      :title="modalType+modalTitle"
       :showClose="false"
       :close-on-click-modal="false"
       width="60%">
-      <w-form label-align="right" :model="form" ref="form" label-width="90px" :rules="rules">
+      <w-form label-align="right" :model="form" ref="form" label-width="120px" :rules="rules">
         <w-row>
           <w-col :span="12">
-            <w-form-item label="模版代码" prop="name" required>
+            <w-form-item :label="modalTitle==='申请单'? '模版代码':'项目代码'" prop="name" required>
               <w-input v-model="form.name" :maxlength="20" showCounter
-                placeholder="请输入模版代码"></w-input>
+                placeholder="请输入代码"></w-input>
             </w-form-item>
           </w-col>
           <w-col :span="12">
-            <w-form-item label="模版名称" prop="name" required>
+            <w-form-item :label="modalTitle==='申请单'? '模版名称':'项目名称'" prop="name" required>
               <w-input v-model="form.name" :maxlength="20" showCounter
-                placeholder="请输入模版名称"></w-input>
+                placeholder="请输入名称"></w-input>
             </w-form-item>
           </w-col>
         </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item label="模版类型" prop="region">
-              <w-select v-model="form.region" placeholder="请选择模版类型">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item label="执行科室" prop="region">
-              <w-select v-model="form.region" placeholder="请选择执行科室">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
+        <!-- 新增申请单 -->
+        <w-row v-if="modalTitle==='申请单'">
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="模版类型" prop="region">
+                <w-select v-model="form.region" placeholder="请选择模版类型">
+                  <w-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </w-option>
+                </w-select>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="执行科室" prop="region">
+                <w-select v-model="form.region" placeholder="请选择执行科室">
+                  <w-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </w-option>
+                </w-select>
 
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item label="开单类别" prop="region">
-              <w-select v-model="form.region" placeholder="请选择开单类别">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item label="开单科室" prop="region">
-              <w-select v-model="form.region" placeholder="请选择开单科室">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="开单类别" prop="region">
+                <w-select v-model="form.region" placeholder="请选择开单类别">
+                  <w-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </w-option>
+                </w-select>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="开单科室" prop="region">
+                <w-select v-model="form.region" placeholder="请选择开单科室">
+                  <w-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </w-option>
+                </w-select>
 
-            </w-form-item>
-          </w-col>
+              </w-form-item>
+            </w-col>
+          </w-row>
         </w-row>
-        <w-row>
-          <w-col :span="11">
-            <w-form-item label="成分大类" prop="region">
-              <w-select v-model="form.region" placeholder="请选择成分大类">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-          <w-col :span="1"><i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
-          <w-col :span="11">
-            <w-form-item label="成分小类" prop="region">
-              <w-select v-model="form.region" placeholder="请选择成分小类">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
+        <!-- 新增项目 -->
+        <w-row v-else-if="modalTitle==='项目'">
+          <w-row>
+            <w-col :span="11">
+              <w-form-item label="成分大类" prop="region">
+                <w-select v-model="form.region" placeholder="请选择成分大类">
+                  <w-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </w-option>
+                </w-select>
+              </w-form-item>
+            </w-col>
+            <w-col :span="1"><i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
+            <w-col :span="11">
+              <w-form-item label="成分小类" prop="region">
+                <w-select v-model="form.region" placeholder="请选择成分小类">
+                  <w-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </w-option>
+                </w-select>
 
-            </w-form-item>
-          </w-col>
-          <w-col :span="1"><i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
+              </w-form-item>
+            </w-col>
+            <w-col :span="1"><i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="默认数量" prop="name" required>
+                <w-input-number v-model="numVal"></w-input-number>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="加减量" prop="name" required>
+                <w-input-number v-model="operationVal"></w-input-number>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="24">
+              <w-form-item label="备注" prop="region">
+                <w-input v-model="form.name"  showCounter
+                  placeholder="请填写备注"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
         </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item label="项目代码" prop="name" required>
-              <w-input v-model="form.name" :maxlength="20" showCounter
-                placeholder="请输入项目代码"></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item label="项目名称" prop="name" required>
-              <w-input v-model="form.name" :maxlength="20" showCounter
-                placeholder="请输入项目名称"></w-input>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item label="默认数量" prop="name" required>
-              <w-input-number v-model="numVal"></w-input-number>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item label="加减量" prop="name" required>
-              <w-input-number v-model="operationVal"></w-input-number>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="24">
-            <w-form-item label="备注" prop="region">
-              <w-input v-model="form.name"  showCounter
-                placeholder="请填写备注"></w-input>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="24">
-            <w-form-item label="成分大类代码" prop="region">
-              <w-input v-model="form.name"  showCounter
-                placeholder="请填写成分大类代码"></w-input>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="24">
-            <w-form-item label="成分大类名称" prop="region">
-              <w-input v-model="form.name"  showCounter
-                placeholder="请填写成分大类名称"></w-input>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="24">
-            <w-form-item label="成分小类代码" prop="region">
-              <w-input v-model="form.name"  showCounter
-                placeholder="请填写成分小类代码"></w-input>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="24">
-            <w-form-item label="成分小类名称" prop="region">
-              <w-input v-model="form.name"  showCounter
-                placeholder="请填写成分小类名称"></w-input>
-            </w-form-item>
-          </w-col>
+        <!-- 新增成分类 -->
+        <w-row v-else>
+          <w-row>
+            <w-col :span="24">
+              <w-form-item label="成分大/小类代码" prop="region">
+                <w-input v-model="form.name"  showCounter
+                  placeholder="请填写成分大类代码"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="24">
+              <w-form-item label="成分大/小类名称" prop="region">
+                <w-input v-model="form.name"  showCounter
+                  placeholder="请填写成分大类名称"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
         </w-row>
       </w-form>
-      <div>
+      <!-- <div>
         <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
           <template slot="suf-append">
             <i class="w-icon-search"></i>
@@ -266,7 +231,7 @@
           <w-table-column prop="type" label="使用范围">
           </w-table-column>
         </w-table>
-      </div>
+      </div> -->
       <span slot="footer" class="dialog-footer">
         <w-button @click="reset">取 消</w-button>
         <w-button type="primary" @click="submit">确 定</w-button>
@@ -291,6 +256,7 @@ export default {
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
       modalTitle: '', // 模态框标题
+      modalType: '', // 模态框类型
       showInput: true,
       value2: '', // 模态框表格搜索
       MODAL_TITLE : {
@@ -307,6 +273,7 @@ export default {
         name:'',
         region: ''
       },
+      tableData:[],
       rules: {
         region: [{
           required: true, message: '请选择区域', trigger: 'change'
@@ -319,7 +286,7 @@ export default {
       options: [
         {
           value: '选项1',
-          label: '安徽'
+          label: '安徽'l
         }, {
           value: '选项2',
           label: '上海'
@@ -351,8 +318,11 @@ export default {
   mounted() {
   },
   methods: {
-    async MouldItems () {
-      const res = await dataApi.getMouldItems()
+    async MouldItems () { 
+      const res = await dataApi.getMouldItems({
+        mouldcode: "1",
+        maincode: "01"
+      })
       this.listMouldItems = res.data
       console.log(res);
     },
@@ -419,8 +389,9 @@ export default {
         })
         .catch(_ => {});
     },
-    // 列表提示框确定按钮
-    handleConfirm (index) {
+    // 列表删除提示框确定按钮
+    handleConfirm (row,t,index) {
+      this.isShowRow(t,'delete',row,index)
       console.log(12)
       this.tableData.splice(index, 1)
     },
@@ -433,27 +404,43 @@ export default {
       }, 200) // 等关闭气泡后修改状态， 避免出现数据状态过度，影响体验
     },
     // 新增按钮
-    handleAdd (title) {
-      if (title === 'left') {
-        this.modalTitle = this.MODAL_TITLE.ADD + this.MODAL_TITLE.FORM
-        this.visible = true
-      } else {
-        this.modalTitle = this.MODAL_TITLE.ADD + this.MODAL_TITLE.ITEM
-        this.visible = true
-      }
-      console.log(title)
+    handleAdd (t) {
+      this.visible = true
+      this.modalType = this.MODAL_TITLE.ADD
+      this.isShowRow(t)
     },
     // 项目列表修改按钮
-    onEditing (scope) {
-      this.isEditing = true
-      this.currentIndex = scope.$index
-      this.currentRow = {
-        ...scope.row
-      }
+    onEditing (row,t) {
+      console.log(row,t)
+      this.visible=true
+      this.modalType = this.MODAL_TITLE.EADIT
+      this.isShowRow(t)
     },
-    // 列表删除
-    handleDelete (row) {
-     console.log(row)
+    // 判断显示modal内容
+    async isShowRow (t,handle,row,index) {
+      if (t === 'left') {
+        if (handle === 'delete') {
+          const res = await dataApi.getRemoveMould({
+            mouldcode:row.EXECDEPT_CODE
+          })
+          console.log(res,row,index);
+          this.listMoulds.splice(index, 1)
+          this.Moulds()
+        } else {
+          this.modalTitle = this.MODAL_TITLE.FORM
+        }
+      } else {
+        if (handle === 'delete') {
+          const res = await dataApi.getRemoveMouldItem({
+            itemcode:row.MOULD_ITEM_CODE,
+            mouldcode:row.MOULD_ITEM_CODE
+          })
+          console.log(res,row,index);
+        } else {
+          this.modalTitle = this.MODAL_TITLE.FORM
+        }
+      }
+      console.log(t)
     }
   }
 };
