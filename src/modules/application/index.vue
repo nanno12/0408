@@ -1,69 +1,78 @@
 <template>
-  <div class="home-page-wrap-pl  pd_16">
-    <div class="home-page-body pd_16">
-      <w-input
-        sufAppendIsButton
-        v-model="value2"
-      >
-        <template slot="suf-append">
-          <i class="w-icon-search"></i>
-        </template>
-      </w-input>
-      <w-button
-        @click="handleAdd"
-        class="fr mb-15"
-        plain
-        type="primary"
-      >新增</w-button>
-    </div>
-    <w-table
-      :border="true"
-      :data="tableData"
-      class="table">
-      <w-table-column
-        label="序号"
-        type="index"
-        width="80"
-      ></w-table-column>
-      <w-table-column
-        label="申请单名称"
-        width="150px"
-        prop="TEMPLATE_NAME"
-      ></w-table-column>
-      <w-table-column
-        label="包含元素"
-        prop="name" >
-        <template slot-scope="scope">
-          <span v-for="(item,index) in scope.row.doctorAdvice" :key="index">
-            {{index+1 + "、"}}{{item.ITEM_NAME}}
-          </span>
-        </template>
-      </w-table-column>
-      <w-table-column
-        label="适用检查"
-        prop="TEMPLATE_NAME">
-        <template slot-scope="scope">
-          <span v-for="(item,index) in scope.row.doctorAdvice" :key="index">
-            {{index+1 + "、"}}{{item.ITEM_NAME}}
-          </span>
-        </template>
-      </w-table-column>
-      <w-table-column
-        label="申请单模版"
-        width="120"
-        prop="APPLY_DEPT_NAME"
-      ></w-table-column>
-      <w-table-column
-        align="center"
-        label="操作"
-        width="120"
-      >
-        <template slot-scope="scope">
-          <w-button type="text">修改</w-button>
-          <w-button type="text">删除</w-button>
-        </template>
-      </w-table-column>
-    </w-table>
+  <div class=" pd_16">
+    <w-row class="home-page-body">
+      <w-col :span="7" >
+        <title-style class=" mg-right_16 pd-y_22 po_re"><span slot="header">申请单列表</span>
+          <w-button class="po_ab top_16 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
+        </title-style>
+         <ul class="mg-right_16">
+            <li class="application" v-for="(item, index) in 4" :key="index" >
+              <h4>title</h4>
+              <p class="mg-bottom_5">申请单号：12345678910</p>
+              <p>元素：临床信息、标本信息、医嘱信息、既往病理检查结果
+                手术信息、妇科信息、肿瘤信息、细胞学活HPV检查结果</p>
+            </li>
+          </ul>
+      </w-col>
+      <w-col :span="17">
+        <title-style class="pd-y_22 po_re"><span slot="header">申请单项目列表</span>
+          <w-button class="po_ab top_16 right_0" @click="handleAdd('rigth')"  type="primary" plain>新增</w-button>
+        </title-style>
+        <w-table
+          :border="true"
+          :data="tableData"
+          class="mg-right_16"
+          >
+          <w-table-column
+            label="序号"
+            type="index"
+            width="80" >
+          </w-table-column>
+          <w-table-column
+            label="项目编码"
+            width="150px"
+            prop="TEMPLATE_NAME"
+          ></w-table-column>
+          <w-table-column
+            label="项目名称"
+            prop="name" >
+            <template slot-scope="scope">
+              <span v-for="(item,index) in scope.row.doctorAdvice" :key="index">
+                {{index+1 + "、"}}{{item.ITEM_NAME}}
+              </span>
+            </template>
+          </w-table-column>
+          <w-table-column
+            label="计价单位"
+            width="120px"
+            prop="TEMPLATE_NAME">
+            <template slot-scope="scope">
+              <span v-for="(item,index) in scope.row.doctorAdvice" :key="index">
+                {{index+1 + "、"}}{{item.ITEM_NAME}}
+              </span>
+            </template>
+          </w-table-column>
+          <w-table-column
+            label="项目价格(元)"
+            width="150"
+            prop="APPLY_DEPT_NAME"
+          ></w-table-column>
+          <w-table-column
+            label="项目说明"
+            prop="APPLY_DEPT_NAME"
+          ></w-table-column>
+          <w-table-column
+            align="center"
+            label="操作"
+            width="120" >
+            <template slot-scope="scope">
+              <w-button type="text">修改</w-button>
+              <w-button type="text">删除</w-button>
+            </template>
+          </w-table-column>
+        </w-table>
+      </w-col>
+    </w-row>
     <w-modal
       :close-on-click-modal="false"
       :showClose="false"
@@ -76,14 +85,12 @@
         :rules="rules"
         label-align="right"
         label-width="150px"
-        ref="form"
-      >
+        ref="form">
         <w-row>
           <w-col :span="24">
             <w-form-item
               label="申请单名称"
-              prop="region"
-            >
+              prop="region">
               <w-input
                 :maxlength="20"
                 placeholder="请输入申请单名称"
@@ -111,37 +118,99 @@
             </w-form-item>
           </w-col>
         </w-row>
+        <w-col :span="24">
+          <w-form-item
+            label="申请单模版"
+            prop="region" >
+            <w-input
+              :maxlength="20"
+              placeholder="点击浏览选择申请单模版"
+              showCounter
+              v-model="form.name"
+            ></w-input>
+            
+          </w-form-item>
+        </w-col>
         <w-row>
-          <w-col :span="24">
+          <w-col :span="12">
             <w-form-item
-              label="适用项目"
-              prop="region"
-            >
-              <w-select
-                placeholder="请选择适用项目"
-                v-model="form.region"
-              >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options"
-                ></w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-        </w-row>
-          <w-col :span="24">
-            <w-form-item
-              label="申请单模版"
-              prop="region" >
+              label="项目编码"
+              prop="region">
               <w-input
                 :maxlength="20"
-                placeholder="点击浏览选择申请单模版"
+                placeholder="请输入项目编码"
                 showCounter
                 v-model="form.name"
               ></w-input>
-              
+            </w-form-item>
+          </w-col>
+          <w-col :span="12">
+            <w-form-item
+              label="项目名称"
+              prop="region">
+              <w-input
+                :maxlength="20"
+                placeholder="请输入项目名称"
+                showCounter
+                v-model="form.name"
+              ></w-input>
+            </w-form-item>
+          </w-col>
+        </w-row>
+        <w-row>
+          <w-col :span="12">
+            <w-form-item
+              label="项目价格"
+              prop="region">
+              <w-input
+                :maxlength="20"
+                placeholder="请输入项目价格"
+                showCounter
+                v-model="form.name"
+              ></w-input>
+            </w-form-item>
+          </w-col>
+          <w-col :span="12">
+            <w-form-item
+              label="计价单位"
+              prop="region">
+              <w-input
+                :maxlength="20"
+                placeholder="请选择计价单位"
+                showCounter
+                v-model="form.name"
+              ></w-input>
+            </w-form-item>
+          </w-col>
+        </w-row>
+        <w-row>
+          <w-col :span="24">
+            <w-form-item
+              label="收费项目"
+              prop="region">
+               <w-input
+                sufAppendIsButton
+                placeholder="请输入关键字搜索收费项目"
+                v-model="value2">
+                <template slot="suf-append">
+                  <i class="w-icon-search"></i>
+                </template>
+              </w-input>
+            </w-form-item>
+          </w-col>
+        </w-row>
+        <w-row>
+          <w-col :span="24">
+            <w-form-item
+              label="描述"
+              prop="region">
+              <w-input
+                :maxlength="20"
+                type="textarea"
+                placeholder="请输入描述内容"
+                showCounter
+                v-model="form.name"
+              ></w-input>
             </w-form-item>
           </w-col>
         </w-row>
@@ -169,28 +238,6 @@ export default {
       value: [1],
       visible: false,
       title:'新增',
-      titleList: [
-        {
-          id: "SX0001",
-          name: "红细胞类"
-        },
-        {
-          id: "SX0002",
-          name: "冷沉淀"
-        },
-        {
-          id: "SX0003",
-          name: "血小板"
-        },
-        {
-          id: "SX0004",
-          name: "血浆类"
-        },
-        {
-          id: "SX0005",
-          name: "白细胞类"
-        }
-      ],
       options: [
         {
           time: "2019.05.12 11:02:33",
@@ -253,24 +300,22 @@ export default {
   color: red;
 }
 
-.home-page-wrap-pl {
-  height: 100%;
-  padding: 12px 15px;
-  background: rgba(234, 237, 244, 1);
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  .home-page-body {
-    padding: 16px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 2px;
-    .w-input {
-        width: 200px !important;
-      }
+.home-page-body {
+  background: rgba(255, 255, 255, 1);
+  padding: 16px;
+  .application {
+    margin-bottom: 10px;
+    padding: 15px 10px;
+    background:rgba(243,245,249,1);
+    // background:rgba(207,224,255,1);
+    h4 {
+      margin: 0;
+      margin-bottom:10px;
+    }
   }
-  .w-select {
-    width: 100%;
-  }
+}
+.w-select {
+  width: 100%;
 }
 </style>
 <style lang='stylus'>

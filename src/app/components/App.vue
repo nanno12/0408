@@ -187,11 +187,13 @@ export default {
   height: 100%;
 
   .wrapper-content {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    overflow-x: hidden;
+    background: rgba(234, 237, 244, 1);
+    // padding: 16px;
+    // position: absolute;
+    // left: 0px;
+    // right: 0px;
+    // bottom: 0px;
+    // overflow-x: hidden;
   }
 }
 </style>
