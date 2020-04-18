@@ -286,7 +286,7 @@ export default {
       options: [
         {
           value: '选项1',
-          label: '安徽'l
+          label: '安徽'
         }, {
           value: '选项2',
           label: '上海'
