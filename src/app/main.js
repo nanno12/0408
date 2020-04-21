@@ -10,6 +10,7 @@ import store from './store'
 // import 'vxe-table/lib/index.css'
 // import '../theme/theme-default/index.css'
 import WuedUI from 'wn-tech-ui'
+import { Message } from 'win-design';
 // import "@/app/assets/css/bootstrap.min.css"
 // import "@/app/assets/css/reset.css"
 // import "@/app/assets/css/common.css"
@@ -52,6 +53,7 @@ import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图�
 // import 'babel-polyfill' // 解决IE10+兼容问题
 import './assets/layout/uiIndex.scss' // 解决IE10+兼容问题
 import Loading  from '../modules/components'
+import mixin  from '../modules/mixin'
 
 // import './components/WinCard'
  
@@ -104,6 +106,7 @@ const registerComponent = () => {
   // import { Message, MessageBox,Notification } from 'wued-ui';
   /**  弹框模块导入*/
   Vue.use(Loading);
+  Vue.mixin(mixin);
   Vue.use(VueClipboard)
   // Vue.use(BaseButton);
   // Vue.use(BaseDialog);

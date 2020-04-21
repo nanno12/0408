@@ -16,14 +16,8 @@
           <w-table-column fixed="right" label="操作" align="center" width="150" reference-cell>
             <template slot-scope="scope">
                 <w-button type="text" @click="onEditing(scope.row,'left')">修改</w-button>
-                <w-button type="text" @click="handleClone(scope.row)">复制</w-button>
-                <w-popconfirm  title="确认删除这条内容吗? "
-                  @document-click="handleCancel(scope.$index)"
-                  @confirm="handleConfirm(scope.row, 'left', scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
-                  <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text">删除</w-button>
-                  </span>
-                </w-popconfirm>
+                <w-button type="text" @click="handleClone(scope.row, 'left')">复制</w-button>
+                <w-button @click="handleConfirm(scope.row, 'left', scope.$index)" type="text">删除</w-button>
             </template>
           </w-table-column>
         </w-table>
@@ -56,7 +50,7 @@
                   @document-click="handleCancel(scope.$index)"
                    @confirm="handleConfirm(scope.row, 'right', scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
                   <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text">删除</w-button>
+                    <w-button  type="text">删除</w-button>
                   </span>
                 </w-popconfirm>
               </template>
@@ -72,7 +66,7 @@
       width="60%">
       <w-form label-align="right" :model="form" ref="form" label-width="120px" :rules="rules">
         <!-- 新增申请单 -->
-        <w-row v-if="modalTitle==='申请单'">
+        <w-row v-if="modalTitle === MODAL_TITLE.FORM || modalTitle=== MODAL_TITLE.CLONE">
           <w-row>
             <w-col :span="12">
               <w-form-item label="模版代码" prop="mouldcode">
@@ -110,7 +104,6 @@
                     :value="item.DEPTCODE">
                   </w-option>
                 </w-select>
-
               </w-form-item>
             </w-col>
           </w-row>
@@ -143,13 +136,11 @@
           </w-row>
         </w-row>
         <!-- 新增项目 -->
-        <w-row v-else-if="modalTitle==='项目'">
+        <w-row v-else-if="modalTitle===MODAL_TITLE.ITEM">
           <w-row>
             <w-col :span="11">
-              <w-form-item label="成分大类" prop="mainname"
-              :rules="[
-                { required: true, message: '请选择成分大类'},
-              ]">
+              <w-form-item label="成分大类"
+              required>
                 <w-select v-model="form.maincode" @change="handleSelChange" placeholder="请选择成分大类">
                   <w-option
                     v-for="item in mainTypesList"
@@ -217,26 +208,26 @@
           </w-row>
           <w-row>
             <w-col :span="12">
-              <w-form-item label="默认数量" prop="name" >
-                <w-input-number v-model="numVal"></w-input-number>
+              <w-form-item label="默认数量"  >
+                <w-input-number :min=0 v-model="form.amount"></w-input-number>
               </w-form-item>
             </w-col>
             <w-col :span="12">
-              <w-form-item label="加减量" prop="name">
-                <w-input-number v-model="operationVal"></w-input-number>
+              <w-form-item label="加减量"  prop="name">
+                <w-input-number :min=0 v-model="form.addfactor"></w-input-number>
               </w-form-item>
             </w-col>
           </w-row>
           <w-row>
             <w-col :span="24">
-              <w-form-item label="备注" prop="region">
-                <w-input v-model="form.name"  showCounter
+              <w-form-item label="备注">
+                <w-input v-model="form.remark"  showCounter
                   placeholder="请填写备注"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
         </w-row>
-        <div v-else-if="modalTitle===MODAL_TITLE.SELECT_ITEM">
+        <div v-else-if="modalTitle=== MODAL_TITLE.SELECT_ITEM">
           <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
             <template slot="suf-append">
               <i class="w-icon-search"></i>
@@ -306,6 +297,7 @@ export default {
       modalType: '', // 模态框类型
       showInput: false,
       mouldcode: '',
+      maincode: '',
       value2: '', // 模态框表格搜索
       implement:[], // 行政科室数据下拉列表
       openings:[],// 开单科室下拉列表
@@ -402,11 +394,16 @@ export default {
         SUB_CLASS:'成分小类',
         SELECT_ITEM:'选择对应项目',
         TIPS:'提示',
+        CLONE:'复制'
       },
       codeLIst: {
         code:'',
         name:''
       },
+      // ceshi:  {
+      //       MAIN_CODE: '01',
+      //       MAIN_NAME: "全血类"
+      //     },
       form: {
         mouldcode:'', // 模板代码
         mouldname: '', // 模板名称
@@ -417,13 +414,13 @@ export default {
 
         itemcode: '', // 项目代码
         itemname:'', // 项目名称
-        maincode:'', // 成分大类代码
+        maincode: '', // 成分大类代码
         mainname:'', // 成分大类名称
         detailcode:'', // 成分小类代码
         detailname:'', // 成分小类名称
-        amount:'', // 默认数量
+        amount:0, // 默认数量
         hisitemcode:'', // 对应费用明细项编号
-        addfactor: '', // 增减因子
+        addfactor: 0, // 增减因子
         remark: '', // 备注
       },
       mouldItemsRow: {},
@@ -490,12 +487,21 @@ export default {
   },
   watch: {
     "form.maincode"(o , n) {
-      if (o) {
-        if (this.form.maincode !== ' ') {
-        this.getListDetailTypes(o.DETAIL_CODE)
-        this.getListMainTypes()
-        } 
-      }
+      console.log(o , n);
+      
+      // if (o) {
+      //   if (this.form.maincode !== ' ') {
+      //   this.getListDetailTypes(o.DETAIL_CODE)
+      //   this.getListMainTypes()
+      //   } 
+      // }
+    },
+    // ceshi:function (value) {
+
+    //     console.log(value, 'test value');
+    //   },
+    'form.detailcode'(o, n) {
+      console.log(o, n);
     },
     listMoulds (o, n) {
       if(this.mouldItemsRow.MOULD_CODE ) {
@@ -526,13 +532,14 @@ export default {
         mouldcode: row.MOULD_CODE
       })
       this.listMouldItems = res.data
-      // this.toggle(this.listMouldItems)
     },
     async Moulds () {
       const res = await dataApi.getMoulds()
       this.listMoulds = res.data
     },
-    handleClone() {},
+    handleClone(row) {
+      this.visible = true
+    },
     // 模态框表格多选值
     handleSelectionChange (val) {
       this.selection = val
@@ -564,26 +571,32 @@ export default {
     },
     handleSelChange(row) {
       console.log(row);
+      // this.getListMainTypes()
       this.getListDetailTypes(row.DETAIL_CODE)
+      this.maincode = row.DETAIL_CODE
       this.form.detailname = ''
       this.form.detailcode = ''
       this.form.itemcode = ''
       this.form.itemname = ''
     },
+    // copiedmouldcode
     async handleSelChange1(row) {
-      if (this.form.mainname === '') {
-        console.log('????');
-        
-        const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
-        this.mainTypesList = res.data
-        this.form.maincode = res.data.MAIN_NAME
-
-        this.getListDetailTypes(res.data.MAIN_CODE)
-        this.getListMainTypes()
-      } else {
+      if (row) {
         this.form.itemcode = row.DETAIL_CODE
         this.form.itemname = row.DETAIL_NAME
+        this.form = {...this.form}
       }
+      if (this.form.maincode === '') {
+        const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
+        // this.mainTypesList = res.data
+        const list = []
+        list.push(res.data)
+        this.mainTypesList = list
+        this.form.maincode = res.data.MAIN_NAME
+        this.getListDetailTypes(res.data.MAIN_CODE)
+        this.getListMainTypes()
+      }
+      
     },
     // 点击模态框新增按钮事件
     async submit () {
@@ -595,11 +608,39 @@ export default {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {
             if (this.modalType === this.MODAL_TITLE.EADIT) {
-               if (this.modalTitle === '申请单'){
+              if (this.modalTitle === '申请单'){
                 const res = await dataApi.getModifyMould({...this.form})
-                this.Moulds()
-                this.visible = false
-              } 
+                console.log(res.type);
+                if (res.type === 'SUCCESS') {
+                  this.showMsg(res.message,'success')
+                  this.Moulds()
+                  this.visible = false
+                } else {
+                  this.showMsg(res.message,'error')
+                }
+              } else {
+                const list = {
+                  mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+                  itemcode: this.form.itemcode, // 项目代码
+                  itemname: this.form.itemname, // 项目名称
+                  maincode: this.form.maincode.value, // 成分大类代码
+                  mainname: this.form.maincode.DETAIL_NAME, // 成分大类名称
+                  detailcode: this.form.detailcode.value, // 成分小类代码
+                  detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
+                  amount: this.form.amount, // 默认数量
+                  hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+                  addfactor:  this.form.addfactor, // 增减因子
+                  remark: this.form.remark // 备注
+                }
+                const res = await dataApi.getModifyMouldItem({...list})
+                	if (res.type === 'SUCCESS') {
+                    this.showMsg(res.message,'success')
+                    this.MouldItems()
+                    this.visible = false
+                  } else {
+                    this.showMsg(res.message,'error')
+                  }
+              }
             } else {
               // const res = await dataApi.getModifyMouldItem({})
               if (this.modalTitle === '项目') {
@@ -617,24 +658,42 @@ export default {
                   addfactor:  this.form.addfactor, // 增减因子
                   remark: this.form.remark // 备注
                 }
-                const addItem = await dataApi.getAddMouldItem({...list})
-                this.visible = false
-                this.MouldItems(this.mouldItemsRow)
-                console.log(addItem, '项目', ...this.form);
+                const res = await dataApi.getAddMouldItem({...list})
+                	if (res.type === 'SUCCESS') {
+                    this.showMsg(res.message,'success')
+                    this.visible = false
+                    this.MouldItems(this.mouldItemsRow)
+                  } else {
+                    this.showMsg(res.message,'error')
+                  }
               } else if (this.modalTitle === '成分大类'){
-                const addMainComponentType = await dataApi.gitAddMainComponentType({
+                console.log(this.codeLIst,'成分大类');
+                
+                const res = await dataApi.gitAddMainComponentType({
                   maincode:this.codeLIst.code,
-                  maincode:this.codeLIst.name,
+                  mainname:this.codeLIst.name,
                 })
+                	if (res.type === 'SUCCESS') {
+                    this.showMsg(res.message,'success')
+                    this.getListMainTypes()
+                    this.modalTitle = '项目'
+                  } else {
+                    this.showMsg(res.message,'error')
+                  }
               } else if (this.modalTitle === '成分小类') {
                 console.log(this.codeLIst);
-                const addDetailComponentType = await dataApi.getAddDetailComponentType({
+                const res = await dataApi.getAddDetailComponentType({
                   detailcode:this.codeLIst.code,
                   detailname:this.codeLIst.name,
-                  // maincode:this.mouldItemsRow.
+                  maincode:this.maincode
                 })
-                this.getListMainTypes()
-                this.modalTitle = '项目'
+                	if (res.type === 'SUCCESS') {
+                    this.showMsg(res.message,'success')
+                    this.modalTitle = '项目'
+                    this.getListMainTypes()
+                  } else {
+                    this.showMsg(res.success,'error')
+                  }
               } else {
                 const list = {
                   mouldcode:this.form.mouldcode, // 模板代码
@@ -643,10 +702,16 @@ export default {
                   execdeptcode: this.form.execdeptcode, // 执行科室代码
                   applydeptcode: this.form.applydeptcode, // 申请科室代码
                   usearea: this.form.usearea, // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+                  copiedmouldcode: this.mouldItemsRow.MOULD_CODE
                 }
-                const add = await dataApi.getAddMould({...list})
-                this.Moulds()
-                this.visible = false
+                const res = await dataApi.getAddMould({...list})
+                	if (res.type === 'SUCCESS') {
+                    this.showMsg(res.message,'success')
+                    this.Moulds()
+                    this.visible = false
+                  } else {
+                    this.showMsg(res.message,'error')
+                  }
               }
             }
           } else {
@@ -658,12 +723,19 @@ export default {
     },
     // 点击模态框取消按钮事件
     reset () {
+      this.$refs.form.resetFields()
+      
       if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
         this.modalTitle = '项目'
         // this.modalTitle = '新增申请单'
       } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
         this.modalTitle = '项目'
       } else {
+        this.form.maincode = ''
+        this.form.mainname = ''
+        this.form.remark = ''
+        this.form.amount = 0
+        this.form.addfactor = 0
         this.$refs.form.resetFields()
         this.visible = false
       }
@@ -686,13 +758,18 @@ export default {
       this.visible=true
       this.modalType = this.MODAL_TITLE.ADD
       this.isShowRow(t)
-      
     },
     // 项目列表修改按钮
     onEditing (row,t) {
       this.visible=true
       this.modalType = this.MODAL_TITLE.EADIT
       this.isShowRow(t,'edit',row)
+      console.log(row);
+    },
+    handleClone (row, t) {
+      this.visible=true
+      this.modalType = ''
+      this.isShowRow(t,'clone',row)
     },
     handleClose (tag) {
       this.selection.splice(this.selection.indexOf(tag), 1)
@@ -708,18 +785,39 @@ export default {
     async isShowRow (t,isHandle,row,index) {
       if (t === 'left') {
         if (isHandle === 'delete') {
-          const res = await dataApi.getRemoveMould({
-            mouldcode:row.MOULD_CODE
-          })
-          this.listMoulds.splice(index, 1)
-          this.Moulds()
-        } else if (isHandle === 'edit') {
-          console.log(row);
+          this.$confirm('删除此模版将同步删除申请单下的所有项目， 是否确认删除？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(async () => {
+            const res = await dataApi.getRemoveMould({
+              mouldcode:row.MOULD_CODE
+            })
+            if (res.type === 'SUCCESS') {
+              this.showMsg(res.message,'success')
+              this.listMoulds.splice(index, 1)
+              this.Moulds()
+            } else {
+              this.showMsg(res.message,'error')
+            }
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        } else if (isHandle === 'edit' || isHandle === 'clone') {
           this.modalTitle = this.MODAL_TITLE.FORM
           const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
-          console.log(res.data);
-          
-          this.form = res.data
+          if (isHandle === 'clone') {
+            this.form = res.data
+            this.$set(this.form, this.form.execdeptcode, 12345)
+            this.form.mouldcode = ''
+            this.form.mouldname = ''
+          } else {
+            this.form = res.data
+          }
+
         } else {
           this.modalTitle = this.MODAL_TITLE.FORM
           
@@ -728,21 +826,38 @@ export default {
         this.implement = res.data
         const openings = await dataApi.getDeptInfos({depttype:'1'})
         this.openings = openings.data
-      } else {
+      } else if (t === 'right') {
         if (isHandle === 'delete') {
           const res = await dataApi.getRemoveMouldItem({
             itemcode:row.MOULD_ITEM_CODE,
             mouldcode:this.mouldItemsRow.MOULD_CODE
           })
-          this.listMouldItems.splice(index, 1)
-          this.MouldItems(this.mouldItemsRow)
+          if (res.type === 'SUCCESS') {
+            this.showMsg(res.message,'success')
+            this.listMouldItems.splice(index, 1)
+            this.MouldItems(this.mouldItemsRow)
+          } else {
+            this.showMsg(res.message,'error')
+          }
+        } else if (isHandle === 'edit') {
+          this.modalTitle = this.MODAL_TITLE.ITEM
+          console.log(this.mouldcode);
+          
+          const res = await dataApi.getFindMouldItem({
+            mouldcode:this.mouldcode,
+            itemcode:row.MOULD_ITEM_CODE})
+          this.form = res.data
+          console.log(res, row.MOULD_ITEM_CODE);
         } else {
           this.modalTitle = this.MODAL_TITLE.ITEM
+        
+        }
           // 成分小类接口
           this.getListDetailTypes()
           // 成分大类接口
           this.getListMainTypes()
-        }
+      } else {
+        this.modalTitle = this.MODAL_TITLE.CLONE
       }
       console.log(t)
     },
@@ -753,11 +868,16 @@ export default {
     // 成分大类接口
     async getListMainTypes () {
       const listMainTypes = await dataApi.getListMainTypes()
-      this.mainTypesList = listMainTypes.data 
+      this.mainTypesList = listMainTypes.data
+      console.log(listMainTypes);
     },
     // 成分小类接口
     async getListDetailTypes (n) {
-      console.log(n);
+      // if (this.form.maincode) {
+      //    n = this.form.maincode
+      // }
+      console.log(n,this.form.maincode);
+
       const listDetailTypes = await dataApi.getListDetailTypes({maincode:n})
       this.detailTypesList = listDetailTypes.data 
     }
