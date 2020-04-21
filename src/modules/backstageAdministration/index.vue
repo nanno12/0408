@@ -5,9 +5,13 @@
         <title-style class="pd-y_22 po_re"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_16 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
         </title-style>
-        <w-table class="mt-15" :data="listMoulds" :border="true" style="width: 100%">
+        <w-table class="mt-15" @row-click="handleRow" 
+        :highlight-current-row="true"
+        :row-class-name="tableRowClassName"
+         ref="interfaceTable"
+        :data="listMoulds" :border="true" style="width: 100%">
           <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
-          <w-table-column prop="MOULD_TYPE" label="类型"></w-table-column>
+          <w-table-column prop="MOULD_LEVEL" label="类型"></w-table-column>
           <w-table-column prop="MOULD_NAME" label="名称" width="100"></w-table-column>
           <w-table-column fixed="right" label="操作" align="center" width="150" reference-cell>
             <template slot-scope="scope">
@@ -67,43 +71,43 @@
       :close-on-click-modal="false"
       width="60%">
       <w-form label-align="right" :model="form" ref="form" label-width="120px" :rules="rules">
-        <w-row>
-          <w-col :span="12">
-            <w-form-item :label="modalTitle==='申请单'? '模版代码':'项目代码'" prop="name" required>
-              <w-input v-model="form.name" :maxlength="20" showCounter
-                placeholder="请输入代码"></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="12">
-            <w-form-item :label="modalTitle==='申请单'? '模版名称':'项目名称'" prop="name" required>
-              <w-input v-model="form.name" :maxlength="20" showCounter
-                placeholder="请输入名称"></w-input>
-            </w-form-item>
-          </w-col>
-        </w-row>
         <!-- 新增申请单 -->
         <w-row v-if="modalTitle==='申请单'">
           <w-row>
             <w-col :span="12">
-              <w-form-item label="模版类型" prop="region">
-                <w-select v-model="form.region" placeholder="请选择模版类型">
+              <w-form-item label="模版代码" prop="mouldcode">
+                <w-input v-model="form.mouldcode" :maxlength="20" showCounter
+                  placeholder="请输入代码"></w-input>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="模版名称" prop="mouldname">
+                <w-input v-model="form.mouldname" :maxlength="20" showCounter
+                  placeholder="请输入名称"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="模版类型" prop="mouldtype">
+                <w-select v-model="form.mouldtype" placeholder="请选择模版类型">
                   <w-option
-                    v-for="item in options"
+                    v-for="item in mtype"
                     :key="item.value"
-                    :label="item.label"
+                    :label="item.name"
                     :value="item.value">
                   </w-option>
                 </w-select>
               </w-form-item>
             </w-col>
             <w-col :span="12">
-              <w-form-item label="执行科室" prop="region">
-                <w-select v-model="form.region" placeholder="请选择执行科室">
+              <w-form-item label="执行科室" prop="execdeptcode">
+                <w-select v-model="form.execdeptcode" placeholder="请选择执行科室">
                   <w-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in implement"
+                    :key="item.DEPTCODE"
+                    :label="item.DEPTNAME"
+                    :value="item.DEPTCODE">
                   </w-option>
                 </w-select>
 
@@ -112,25 +116,25 @@
           </w-row>
           <w-row>
             <w-col :span="12">
-              <w-form-item label="开单类别" prop="region">
-                <w-select v-model="form.region" placeholder="请选择开单类别">
+              <w-form-item label="开单类别" prop="usearea">
+                <w-select v-model="form.usearea" placeholder="请选择开单类别">
                   <w-option
-                    v-for="item in options"
+                    v-for="item in category"
                     :key="item.value"
-                    :label="item.label"
+                    :label="item.name"
                     :value="item.value">
                   </w-option>
                 </w-select>
               </w-form-item>
             </w-col>
             <w-col :span="12">
-              <w-form-item label="开单科室" prop="region">
-                <w-select v-model="form.region" placeholder="请选择开单科室">
+              <w-form-item label="开单科室">
+                <w-select v-model="form.applydeptcode" placeholder="请选择开单科室">
                   <w-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in openings"
+                    :key="item.DEPTCODE"
+                    :label="item.DEPTNAME"
+                    :value="item.DEPTCODE">
                   </w-option>
                 </w-select>
 
@@ -142,41 +146,83 @@
         <w-row v-else-if="modalTitle==='项目'">
           <w-row>
             <w-col :span="11">
-              <w-form-item label="成分大类" prop="region">
-                <w-select v-model="form.region" placeholder="请选择成分大类">
+              <w-form-item label="成分大类" prop="mainname"
+              :rules="[
+                { required: true, message: '请选择成分大类'},
+              ]">
+                <w-select v-model="form.maincode" @change="handleSelChange" placeholder="请选择成分大类">
                   <w-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in mainTypesList"
+                    :key="item.MAIN_CODE"
+                    :label="item.MAIN_NAME"
+                    :value="{
+                      value:item.MAIN_CODE,
+                      DETAIL_CODE:item.MAIN_CODE,
+                      DETAIL_NAME:item.MAIN_NAME,
+                    }">
                   </w-option>
                 </w-select>
               </w-form-item>
             </w-col>
             <w-col :span="1"><i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
             <w-col :span="11">
-              <w-form-item label="成分小类" prop="region">
-                <w-select v-model="form.region" placeholder="请选择成分小类">
+              <w-form-item label="成分小类" prop="detailcode"
+              :rules="[
+                { required: true, message: '请选择成分小类'},
+              ]">
+                <w-select @change="handleSelChange1" v-model="form.detailcode" placeholder="请选择成分小类">
                   <w-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in detailTypesList"
+                    :key="item.DETAIL_CODE"
+                    :label="item.DETAIL_NAME"
+                    :value="{
+                      value:item.DETAIL_CODE,
+                      DETAIL_CODE:item.DETAIL_CODE,
+                      DETAIL_NAME:item.DETAIL_NAME,
+                    }">
                   </w-option>
                 </w-select>
 
               </w-form-item>
             </w-col>
-            <w-col :span="1"><i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
+            <w-col :span="1"  v-if="form.maincode !==''">
+              <i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i>
+            </w-col>
           </w-row>
           <w-row>
             <w-col :span="12">
-              <w-form-item label="默认数量" prop="name" required>
+              <w-form-item label="项目代码" prop="itemcode">
+                <w-input v-model="form.itemcode" :maxlength="20" showCounter
+                  placeholder="请输入代码"></w-input>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="项目名称" prop="itemname">
+                <w-input v-model="form.itemname" :maxlength="20" showCounter
+                  placeholder="请输入名称"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col>
+              <w-form-item label="费用对应" prop="">
+                <div @click="hadleInputFocus"  class="unitDepartment-tag" >
+                  <w-tag size="mini" @close="handleClose(tag)" closable
+                  v-for="(tag, index) in selection" :key="index">{{tag.name}}</w-tag>
+                </div>
+                <w-input v-if="showInput"></w-input>
+                <w-button @click="add(showInput)">{{h = showInput === true? '取消':'添加'}}</w-button>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="默认数量" prop="name" >
                 <w-input-number v-model="numVal"></w-input-number>
               </w-form-item>
             </w-col>
             <w-col :span="12">
-              <w-form-item label="加减量" prop="name" required>
+              <w-form-item label="加减量" prop="name">
                 <w-input-number v-model="operationVal"></w-input-number>
               </w-form-item>
             </w-col>
@@ -190,54 +236,55 @@
             </w-col>
           </w-row>
         </w-row>
+        <div v-else-if="modalTitle===MODAL_TITLE.SELECT_ITEM">
+          <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
+            <template slot="suf-append">
+              <i class="w-icon-search"></i>
+            </template>
+          </w-input>
+          <w-table ref="multiTable" :data="tableData" :border="true" class="mt-15" style="width: 100%"
+            @selection-change="handleSelectionChange">
+            <w-table-column type="selection" width="50">
+            </w-table-column>
+            <w-table-column prop="value" label="代码" width="150">
+            </w-table-column>
+            <w-table-column prop="name" label="名称" >
+            </w-table-column>
+          </w-table>
+          <w-pagination :total="10" :page-size="4"
+            @page-size-change="handlePageSizeChange"
+            :page-sizes="[4, 8, 12, 16]" :show="['prev', 'next', 'total', 'jump']">
+          </w-pagination>
+        </div>
         <!-- 新增成分类 -->
         <w-row v-else>
           <w-row>
             <w-col :span="24">
-              <w-form-item label="成分大/小类代码" prop="region">
-                <w-input v-model="form.name"  showCounter
-                  placeholder="请填写成分大类代码"></w-input>
+              <w-form-item :label="modalTitle+'代码'" prop="region">
+                <w-input v-model="codeLIst.code"  showCounter
+                  placeholder="请填写成分代码"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
           <w-row>
             <w-col :span="24">
-              <w-form-item label="成分大/小类名称" prop="region">
-                <w-input v-model="form.name"  showCounter
-                  placeholder="请填写成分大类名称"></w-input>
+              <w-form-item :label="modalTitle+'名称'" prop="region">
+                <w-input v-model="codeLIst.name"  showCounter
+                  placeholder="请填写成分名称"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
         </w-row>
+      
       </w-form>
-      <!-- <div>
-        <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
-          <template slot="suf-append">
-            <i class="w-icon-search"></i>
-          </template>
-        </w-input>
-        <w-table ref="multiTable" :data="tableData" :border="true" class="mt-15" style="width: 100%"
-          @selection-change="handleSelectionChange">
-          <w-table-column type="selection" width="50">
-          </w-table-column>
-          <w-table-column prop="time" label="代码">
-          </w-table-column>
-          <w-table-column prop="name" label="名称" width="150">
-          </w-table-column>
-          <w-table-column prop="status" label="价格" width="150">
-          </w-table-column>
-          <w-table-column prop="type" label="单位">
-          </w-table-column>
-          <w-table-column prop="type" label="使用范围">
-          </w-table-column>
-        </w-table>
-      </div> -->
+
       <span slot="footer" class="dialog-footer">
         <w-button @click="reset">取 消</w-button>
         <w-button type="primary" @click="submit">确 定</w-button>
       </span>
     </w-modal>
   </div>
+
 </template>
 <script>
 // import Common from '@/app/api/common.js';
@@ -257,8 +304,95 @@ export default {
       numVal: 1, // 默认数量
       modalTitle: '', // 模态框标题
       modalType: '', // 模态框类型
-      showInput: true,
+      showInput: false,
+      mouldcode: '',
       value2: '', // 模态框表格搜索
+      implement:[], // 行政科室数据下拉列表
+      openings:[],// 开单科室下拉列表
+      mainTypesList:[], // 成分大类拉列表
+      detailTypesList:[], // 成分小类拉列表
+      tableData:[
+        {
+          value:'1',
+          name:'悄悄告诉'
+        },
+        {
+          value:'2',
+          name:'一个秘密'
+        },
+        {
+          value:'3',
+          name:'往下看'
+        },
+        {
+          value:'4',
+          name:'哎呀，没了'
+        },
+        {
+          value:'5',
+          name:'我出来喽'
+        },
+        {
+          value:'6',
+          name:'好吧告诉你'
+        },
+        {
+          value:'7',
+          name:'这个秘密啊'
+        },
+        {
+          value:'8',
+          name:'这个秘密就是'
+        },
+        {
+          value:'9',
+          name:'就是'
+        },
+        {
+          value:'10',
+          name:'下班喽'
+        }
+      ],// 对应项目列表
+      mtype:[
+        {
+          value:'1',
+          name:'常规备血'
+        },
+        {
+          value:'2',
+          name:'常规用血'
+        },
+        {
+          value:3,
+          name:'紧急用血'
+        },
+        {
+          value:'4',
+          name:'自体输血'
+        },
+        {
+          value:'5',
+          name:'备血预约'
+        }
+      ], // 模板类型数据下拉列表
+      category: [
+        {
+          value:'0',
+          name:'门诊'
+        },
+        {
+          value:'1',
+          name:'住院'
+        },
+        {
+          value:'2',
+          name:'体检'
+        },
+        {
+          value:'9',
+          name:'全部'
+        }
+      ], // 开单类别下拉列表
       MODAL_TITLE : {
         ADD:'新增',
         EADIT:'修改',
@@ -269,17 +403,63 @@ export default {
         SELECT_ITEM:'选择对应项目',
         TIPS:'提示',
       },
-      form: {
-        name:'',
-        region: ''
+      codeLIst: {
+        code:'',
+        name:''
       },
-      tableData:[],
+      form: {
+        mouldcode:'', // 模板代码
+        mouldname: '', // 模板名称
+        mouldtype: '', // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
+        execdeptcode: '', // 执行科室代码
+        applydeptcode: '', // 申请科室代码
+        usearea: '', // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+
+        itemcode: '', // 项目代码
+        itemname:'', // 项目名称
+        maincode:'', // 成分大类代码
+        mainname:'', // 成分大类名称
+        detailcode:'', // 成分小类代码
+        detailname:'', // 成分小类名称
+        amount:'', // 默认数量
+        hisitemcode:'', // 对应费用明细项编号
+        addfactor: '', // 增减因子
+        remark: '', // 备注
+      },
+      mouldItemsRow: {},
       rules: {
-        region: [{
-          required: true, message: '请选择区域', trigger: 'change'
+        mouldcode: [{
+          required: true, message: '请输入模板代码', trigger: 'blur'
         }],
-        name: [{
-          required: true, message: '请选择区域', trigger: 'change'
+        mouldname: [{
+          required: true, message: '请输入模板名称', trigger: 'blur'
+        }],
+        itemcode: [{
+          required: true, message: '请输入项目代码', trigger: 'blur'
+        }],
+        itemname: [{
+          required: true, message: '请输入项目名称', trigger: 'blur'
+        }],
+        mouldtype: [{
+          required: true, message: '请选择模板类型', trigger: 'change'
+        }],
+        "execdeptcode": [{
+          required: true, message: '请选择执行科室', trigger: 'change'
+        }],
+        applydeptcode: [{
+          required: true, message: '请选择开单科室', trigger: 'change'
+        }],
+        usearea: [{
+          required: true, message: '请选择开单类别', trigger: 'change'
+        }],
+        // maincode: [{
+        //   required: true, message: '请选择成分大类', trigger: 'change'
+        // }],
+        // detailname: [{
+        //   required: true, message: '请选择成分小类', trigger: 'change'
+        // }],
+        hisitemcode: [{
+          required: true, message: '请选择费用对应', trigger: 'change'
         }]
       },
       selection: [],
@@ -309,57 +489,166 @@ export default {
   computed: {
   },
   watch: {
+    "form.maincode"(o , n) {
+      if (o) {
+        if (this.form.maincode !== ' ') {
+        this.getListDetailTypes(o.DETAIL_CODE)
+        this.getListMainTypes()
+        } 
+      }
+    },
+    listMoulds (o, n) {
+      if(this.mouldItemsRow.MOULD_CODE ) {
+        this.$nextTick(function() {
+          this.$refs.interfaceTable.setCurrentRow(this.listMoulds[this.mouldItemsRow.index])
+        })
+        this.MouldItems(o[this.mouldItemsRow.index])
+        this.mouldcode = o[this.mouldItemsRow.index].MOULD_CODE
+      } else {
+        this.$nextTick(function() {
+          this.$refs.interfaceTable.setCurrentRow(this.listMoulds[0])
+        })
+        this.MouldItems(o[0])
+        this.mouldcode = o[0].MOULD_CODE
+      }
 
+    }
   },
   created() {
-    this.MouldItems()
     this.Moulds()
   },
   mounted() {
   },
   methods: {
-    async MouldItems () { 
+     
+    async MouldItems (row) { 
       const res = await dataApi.getMouldItems({
-        mouldcode: "1",
-        maincode: "01"
+        mouldcode: row.MOULD_CODE
       })
       this.listMouldItems = res.data
-      console.log(res);
+      // this.toggle(this.listMouldItems)
     },
     async Moulds () {
       const res = await dataApi.getMoulds()
       this.listMoulds = res.data
-      console.log(res);
     },
     handleClone() {},
     // 模态框表格多选值
     handleSelectionChange (val) {
       this.selection = val
+      console.log(this.selection)
+      
+    },
+    hadleInputFocus () {
+      this.visible = true
+      this.modalType = ''
+      this.modalTitle = this.MODAL_TITLE.SELECT_ITEM
     },
     // 模态框➕按钮事件
     handlePlus (title) {
       if (title === 'big') {
-        this.showInput = false
-        this.modalTitle = '新增成分大类'
+        this.modalTitle = this.MODAL_TITLE.LARGE_CLASS
       } else {
-        this.showInput = false
-        this.modalTitle = '新增成分小类'
+        this.modalTitle = this.MODAL_TITLE.SUB_CLASS
       }
       console.log('模态框➕按钮事件')
     },
-    // 点击模态框新增按钮事件
-    submit () {
-      if (this.modalTitle === '新增项目') {
-        this.visible = false
-      } else if (this.showInput === false) {
-        this.showInput = true
-        this.modalTitle = '新增申请单'
+    tableRowClassName({row,rowIndex}) {
+       row.index = rowIndex;
+     },
+    // 点击申请单列表某一行触发
+    handleRow (row) {
+      console.log(row)
+      this.mouldItemsRow = row
+      this.MouldItems(row)
+    },
+    handleSelChange(row) {
+      console.log(row);
+      this.getListDetailTypes(row.DETAIL_CODE)
+      this.form.detailname = ''
+      this.form.detailcode = ''
+      this.form.itemcode = ''
+      this.form.itemname = ''
+    },
+    async handleSelChange1(row) {
+      if (this.form.mainname === '') {
+        console.log('????');
+        
+        const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
+        this.mainTypesList = res.data
+        this.form.maincode = res.data.MAIN_NAME
+
+        this.getListDetailTypes(res.data.MAIN_CODE)
+        this.getListMainTypes()
       } else {
-        this.$refs.form.validateForm((valid) => {
+        this.form.itemcode = row.DETAIL_CODE
+        this.form.itemname = row.DETAIL_NAME
+      }
+    },
+    // 点击模态框新增按钮事件
+    async submit () {
+    //  if {
+      if (this.modalTitle === this.MODAL_TITLE.SELECT_ITEM) {
+        console.log(this.selection);
+        this.modalTitle = '项目'
+      } else {
+        this.$refs.form.validateForm(async (valid) => {
           if (valid) {
-            // 通过验证
-            console.log('submit !')
-            this.visible = false
+            if (this.modalType === this.MODAL_TITLE.EADIT) {
+               if (this.modalTitle === '申请单'){
+                const res = await dataApi.getModifyMould({...this.form})
+                this.Moulds()
+                this.visible = false
+              } 
+            } else {
+              // const res = await dataApi.getModifyMouldItem({})
+              if (this.modalTitle === '项目') {
+                console.log(this.form);
+                const list = {
+                  mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+                  itemcode: this.form.itemcode, // 项目代码
+                  itemname: this.form.itemname, // 项目名称
+                  maincode: this.form.maincode.value, // 成分大类代码
+                  mainname: this.form.maincode.DETAIL_NAME, // 成分大类名称
+                  detailcode: this.form.detailcode.value, // 成分小类代码
+                  detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
+                  amount: this.form.amount, // 默认数量
+                  hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+                  addfactor:  this.form.addfactor, // 增减因子
+                  remark: this.form.remark // 备注
+                }
+                const addItem = await dataApi.getAddMouldItem({...list})
+                this.visible = false
+                this.MouldItems(this.mouldItemsRow)
+                console.log(addItem, '项目', ...this.form);
+              } else if (this.modalTitle === '成分大类'){
+                const addMainComponentType = await dataApi.gitAddMainComponentType({
+                  maincode:this.codeLIst.code,
+                  maincode:this.codeLIst.name,
+                })
+              } else if (this.modalTitle === '成分小类') {
+                console.log(this.codeLIst);
+                const addDetailComponentType = await dataApi.getAddDetailComponentType({
+                  detailcode:this.codeLIst.code,
+                  detailname:this.codeLIst.name,
+                  // maincode:this.mouldItemsRow.
+                })
+                this.getListMainTypes()
+                this.modalTitle = '项目'
+              } else {
+                const list = {
+                  mouldcode:this.form.mouldcode, // 模板代码
+                  mouldname: this.form.mouldname, // 模板名称
+                  mouldtype: this.form.mouldtype, 
+                  execdeptcode: this.form.execdeptcode, // 执行科室代码
+                  applydeptcode: this.form.applydeptcode, // 申请科室代码
+                  usearea: this.form.usearea, // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+                }
+                const add = await dataApi.getAddMould({...list})
+                this.Moulds()
+                this.visible = false
+              }
+            }
           } else {
             // 未通过
             console.log('invalid form !')
@@ -369,30 +658,19 @@ export default {
     },
     // 点击模态框取消按钮事件
     reset () {
-       if (this.modalTitle === '新增项目') {
-        this.visible = false
-      } else if (this.showInput === false) {
-        this.showInput = true
-        this.modalTitle = '新增申请单'
+      if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
+        this.modalTitle = '项目'
+        // this.modalTitle = '新增申请单'
+      } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
+        this.modalTitle = '项目'
       } else {
         this.$refs.form.resetFields()
         this.visible = false
       }
     },
-    // 点击新增按钮出现弹框事件
-
-    // 点击模态框以外的显示÷
-    handleCloseModal (done) {
-      this.$confirm('确认关闭Modal？')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
       this.isShowRow(t,'delete',row,index)
-      console.log(12)
       this.tableData.splice(index, 1)
     },
     // 列表提示框取消按钮
@@ -405,42 +683,83 @@ export default {
     },
     // 新增按钮
     handleAdd (t) {
-      this.visible = true
+      this.visible=true
       this.modalType = this.MODAL_TITLE.ADD
       this.isShowRow(t)
+      
     },
     // 项目列表修改按钮
     onEditing (row,t) {
-      console.log(row,t)
       this.visible=true
       this.modalType = this.MODAL_TITLE.EADIT
-      this.isShowRow(t)
+      this.isShowRow(t,'edit',row)
+    },
+    handleClose (tag) {
+      this.selection.splice(this.selection.indexOf(tag), 1)
+    },
+    add (showInput) {
+      if (showInput === true ) {
+        this.showInput = false
+      } else {
+        this.showInput = true
+      }
     },
     // 判断显示modal内容
-    async isShowRow (t,handle,row,index) {
+    async isShowRow (t,isHandle,row,index) {
       if (t === 'left') {
-        if (handle === 'delete') {
+        if (isHandle === 'delete') {
           const res = await dataApi.getRemoveMould({
-            mouldcode:row.EXECDEPT_CODE
+            mouldcode:row.MOULD_CODE
           })
-          console.log(res,row,index);
           this.listMoulds.splice(index, 1)
           this.Moulds()
+        } else if (isHandle === 'edit') {
+          console.log(row);
+          this.modalTitle = this.MODAL_TITLE.FORM
+          const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
+          console.log(res.data);
+          
+          this.form = res.data
         } else {
           this.modalTitle = this.MODAL_TITLE.FORM
+          
         }
+        const res = await dataApi.getDeptInfos({depttype:'3'})
+        this.implement = res.data
+        const openings = await dataApi.getDeptInfos({depttype:'1'})
+        this.openings = openings.data
       } else {
-        if (handle === 'delete') {
+        if (isHandle === 'delete') {
           const res = await dataApi.getRemoveMouldItem({
             itemcode:row.MOULD_ITEM_CODE,
-            mouldcode:row.MOULD_ITEM_CODE
+            mouldcode:this.mouldItemsRow.MOULD_CODE
           })
-          console.log(res,row,index);
+          this.listMouldItems.splice(index, 1)
+          this.MouldItems(this.mouldItemsRow)
         } else {
-          this.modalTitle = this.MODAL_TITLE.FORM
+          this.modalTitle = this.MODAL_TITLE.ITEM
+          // 成分小类接口
+          this.getListDetailTypes()
+          // 成分大类接口
+          this.getListMainTypes()
         }
       }
       console.log(t)
+    },
+    handlePageSizeChange(val) {
+
+      console.log(val, '条/页');
+    },
+    // 成分大类接口
+    async getListMainTypes () {
+      const listMainTypes = await dataApi.getListMainTypes()
+      this.mainTypesList = listMainTypes.data 
+    },
+    // 成分小类接口
+    async getListDetailTypes (n) {
+      console.log(n);
+      const listDetailTypes = await dataApi.getListDetailTypes({maincode:n})
+      this.detailTypesList = listDetailTypes.data 
     }
   }
 };
@@ -483,4 +802,30 @@ export default {
     margin-left 0px
   .w-select
     width 100%
+
+  .unitDepartment-tag {
+    // width: 100%;
+    min-height: 44px;
+    // border: 1px solid #dcdfe6;
+    background-color: #f3f6fe;
+    border-radius: 4px;
+    position: relative;
+    .el-button {
+      border: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      // height: ;
+      // width: 100%;
+      height: 100%;
+    }
+  }
+  .unitDepartment-tag:hover {
+    background-color: #e7edfd;
+    // box-shadow: #2d5afa 0px 0px 3px;
+  }
+  // .unitDepartment-tag:focus {
+  //   border-color: #5175f4;
+  //   box-shadow: #2d5afa 0px 0px 0px;
+  // }
 </style>
