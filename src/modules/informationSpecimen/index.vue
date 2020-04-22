@@ -1,5 +1,14 @@
 <template>
   <div class='home-page-wrap-in'>
+    <table-style  v-bind:listTable="listTable" 
+     @handleRow="handleRow"
+     @handleEdit="handleEdit"
+     @handleDelete="handleDelete"
+     :showIndex="true"
+     :showSelection="true"
+     :isShow="isShow"
+    :tableData="tableData">
+    </table-style>
     <w-row style="background:rgba(255,255,255,1);">
       <w-col :span="8">
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">器官/系统</span>
@@ -113,6 +122,12 @@ export default {
       show: true,
       h: '',
       idVal: '',
+      isShow: {
+      width: 200,
+      fixed: 'right',
+      copy: false,
+      // edit:true
+      },
       form: {
         editVal: '',
         dynamicArr: []
@@ -125,7 +140,9 @@ export default {
       },
       organList:[],
       positionList:[],
-      nameList:[]    
+      nameList:[],
+      tableData:[{}],
+      listTable:[{prop:'nihao',label:'nihao'}]  
     }
   },
   created(){
@@ -232,6 +249,17 @@ export default {
         })
       }
       console.log(this.form.dynamicArr,this.form.dynamicArr.length);
+    },
+    handleEdit(row){
+      console.log(row);
+
+    },
+    handleDelete (row,index) {
+      console.log(row,index);
+      
+    },
+    handleRow (row) {
+      // console.log(row);
     },
     int () {
       this.form.dynamicArr = []

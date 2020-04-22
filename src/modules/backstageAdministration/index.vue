@@ -1,5 +1,23 @@
 <template>
   <div class="home-page-wrap-ba">
+    <table-style  v-bind:listTable="listTable" 
+     @handleRow="handleRowe"
+     :showIndex="true"
+     :showSelection="true"
+     @handleSelectionChange="handleSelectionChangew"
+    :tableData="tableData">
+        <!-- <div slot="handleColumn">
+        <w-table-column
+          fixed="right"
+          label="操作"
+          width="100">
+          <template slot-scope="scope">
+            <w-button  type="text" size="small">查看</w-button>
+            <w-button type="text" size="small">编辑</w-button>
+          </template>
+        </w-table-column>
+      </div> -->
+    </table-style>
     <w-row  class="home-page-body">
       <w-col :span="6" >
         <title-style class="pd-y_22 po_re"><span slot="header">申请单列表</span>
@@ -64,7 +82,7 @@
       :showClose="false"
       :close-on-click-modal="false"
       width="60%">
-      <w-form label-align="right" :model="form" ref="form" label-width="120px" :rules="rules">
+      <w-form label-align="right"  :model="form" ref="form" label-width="120px" :rules="rules">
         <!-- 新增申请单 -->
         <w-row v-if="modalTitle === MODAL_TITLE.FORM || modalTitle=== MODAL_TITLE.CLONE">
           <w-row>
@@ -196,25 +214,26 @@
           </w-row>
           <w-row>
             <w-col>
-              <w-form-item label="费用对应" prop="">
+              <w-form-item class=" pd-right" label="费用对应" prop="">
                 <div @click="hadleInputFocus"  class="unitDepartment-tag" >
                   <w-tag size="mini" @close="handleClose(tag)" closable
                   v-for="(tag, index) in selection" :key="index">{{tag.name}}</w-tag>
+                  <span style="">点击选择费用对应内容</span>
                 </div>
-                <w-input v-if="showInput"></w-input>
-                <w-button @click="add(showInput)">{{h = showInput === true? '取消':'添加'}}</w-button>
+                <w-input placeholder="输入内容进行搜索" class="po_ab top_0 right_0" v-if="showInput"></w-input>
+                <w-button size="mini"  type="text" class="po_ab top_0 right_0" @click="add(showInput)">{{h = showInput === true? '取消':'添加'}}</w-button>
               </w-form-item>
             </w-col>
           </w-row>
           <w-row>
             <w-col :span="12">
-              <w-form-item label="默认数量"  >
-                <w-input-number :min=0 v-model="form.amount"></w-input-number>
+              <w-form-item label="默认数量"  prop="amount">
+                <w-input-number :min=0 v-model.number="form.amount"></w-input-number>
               </w-form-item>
             </w-col>
             <w-col :span="12">
               <w-form-item label="加减量"  prop="name">
-                <w-input-number :min=0 v-model="form.addfactor"></w-input-number>
+                <w-input-number :min=0 v-model.number="form.addfactor"></w-input-number>
               </w-form-item>
             </w-col>
           </w-row>
@@ -251,15 +270,18 @@
         <w-row v-else>
           <w-row>
             <w-col :span="24">
-              <w-form-item :label="modalTitle+'代码'" prop="region">
-                <w-input v-model="codeLIst.code"  showCounter
+              <w-form-item :label="modalTitle+'代码'" prop="code"
+              :rules="[
+                { required: true, message: '年龄不能为空'},
+              ]">
+                <w-input v-model="form.code"  showCounter
                   placeholder="请填写成分代码"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
           <w-row>
             <w-col :span="24">
-              <w-form-item :label="modalTitle+'名称'" prop="region">
+              <w-form-item :label="modalTitle+'名称'" prop="name">
                 <w-input v-model="codeLIst.name"  showCounter
                   placeholder="请填写成分名称"></w-input>
               </w-form-item>
@@ -289,6 +311,13 @@ export default {
   },
   data() {
     return {
+      listTable:[
+        {
+          prop: 'name',   //<String>  对应属性名
+          label: '姓名',  //<String>   表头标签
+
+        }
+      ],
       value: '', // 搜索框
       visible: false,
       operationVal: 1, // 加减量
@@ -422,6 +451,9 @@ export default {
         hisitemcode:'', // 对应费用明细项编号
         addfactor: 0, // 增减因子
         remark: '', // 备注
+
+        code:'',
+        name:''
       },
       mouldItemsRow: {},
       rules: {
@@ -449,8 +481,8 @@ export default {
         usearea: [{
           required: true, message: '请选择开单类别', trigger: 'change'
         }],
-        // maincode: [{
-        //   required: true, message: '请选择成分大类', trigger: 'change'
+        // amount: [{
+        //  required: true, validator: validateAmount, trigger: 'blur' 
         // }],
         // detailname: [{
         //   required: true, message: '请选择成分小类', trigger: 'change'
@@ -526,7 +558,12 @@ export default {
   mounted() {
   },
   methods: {
-     
+    handleRowe(row) {
+      console.log(row);
+    },
+    handleSelectionChangew (val) {
+    console.log('val:', val)
+   },
     async MouldItems (row) { 
       const res = await dataApi.getMouldItems({
         mouldcode: row.MOULD_CODE
@@ -667,33 +704,33 @@ export default {
                     this.showMsg(res.message,'error')
                   }
               } else if (this.modalTitle === '成分大类'){
-                console.log(this.codeLIst,'成分大类');
-                
                 const res = await dataApi.gitAddMainComponentType({
-                  maincode:this.codeLIst.code,
-                  mainname:this.codeLIst.name,
+                  maincode:this.form.code,
+                  mainname:this.form.name,
                 })
-                	if (res.type === 'SUCCESS') {
-                    this.showMsg(res.message,'success')
-                    this.getListMainTypes()
-                    this.modalTitle = '项目'
-                  } else {
-                    this.showMsg(res.message,'error')
-                  }
+                console.log(res,'成分大类');
+
+                if (res.type === 'SUCCESS') {
+                  this.showMsg(res.message,'success')
+                  this.getListMainTypes()
+                  this.modalTitle = '项目'
+                } else {
+                  this.showMsg(res.message,'error')
+                }
               } else if (this.modalTitle === '成分小类') {
-                console.log(this.codeLIst);
                 const res = await dataApi.getAddDetailComponentType({
-                  detailcode:this.codeLIst.code,
-                  detailname:this.codeLIst.name,
+                  detailcode:this.form.code,
+                  detailname:this.form.name,
                   maincode:this.maincode
                 })
-                	if (res.type === 'SUCCESS') {
-                    this.showMsg(res.message,'success')
-                    this.modalTitle = '项目'
-                    this.getListMainTypes()
-                  } else {
-                    this.showMsg(res.success,'error')
-                  }
+                console.log(res);
+                if (res.type === 'SUCCESS') {
+                  this.showMsg(res.message,'success')
+                  this.modalTitle = '项目'
+                  this.getListMainTypes()
+                } else {
+                  this.showMsg(res.success,'error')
+                }
               } else {
                 const list = {
                   mouldcode:this.form.mouldcode, // 模板代码
@@ -892,6 +929,7 @@ export default {
   background rgba(234,237,244,1)
   overflow-x auto
   overflow-y hidden
+  
   .title
     font-weight 500;
     font-size 14px;
@@ -911,33 +949,38 @@ export default {
       float right
       background #fff
 </style>
-<style lang="stylus">
-.pd-right
-  .w-input
-    width 200px!important
-.w-row
-  padding-bottom 16px
-.w-form
-  .w-form-item__label
-    margin-left 0px
-  .w-select
-    width 100%
+<style lang="scss">
+
+.pd-right {
+  .w-input {
+    width:200px!important
+  }
+}
+  
+.w-row {
+  padding-bottom: 16px;
+}
+// .w-form
+//   .w-form-item__label
+//     margin-left 0px
+//   .w-select
+//     width 100%
 
   .unitDepartment-tag {
-    // width: 100%;
+    width: 70%;
     min-height: 44px;
-    // border: 1px solid #dcdfe6;
     background-color: #f3f6fe;
     border-radius: 4px;
-    position: relative;
-    .el-button {
-      border: none;
-      position: absolute;
-      top: 0;
-      right: 0;
-      // height: ;
-      // width: 100%;
-      height: 100%;
+    display:inline-block;
+    span {
+      display:inline-block;
+      padding-left: 10px;
+      color:#999;
+    }
+    .w-input,
+    .w-input__inner {
+      width:100%!important;
+      min-height: 44px!important;
     }
   }
   .unitDepartment-tag:hover {

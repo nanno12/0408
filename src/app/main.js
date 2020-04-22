@@ -7,97 +7,29 @@ import Vue from 'vue'
 import App from './components/App'
 import router from './router'
 import store from './store'
-// import 'vxe-table/lib/index.css'
-// import '../theme/theme-default/index.css'
-import WuedUI from 'wn-tech-ui'
-import { Message } from 'win-design';
-// import "@/app/assets/css/bootstrap.min.css"
-// import "@/app/assets/css/reset.css"
-// import "@/app/assets/css/common.css"
-// import "@/app/assets/css/public.css"
-// import "@/app/assets/css/bgsh.css"
-// import "@/app/assets/css/element-reset.css"
-// import test from './utils/mylog'
-// import BaseButton from './components/BaseButton';
-// import EllipsisLable from './components/EllipsisLable';
-// import BaseDialog from './components/dialog/index';
-// import BaseSelect from './components/select/';
-// import BaseOption from './components/option/';
-// import BaseAutoItem from './components/base-auto-item/index';
-
-// import BaseAgeInput from './components/BaseAgeInput';
-// import BaseInputSupport from './components/BaseInputSupport';
-// import MultiSelectInput from './components/MultiSelectInput';
-// import InstSelect from './components/InstSelect';
-// import InstSelectMore from './components/InstSelectMore';
+// import WuedUI from 'wn-tech-ui'
+// import { Message } from 'win-design';
 
 import * as layerUtils from '@techCommon/utils/layerUtils'
-// import KeyCode from './enums/KeyCode' 
-// import smartClientUtils from "@techCommon/utils/smartClientUtils";
-// import uuidUtils from "./utils/uuidUtils";
-// import utils from "./utils/utils";
-// import * as dateUtils from "./utils/dateUtils";
 import VueLazyload from 'vue-lazyload' 
 import VueClipboard from 'vue-clipboard2'
 import echarts from 'echarts'
 import html2canvas from 'html2canvas'
-// import { PARAME_VXETABLE_OPTIONS } from "@/app/settings/vexTableOptions";
  
 import 'xe-utils'
 import VXETable from 'vxe-table' 
-// import '@techCommon/theme/vex-table/styles/index.scss'; 
 import sortTable from '@techCommon/components/sortTable'
 import WinDesign from 'win-design'
 import 'win-design/lib/themes/default.css' // 默认主题样式文件
 import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图标
-// import 'babel-polyfill' // 解决IE10+兼容问题
 import './assets/layout/uiIndex.scss' // 解决IE10+兼容问题
-import Loading  from '../modules/components'
+import '../modules/components'
 import mixin  from '../modules/mixin'
 
 // import './components/WinCard'
  
 /** 注册组件的动作放在此 */ 
 const registerComponent = () => {
-  /* istanbul ignore next */ 
-  // BaseButton.install = function (Vue) {
-  //   Vue.component(BaseButton.name, BaseButton);
-  // };
-
-
-  /* istanbul ignore next */
-  // //基础年龄输入框
-  // BaseAgeInput.install = function (Vue) {
-  //   Vue.component(BaseAgeInput.name, BaseAgeInput);
-  // };
-
-  // //基础年龄输入框
-  // BaseInputSupport.install = function (Vue) {
-  //   Vue.component(BaseInputSupport.name, BaseInputSupport);
-  // };
-
-  // /* 仪器单选组件 */
-  // InstSelect.install = function (Vue) {
-  //   Vue.component(InstSelect.name, InstSelect);
-  // };
-  // /* 仪器多选组件 */
-  // InstSelectMore.install = function (Vue) {
-  //   Vue.component(InstSelectMore.name, InstSelectMore);
-  // };
-
-  // MultiSelectInput.install = function (Vue) {
-  //   Vue.component(MultiSelectInput.name, MultiSelectInput);
-  // };
-
-  // /* istanbul ignore next */
-  // BaseDialog.install = function (Vue) {
-  //   Vue.component(BaseDialog.name, BaseDialog);
-  // };
-
-  /* 内容文字显示，自动省略号，超出后悬停显示 */
-  // EllipsisLable.install = function (Vue) {
-  //   Vue.component(EllipsisLable.name, EllipsisLable);
-  // };
   /*自定义表格 */
   sortTable.install = function (Vue) {
     Vue.component(sortTable.name, sortTable);
@@ -105,18 +37,10 @@ const registerComponent = () => {
 
   // import { Message, MessageBox,Notification } from 'wued-ui';
   /**  弹框模块导入*/
-  Vue.use(Loading);
+  // Vue.use(Loading);
   Vue.mixin(mixin);
   Vue.use(VueClipboard)
-  // Vue.use(BaseButton);
-  // Vue.use(BaseDialog);
-  // Vue.use(BaseAgeInput);
-  // Vue.use(BaseInputSupport);
-  // Vue.use(MultiSelectInput);
-  //仪器选择组件
-  // Vue.use(InstSelect);
-  // Vue.use(InstSelectMore);
-  // Vue.use(EllipsisLable);
+  
   Vue.use(VueLazyload, {
     error: 'static/image/loading.gif',
     loading: 'static/image/loading.gif',
@@ -124,12 +48,6 @@ const registerComponent = () => {
     attempt: 2
   });
 
-  // Vue.use(BaseSelect);
-  // Vue.use(BaseOption);
-  // Vue.use(BaseAutoItem);
-  // Vue.use(WuedUI);
-  // Vue.use(test);
-  // VXETable.setup(PARAME_VXETABLE_OPTIONS);
 
   Vue.use(VXETable);
   Vue.use(sortTable);
