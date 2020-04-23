@@ -8,14 +8,16 @@
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">器官/系统</span>
           <w-button class="po_ab top_16 right_8" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
         </title-style>
-        <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
-          :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
-          @mouseover="hoverIndex = index"
-          @mouseout="hoverIndex = -1" :key="index">
-          <span>{{item.SPECIMEN_NAME}}</span>
-          <div class="button-style fr" v-if="hoverIndex === index || clickIndex === index">
-            <span type="text" @click="handleEdit(item,'器官/系统')">修改</span>
-            <span type="text" @click="handleDelete(item,'器官/系统')">删除</span>
+        <div class="list-style">
+          <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
+            :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
+            @mouseover="hoverIndex = index"
+            @mouseout="hoverIndex = -1" :key="index">
+            <span>{{item.SPECIMEN_NAME}}</span>
+            <div class="button-style fr" v-if="hoverIndex === index || clickIndex === index">
+              <span type="text" @click="handleEdit(item,'器官/系统')">修改</span>
+              <span type="text" @click="handleDelete(item,'器官/系统')">删除</span>
+            </div>
           </div>
         </div>
       </w-col>
@@ -23,14 +25,16 @@
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本部位</span>
           <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
         </title-style>
-        <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
-          @click="handle(item,'标本部位',index)" class="tab-style"
-          @mouseover="hoverIndex1 = index"
-          @mouseout="hoverIndex1 = -1" :key="index">
-          <span>{{item.SPECIMEN_NAME}}</span>
-          <div class="button-style fr" v-if="hoverIndex1 === index || clickIndex1 === index">
-            <span type="text" @click="handleEdit(item,'标本部位')">修改</span>
-            <span type="text" @click="handleDelete(item,'标本部位')">删除</span>
+        <div class="list-style">
+          <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
+            @click="handle(item,'标本部位',index)" class="tab-style"
+            @mouseover="hoverIndex1 = index"
+            @mouseout="hoverIndex1 = -1" :key="index">
+            <span>{{item.SPECIMEN_NAME}}</span>
+            <div class="button-style fr" v-if="hoverIndex1 === index || clickIndex1 === index">
+              <span type="text" @click="handleEdit(item,'标本部位')">修改</span>
+              <span type="text" @click="handleDelete(item,'标本部位')">删除</span>
+            </div>
           </div>
         </div>
       </w-col>
@@ -39,14 +43,16 @@
           <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
         </title-style>
         <div v-show="show">
-          <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
-            :class="{'clickBg':index==clickIndex2,'hoverBg':index==hoverIndex2}"
-            @mouseover="hoverIndex2 = index"
-            @mouseout="hoverIndex2 = -1">
-            <span>{{item.SPECIMEN_NAME}}</span>
-            <div class="button-style fr" v-if="hoverIndex2 === index || clickIndex2 === index">
-              <span type="text" @click="handleEdit(item,'标本名称')">修改</span>
-              <span type="text" @click="handleDelete(item,'标本名称')">删除</span>
+          <div class="list-style">
+            <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
+              :class="{'clickBg':index==clickIndex2,'hoverBg':index==hoverIndex2}"
+              @mouseover="hoverIndex2 = index"
+              @mouseout="hoverIndex2 = -1">
+              <span>{{item.SPECIMEN_NAME}}</span>
+              <div class="button-style fr" v-if="hoverIndex2 === index || clickIndex2 === index">
+                <span type="text" @click="handleEdit(item,'标本名称')">修改</span>
+                <span type="text" @click="handleDelete(item,'标本名称')">删除</span>
+              </div>
             </div>
           </div>
         </div>
@@ -103,10 +109,6 @@ export default {
     return{
       titlee:'123455',
       isShow:true,
-      // tittle:"Test",
-    //   isShow:false,
-    //   width:"60%",
-    // height:"1000px",
       modalData:{
         visible:true,
         title:'test',
@@ -130,13 +132,13 @@ export default {
         editVal: '',
         dynamicArr: []
       },
-      rowList:{},
      rules: {
       'test': [
         // { required: true, message: '所选项不能为空'},
         { validator: checkOrgTypeCode,  trigger: ['blur', 'change'] }
       ]
       },
+      idValue:'',
       organList:[],
       rowOrgList: {},
       positionList:[],
@@ -149,15 +151,11 @@ export default {
     this.getOrganList()
   },
   watch: {
-    'rowList' (o, n) {
-      console.log(o, n)
-    }
   },
   methods:{
     async handle (item, title, index) {
       console.log(title, item, index);
       this.row = true
-      this.rowList = item
       this.isTitle(title)
       if (title === "器官/系统") {
         this.rowOrgList = item
@@ -168,12 +166,11 @@ export default {
         const res = await apiData.getQuery({id:item.ID})
         this.positionList = res.data
         if (this.positionList.length>0) {
-          const res2 = await apiData.getQuery({id:this.positionList[0].ID})
-          this.nameList = res2.data
+          const res = await apiData.getQuery({id:this.positionList[0].ID})
+          this.nameList = res.data
         }
       } else if (title === "标本部位") {
         this.rowPosList = item
-        this.rowList = item
         this.show = true
         this.clickIndex1 = index;
         const res = await apiData.getQuery({id:item.ID})
@@ -183,29 +180,24 @@ export default {
         this.clickIndex2 = index;
       }
     },
-    idData(){
-
-    },
     // 获取首页list接口
     async getOrganList (id) {
+      // console.log(id);
       let positionList = []
       let nameList = []
       const res = await apiData.getQuery({id:id})
       this.organList = res.data
-      const res1 = await apiData.getQuery({id:this.organList[0].ID})
-      this.positionList = res1.data
-      const res2 = await apiData.getQuery({id:this.positionList[0].ID})
-      this.nameList = res2.data
-      console.log('默认',this.organList[0],this.positionList[0]);
-      
+      console.log(this.positionList.length===0? '' :this.positionList[0].ID, this.nameList);
+
+      if (this.organList.length!==0){
+        const res1 = await apiData.getQuery({id:this.organList[0].ID})
+        this.positionList = res1.data
+      } else if (positionList.length!==0) {
+        const res2 = await apiData.getQuery({id:this.positionList[0].ID})
+        this.nameList = res2.data
+      }
     },
-    handleAdd (title) {
-      this.visible = true
-      this.editVal = false
-      let dynamicArr = []
-      this.isTitle(title)
-      this.h = '新增'
-      let id = ''
+    idData(id) {
       // 如果点击单独某一条 false没有
       if (this.row === false) {
         if (this.title ==='标本名称') {
@@ -221,10 +213,33 @@ export default {
           console.log('true有点计', this.rowOrgList);
         }
       }
+      // shazi = id
+      this.idValue = id
+      console.log(id);
+      
+    },
+    async succData(){
+      if (this.title === '标本部位') {
+        const res = await apiData.getQuery({id:this.idValue})
+        this.positionList = res.data
+      } else if (this.title === '标本名称') {
+        const res = await apiData.getQuery({id:this.idValue})
+        this.nameList = res.data
+      } else {
+        this.getOrganList()
+      }
+    },
+    handleAdd (title) {
+      this.visible = true
+      this.editVal = false
+      let dynamicArr = []
+      this.isTitle(title)
+      this.h = '新增'
+      this.idData()
       this.form.dynamicArr.push({
         pafTemplateId:'',
         specimenName:'',
-        pafSpecimenFid:id,
+        pafSpecimenFid:this.idValue,
         seqNo:title === '器官/系统'?
           this.organList.length:(title === '标本部位'? this.positionList.length:this.nameList.length)+this.form.dynamicArr.length + 1,
         specimenType:title === '器官/系统'?1:(title === '标本部位'?2:3)
@@ -242,31 +257,21 @@ export default {
     },
     async handleDelete (item, title) {
       const res = await apiData.getDelete({id: item.ID})
+      // if(res.type )
+      this.showMsg1(res, '删除')
+      // this.succData()
+      console.log(item);
       this.getOrganList()
+      // await this.getQuery({id:''})
     },
     async handleChangeInput (val) {
       const dynamicArr = []
       if (this.form.dynamicArr[this.form.dynamicArr.length - 1].specimenName !== '' ) {
-        let id = ''
-        // 如果点击单独某一条 false没有
-        if (this.row === false) {
-          if (this.title ==='标本名称') {
-            id = this.positionList[0].ID
-          } else if (this.title ==='标本部位'){
-            id = this.organList[0].ID
-          }
-        } else {
-          if (this.title ==='标本名称') {
-            id = this.rowPosList.ID || this.positionList[0].ID
-          } else if (this.title ==='标本部位'){
-            id = this.rowOrgList.ID || this.organList[0].ID
-            console.log('true有点计', this.rowOrgList);
-          }
-        }
+        this.idData()
         this.form.dynamicArr.push({
           pafTemplateId:'',
           specimenName:'',
-          pafSpecimenFid:id,
+          pafSpecimenFid:this.idValue,
           specimenType:this.title === '器官/系统'?1:(this.title === '标本部位'?2:3),
           seqNo:this.title === '器官/系统'?
             this.organList.length:(this.title === '标本部位'? this.positionList.length:this.nameList.length) + this.form.dynamicArr.length + 1,
@@ -281,22 +286,7 @@ export default {
       this.$refs.form.validateForm(async (valid) => {
         if (valid) {
           // 通过验证
-          let id = ''
-          // 如果点击单独某一条 false没有
-          if (this.row === false) {
-            if (this.title ==='标本名称') {
-              id = this.positionList[0].ID
-            } else if (this.title ==='标本部位'){
-              id = this.organList[0].ID
-            }
-          } else {
-            if (this.title ==='标本名称') {
-              id = this.rowPosList.ID || this.positionList[0].ID
-            } else if (this.title ==='标本部位'){
-              id = this.rowOrgList.ID || this.organList[0].ID
-              console.log('true有点计', this.rowOrgList);
-            }
-          }
+          this.idData()
           if (title ==='新增') {
             const dynamicArr = []
             // 判断去重空值
@@ -306,34 +296,15 @@ export default {
               }
             })
             const res = await apiData.getAdd(dynamicArr)
-            if (this.title === '标本部位') {
-              const res = await apiData.getQuery({id:id})
-              this.positionList = res.data
-            } else if (this.title === '标本名称') {
-              const res = await apiData.getQuery({id:id})
-              this.nameList = res.data
-            } else {
-              this.getOrganList()
-            }
+             this.showMsg1(res, '新增')
+            this.succData()
           } else {
             const res = await apiData.getUpdate({
               id: this.idVal.ID,
               specimenName: this.form.editVal
             })
-            if (this.title === '标本部位') {
-              console.log(this.rowList,this.idVal,'this.标本部位.rowList');
-              const res1 = await apiData.getQuery({id:id})
-              console.log(res1);
-              this.positionList = res1.data
-            } else if (this.title === '标本名称') {
-              console.log(this.rowList,'this.标本名称.rowList');
-              const res = await apiData.getQuery({id:id})
-              this.nameList = res.data
-            } else {
-              this.getOrganList()
-              // const res = await apiData.getQuery({id:id})
-              // this.organList = res.data
-            }
+            this.showMsg1(res, '修改')
+            this.succData()
           }
           this.visible = false
           this.int()
@@ -362,6 +333,19 @@ export default {
 }
 
 </script>
+<style lang="scss" scoped>
+.list-style {
+  height: calc(100vh - 70px);
+  // overflow-y: auto;
+}
+.list-style:hover {
+    overflow-y: auto;
+}
+// .tab-style{
+//   overflow-y:auto;
+//   height:calc(100vh - 70px);
+// }
+</style>
 <style lang='stylus' scoped>
 .styleHover 
   background rgba(207,224,255,1)!important;
@@ -385,6 +369,7 @@ export default {
       height: 100%;
       overflow: auto;
     .tab-style 
+      //  height calc(100vh - 70px)
       // width 410px;
       height 40px
       line-height 40px
