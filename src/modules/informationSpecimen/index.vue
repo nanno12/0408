@@ -1,14 +1,8 @@
 <template>
   <div class='home-page-wrap-in'>
-    <table-style  v-bind:listTable="listTable" 
-     @handleRow="handleRow"
-     @handleEdit="handleEdit"
-     @handleDelete="handleDelete"
-     :showIndex="true"
-     :showSelection="true"
-     :isShow="isShow"
-    :tableData="tableData">
-    </table-style>
+    <!-- <win-modal :title="titlee" :isShow="isShow">
+        <span>this is a dialog</span>
+    </win-modal> -->
     <w-row style="background:rgba(255,255,255,1);">
       <w-col :span="8">
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">器官/系统</span>
@@ -27,7 +21,7 @@
       </w-col>
       <w-col :span="8"  class="center">
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本部位</span>
-          <w-button type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
+          <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
         </title-style>
         <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
           @click="handle(item,'标本部位',index)" class="tab-style"
@@ -42,7 +36,7 @@
       </w-col>
       <w-col :span="8" >
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本名称</span>
-          <w-button type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
+          <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
         </title-style>
         <div v-show="show">
           <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
@@ -93,15 +87,12 @@ import apiData from './api/api.js';
 export default {
   data(){
     let checkOrgTypeCode = async (rule, value, callback) => {
-      console.log(value)
       if (value) {
          const params = {
           type:'specimen',
           name:value
         }
         const res = await apiData.isHaveReName(params)
-        // const { data } = res
-        console.log(res);
         if (res.type !== 'SUCCESS') {
           return callback(new Error('该名称已存在！'))
         } else {
@@ -110,6 +101,18 @@ export default {
       }
     }
     return{
+      titlee:'123455',
+      isShow:true,
+      // tittle:"Test",
+    //   isShow:false,
+    //   width:"60%",
+    // height:"1000px",
+      modalData:{
+        visible:true,
+        title:'test',
+        width:'35%',
+        height:'300px'
+      },
       visible: false,
       title: '',
       hoverIndex: 0,
@@ -121,17 +124,13 @@ export default {
       editVal: false,
       show: true,
       h: '',
-      idVal: '',
-      isShow: {
-      width: 200,
-      fixed: 'right',
-      copy: false,
-      // edit:true
-      },
+      idVal: {},
+      row: false,
       form: {
         editVal: '',
         dynamicArr: []
       },
+      rowList:{},
      rules: {
       'test': [
         // { required: true, message: '所选项不能为空'},
@@ -141,35 +140,37 @@ export default {
       organList:[],
       positionList:[],
       nameList:[],
-      tableData:[{}],
-      listTable:[{prop:'nihao',label:'nihao'}]  
     }
   },
   created(){
     this.getOrganList()
   },
   watch: {
-    'title' (o, n) {
+    'rowList' (o, n) {
       console.log(o, n)
-    },
-    //  (o, n) {
-
-    // }
+    }
   },
   methods:{
     async handle (item, title, index) {
       console.log(title, item, index);
-
+      this.row = true
       this.isTitle(title)
       if (title === "器官/系统") {
+        this.rowList = item
+        this.show = false
         this.clickIndex = index;
         this.hoverIndex1 = 0
         this.clickIndex1 = 0
         const res = await apiData.getQuery({id:item.ID})
         this.positionList = res.data
+        if (this.positionList.length>0) {
+          const res2 = await apiData.getQuery({id:this.positionList[0].ID})
+          this.nameList = res2.data
+        }
       } else if (title === "标本部位") {
+        this.rowList = item
+        this.show = true
         this.clickIndex1 = index;
-        console.log(item);
         const res = await apiData.getQuery({id:item.ID})
         this.nameList = res.data
       } else {
@@ -182,43 +183,68 @@ export default {
       let nameList = []
       const res = await apiData.getQuery({id:id})
       this.organList = res.data
-      res.data.map(item => {
-        item.children.map(it => {
-           positionList.push(it)
-           it.children.map(ite => {
-            nameList.push(ite)
-           }) 
-        })
-      })
+      const res1 = await apiData.getQuery({id:this.organList[0].ID})
+      this.positionList = res1.data
+      const res2 = await apiData.getQuery({id:this.positionList[0].ID})
+      this.nameList = res2.data
+      console.log('默认',this.organList[0],this.positionList[0]);
       
-      this.positionList = positionList
-      this.nameList = nameList
     },
     handleAdd (title) {
       this.visible = true
       this.editVal = false
       let dynamicArr = []
+      let id = ''
       this.isTitle(title)
       this.h = '新增'
-      this.form.dynamicArr.push({
+      console.log(title,this.rowList);
+      if (this.row === false) {
+        if (this.title ==='标本名称') {
+          id = this.positionList[0].ID
+          console.log(this.positionList[0].ID);
+          
+        } else if (this.title ==='标本部位'){
+          id = this.organList[0].ID
+          console.log(this.organList[0].ID);
+        }
+      } else {
+        if (this.title ==='标本名称') {
+          console.log('标本名称212');
+          id = this.rowList.ID
+          if(this.rowList.SPECIMEN_TYPE !== 2) {
+            id =  this.positionList[0].ID
+          } else {
+            id = this.rowList.ID
+          }
+        } else if (this.title ==='标本部位'){
+          console.log('标本部位219');
+          if(this.rowList.SPECIMEN_TYPE !== 1) {
+            id =  this.organList[0].ID
+          } else {
+            id = this.rowList.ID
+          }
+          // id = this.rowList.ID
+        }
+      }
+      // if (this.rowList) {
+        this.form.dynamicArr.push({
           pafTemplateId:'',
           specimenName:'',
-          pafSpecimenFid:title === '器官/系统'?
-            this.organList[0].PAF_SPECIMEN_FID:(title === '标本部位'?this.positionList[0].PAF_SPECIMEN_FID:this.nameList[0].PAF_SPECIMEN_FID),
+          pafSpecimenFid:id,
           seqNo:title === '器官/系统'?
             this.organList.length:(title === '标本部位'? this.positionList.length:this.nameList.length)+this.form.dynamicArr.length + 1,
-          specimenType:title === '器官/系统'?
-            this.organList[0].SPECIMEN_TYPE:(title === '标本部位'?this.positionList[0].SPECIMEN_TYPE:this.nameList[0].SPECIMEN_TYPE)
+          specimenType:title === '器官/系统'?1:(title === '标本部位'?2:3)
         })
-        console.log(title);
+      // }
     },
     async handleEdit (item) {
       console.log(item)
       this.h = '修改'
       this.form.editVal = item.SPECIMEN_NAME
-      this.idVal = item.ID
+      this.idVal = item
       this.editVal = true
       this.visible = true
+
 
     },
     async handleDelete (item, title) {
@@ -227,39 +253,42 @@ export default {
     },
     async handleChangeInput (val) {
       const dynamicArr = []
-      console.log(this.title, val);
-      // const params = {
-      //   type:'specimen',
-      //   name:val
-      // }
-      // let res = await apiData.isHaveReName(params)
-      // if (res.type !== "SUCCESS") {
-      //   console.log(res.type);
-      // }
       if (this.form.dynamicArr[this.form.dynamicArr.length - 1].specimenName !== '' ) {
+        let id = ''
+        if (this.row === false) {
+          if (this.title ==='标本名称') {
+            id = this.positionList[0].ID
+            console.log(this.positionList[0].ID);
+            
+          } else if (this.title ==='标本部位'){
+            id = this.organList[0].ID
+            console.log(this.organList[0].ID);
+          }
+        } else {
+          if (this.title ==='标本名称') {
+            id = this.rowList.ID
+            if(this.rowList.SPECIMEN_TYPE !== 2) {
+              id =  this.positionList[0].ID
+            } else {
+              id = this.rowList.ID
+            }
+          } else if (this.title ==='标本部位'){
+           if(this.rowList.SPECIMEN_TYPE !== 1) {
+              id =  this.organList[0].ID
+            } else {
+              id = this.rowList.ID
+            }
+          }
+        }
         this.form.dynamicArr.push({
           pafTemplateId:'',
           specimenName:'',
-          pafSpecimenFid:this.title === '器官/系统'?
-            this.organList[0].PAF_SPECIMEN_FID:(this.title === '标本部位'?this.positionList[0].PAF_SPECIMEN_FID:this.nameList[0].PAF_SPECIMEN_FID),
+          pafSpecimenFid:id,
+          specimenType:this.title === '器官/系统'?1:(this.title === '标本部位'?2:3),
           seqNo:this.title === '器官/系统'?
             this.organList.length:(this.title === '标本部位'? this.positionList.length:this.nameList.length) + this.form.dynamicArr.length + 1,
-          specimenType:this.title === '器官/系统'?
-            this.organList[0].SPECIMEN_TYPE:(this.title === '标本部位'?this.positionList[0].SPECIMEN_TYPE:this.nameList[0].SPECIMEN_TYPE)
-        })
+          })
       }
-      console.log(this.form.dynamicArr,this.form.dynamicArr.length);
-    },
-    handleEdit(row){
-      console.log(row);
-
-    },
-    handleDelete (row,index) {
-      console.log(row,index);
-      
-    },
-    handleRow (row) {
-      // console.log(row);
     },
     int () {
       this.form.dynamicArr = []
@@ -267,40 +296,100 @@ export default {
     },
     submit (title) {
       this.$refs.form.validateForm(async (valid) => {
-        console.log(valid,title)
         if (valid) {
           // 通过验证
           if (title ==='新增') {
               const dynamicArr = []
-              console.log(this.form.dynamicArr);
-              
               this.form.dynamicArr.find(item => {
               if (item.specimenName !== '') {
-                console.log(item);
                 dynamicArr.push(item)
               }
             })
             const res = await apiData.getAdd(dynamicArr)
+            let id = ''
+            if (this.row === false) {
+              if (this.title ==='标本名称') {
+                id = this.positionList[0].ID
+                console.log(this.positionList[0].ID);
+              } else if (this.title ==='标本部位'){
+                id = this.organList[0].ID
+                console.log(this.organList[0].ID);
+              }
+            } else {
+              if (this.title ==='标本名称') {
+                id = this.rowList.ID
+                if(this.rowList.SPECIMEN_TYPE !== 2) {
+                  id =  this.positionList[0].ID
+                } else {
+                  id = this.rowList.ID
+                }
+              } else if (this.title ==='标本部位'){
+              if(this.rowList.SPECIMEN_TYPE !== 1) {
+                  id =  this.organList[0].ID
+                } else {
+                  id = this.rowList.ID
+                }
+              }
+            }
+            if (this.title === '标本部位') {
+              console.log(this.rowList,'this.标本部位.rowList');
+              const res1 = await apiData.getQuery({id:id})
+              this.positionList = res1.data
+            } else if (this.title === '标本名称') {
+              console.log(this.rowList,'this.标本名称.rowList');
+              const res = await apiData.getQuery({id:id})
+              this.nameList = res.data
+            } else {
+              this.getOrganList()
+            }
           } else {
+            let id = ''
+            if (this.row === false) {
+              if (this.title ==='标本名称') {
+                id = this.positionList[0].ID
+                console.log(this.positionList[0].ID);
+              } else if (this.title ==='标本部位'){
+                id = this.organList[0].ID
+                console.log(this.organList[0].ID);
+              }
+            } else {
+              if (this.title ==='标本名称') {
+                id = this.rowList.ID
+                if(this.rowList.SPECIMEN_TYPE !== 2) {
+                  id =  this.positionList[0].ID
+                } else {
+                  id = this.rowList.ID
+                }
+              } else if (this.title ==='标本部位'){
+              if(this.rowList.SPECIMEN_TYPE !== 1) {
+                  id =  this.organList[0].ID
+                } else {
+                  id = this.rowList.ID
+                }
+              }
+            }
             let params = {
-              id: this.idVal,
+              id: this.idVal.ID,
               specimenName: this.form.editVal
             }
             const res = await apiData.getUpdate(params)
-            console.log(res)
+            if (this.title === '标本部位') {
+              console.log(this.rowList,this.idVal,'this.标本部位.rowList');
+              const res1 = await apiData.getQuery({id:id})
+              console.log(res1);
+              
+              this.positionList = res1.data
+            } else if (this.title === '标本名称') {
+              console.log(this.rowList,'this.标本名称.rowList');
+              const res = await apiData.getQuery({id:id})
+              this.nameList = res.data
+            } else {
+              const res = await apiData.getQuery({id:id})
+              this.organList = res.data
+            }
           }
-
-        //   const dynamicArr = []
-        //   this.form.dynamicArr.find(item => {
-        //   if (item.specimenName !== '') {
-        //     console.log(item);
-        //     dynamicArr.push(item)
-        //   }
-        // })
-        // const res = await apiData.getAdd(dynamicArr)
           this.visible = false
           this.int()
-          this.getOrganList()
         } else {
           // 未通过
           console.log('invalid form !')
@@ -314,10 +403,9 @@ export default {
     },
     isTitle (title) {
       if (title ==='器官/系统') {
-        this.show = false
         this.title = '器官/系统'
       } else if (title ==='标本部位') {
-        this.show = true
+        // this.show = true
         this.title = '标本部位'
       }  else {
         this.title = '标本名称'

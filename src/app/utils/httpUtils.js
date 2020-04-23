@@ -40,6 +40,7 @@ axios.interceptors.request.use(axiosConfig => {
 	}
 	/*global authToken jwt*/
 	axiosConfig.headers["Authorization"] = authToken || jwt;
+	// console.log(jwt);
 
 	//拼接主菜单和模块菜单，以逗号分隔，例如住院采集下的标本查询，menuid=623,625
 	let arr = [];

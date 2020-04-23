@@ -1,23 +1,6 @@
 <template>
   <div class="home-page-wrap-ba">
-    <table-style  v-bind:listTable="listTable" 
-     @handleRow="handleRowe"
-     :showIndex="true"
-     :showSelection="true"
-     @handleSelectionChange="handleSelectionChangew"
-    :tableData="tableData">
-        <!-- <div slot="handleColumn">
-        <w-table-column
-          fixed="right"
-          label="操作"
-          width="100">
-          <template slot-scope="scope">
-            <w-button  type="text" size="small">查看</w-button>
-            <w-button type="text" size="small">编辑</w-button>
-          </template>
-        </w-table-column>
-      </div> -->
-    </table-style>
+    
     <w-row  class="home-page-body">
       <w-col :span="6" >
         <title-style class="pd-y_22 po_re"><span slot="header">申请单列表</span>
