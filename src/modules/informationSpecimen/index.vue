@@ -16,7 +16,7 @@
             <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr" v-if="hoverIndex === index || clickIndex === index">
               <span type="text" @click="handleEdit(item,'器官/系统')">修改</span>
-              <span type="text" @click="handleDelete(item,'器官/系统')">删除</span>
+              <span type="text" @click="handleDelete(item,'器官/系统',index)">删除</span>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
             <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr" v-if="hoverIndex1 === index || clickIndex1 === index">
               <span type="text" @click="handleEdit(item,'标本部位')">修改</span>
-              <span type="text" @click="handleDelete(item,'标本部位')">删除</span>
+              <span type="text" @click="handleDelete(item,'标本部位',index)">删除</span>
             </div>
           </div>
         </div>
@@ -51,7 +51,7 @@
               <span>{{item.SPECIMEN_NAME}}</span>
               <div class="button-style fr" v-if="hoverIndex2 === index || clickIndex2 === index">
                 <span type="text" @click="handleEdit(item,'标本名称')">修改</span>
-                <span type="text" @click="handleDelete(item,'标本名称')">删除</span>
+                <span type="text" @click="handleDelete(item,'标本名称',index)">删除</span>
               </div>
             </div>
           </div>
@@ -90,6 +90,7 @@
 <script>
 import * as layerUtils from 'app/utils/layerUtils';
 import apiData from './api/api.js';
+import _ from 'lodash'
 export default {
   data(){
     let checkOrgTypeCode = async (rule, value, callback) => {
@@ -125,6 +126,8 @@ export default {
       clickIndex2: -1, 
       editVal: false,
       show: true,
+      findId: '',
+      findtype:'',
       h: '',
       idVal: {},
       row: false,
@@ -156,7 +159,9 @@ export default {
     async handle (item, title, index) {
       console.log(title, item, index);
       this.row = true
+      let list = []
       this.isTitle(title)
+      // debugger
       if (title === "器官/系统") {
         this.rowOrgList = item
         this.show = false
@@ -164,10 +169,18 @@ export default {
         this.hoverIndex1 = 0
         this.clickIndex1 = 0
         const res = await apiData.getQuery({id:item.ID})
-        this.positionList = res.data
-        if (this.positionList.length>0) {
-          const res = await apiData.getQuery({id:this.positionList[0].ID})
-          this.nameList = res.data
+        if (res.type === 'SUCCESS') {
+          this.positionList = res.data
+          if (this.positionList.length>0) {
+            console.log(res.data[0],'12345');
+            const res1 = await apiData.getQuery({id:item.children[0].ID})
+            if (res1.type === 'SUCCESS') {
+              console.log(res1);
+              this.nameList = res1.data
+            }
+            
+          //  this.handle(item, title, index)
+          }
         }
       } else if (title === "标本部位") {
         this.rowPosList = item
@@ -182,24 +195,29 @@ export default {
     },
     // 获取首页list接口
     async getOrganList (id) {
-      // console.log(id);
       let positionList = []
       let nameList = []
-      const res = await apiData.getQuery({id:id})
+      const res = await apiData.getQuery()
       this.organList = res.data
-      console.log(this.positionList.length===0? '' :this.positionList[0].ID, this.nameList);
-
-      if (this.organList.length!==0){
-        const res1 = await apiData.getQuery({id:this.organList[0].ID})
-        this.positionList = res1.data
-      } else if (positionList.length!==0) {
-        const res2 = await apiData.getQuery({id:this.positionList[0].ID})
-        this.nameList = res2.data
+      if (!id) {
+        if (this.organList.length!==0){
+          const res = await apiData.getQuery({id:this.organList[0].ID})
+          this.positionList = res.data
+          console.log(res, this.positionList[0]);
+        } 
+         if (this.positionList.length!==0) {
+          const res = await apiData.getQuery({id:this.positionList[0].ID})
+          this.nameList = res.data
+        }
       }
     },
-    idData(id) {
+    idData(item) {
+      console.log(item);
+      
       // 如果点击单独某一条 false没有
+      let id = ''
       if (this.row === false) {
+        console.log(id,'falsefalsefalse');
         if (this.title ==='标本名称') {
           id = this.positionList[0].ID
         } else if (this.title ==='标本部位'){
@@ -207,13 +225,25 @@ export default {
         }
       } else {
         if (this.title ==='标本名称') {
-          id = this.rowPosList.ID || this.positionList[0].ID
+           if (this.findId) {
+            if(this.findtype === 3) return
+            id = this.findId
+            console.log(this.findId,'truetruetrue');
+          } else {
+            id = this.rowPosList.ID || this.positionList[0].ID
+          }
         } else if (this.title ==='标本部位'){
-          id = this.rowOrgList.ID || this.organList[0].ID
+          if (this.findId) {
+            console.log(this.findId,'truetruetrue');
+            if(this.findtype === 2) return
+            id = this.findId
+          } else {
+            id = this.rowOrgList.ID || this.organList[0].ID
+            console.log('哈哈哈哈');
+          }
           console.log('true有点计', this.rowOrgList);
         }
       }
-      // shazi = id
       this.idValue = id
       console.log(id);
       
@@ -222,9 +252,11 @@ export default {
       console.log(e,v);
       if (this.title === '标本部位') {
         if (e === 'nihao') {
+          console.log(v, 'vvvvvv');
           const res = await apiData.getQuery({id:v})
           this.nameList = res.data
-        } 
+        }
+        console.log(this.idValue,'this.idValue');
         const res = await apiData.getQuery({id:this.idValue})
         this.positionList = res.data
         console.log(this.idValue);
@@ -233,13 +265,11 @@ export default {
         this.nameList = res.data
       } else {
         if (e === 'nihao') {
-          console.log(v);
-          const res = await apiData.getQuery({id:v})
-          this.positionList = res.data
-          this.getOrganList({id:v})
-        } else {
-         this.getOrganList()
+          console.log(v,this.positionList);
+            const res = await apiData.getQuery({id:v})
+            this.positionList = res.data
         }
+        this.getOrganList(v)
       }
     },
     handleAdd (title) {
@@ -268,15 +298,15 @@ export default {
 
 
     },
-    async handleDelete (item, title) {
+    handleDelete: _.debounce(async function (item, title,index) {
+      console.log(item, title);
       const res = await apiData.getDelete({id: item.ID})
       this.showMsg1(res, '删除')
       let list = ''
-      this.idData()
         if (this.title === '标本部位') { 
         list = this.positionList
       } else if (this.title === '标本名称') { 
-        list = this.nameLIst
+        list = this.nameList
       } else {
         list = this.organList
       }
@@ -289,16 +319,26 @@ export default {
         } else {
           this.clickIndex = this.clickIndex -1
         }
-        // index = index -1
         find = list.slice(0,-1)[list.slice(0,-1).length-1].ID
-        // console.log(list.slice(0,-1)[list.slice(0,-1).length-1].ID,'listlistlist',index);
       } else {
-        find = list.find(it =>it.SEQ_NO === item.SEQ_NO+1)
+        find = list.find((it,index1) => index1+1 === index)
+         if (this.title === '标本部位') {
+          this.clickIndex1 = this.clickIndex1 -1
+        } else if (this.title === '标本名称') {
+          this.clickIndex2 = this.clickIndex2 -1
+        } else {
+          // this.organList.splice(index, 1)
+          this.clickIndex = this.clickIndex -1
+        }
         find = find.ID
       }
-        console.log(item,find,list[list.length-1]);
+        this.idData(item)
+        console.log(item,find.ID,list[list.length-1]);
         this.succData('nihao',find)
-    },
+        this.findId = find
+        this.findtype = item.SPECIMEN_TYPE
+
+    },300),
     async handleChangeInput (val) {
       const dynamicArr = []
       if (this.form.dynamicArr[this.form.dynamicArr.length - 1].specimenName !== '' ) {
@@ -317,7 +357,7 @@ export default {
       this.form.dynamicArr = []
       this.form.editVal = ''
     },
-    submit (title) {
+    submit:_.debounce(async function (title) {
       this.$refs.form.validateForm(async (valid) => {
         if (valid) {
           // 通过验证
@@ -348,7 +388,7 @@ export default {
           console.log('invalid form !')
         }
       })
-    },
+    },300),
     reset () {
       this.$refs.form.resetFields()
       this.int()
@@ -371,11 +411,11 @@ export default {
 <style lang="scss" scoped>
 .list-style {
   height: calc(100vh - 70px);
-  // overflow-y: auto;
+  overflow-y: auto;
 }
-.list-style:hover {
-    overflow-y: auto;
-}
+// .list-style:hover {
+//     overflow-y: auto;
+// }
 // .tab-style{
 //   overflow-y:auto;
 //   height:calc(100vh - 70px);
