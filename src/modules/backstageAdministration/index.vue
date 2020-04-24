@@ -398,7 +398,7 @@ export default {
         }
       ], // 开单类别下拉列表
       MODAL_TITLE : {
-        ADD:'新增',
+        ADD:'新1111增',
         EADIT:'修改',
         FORM:'申请单',
         ITEM:'项目',
