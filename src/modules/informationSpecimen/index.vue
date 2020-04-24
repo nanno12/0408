@@ -12,7 +12,7 @@
           <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
             :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
             @mouseover="hoverIndex = index"
-            @mouseout="hoverIndex = -1" :key="index">
+            @mouseout="hoverIndex = - 1" :key="index">
             <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr" v-if="hoverIndex === index || clickIndex === index">
               <span type="text" @click="handleEdit(item,'器官/系统')">修改</span>
@@ -29,7 +29,7 @@
           <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
             @click="handle(item,'标本部位',index)" class="tab-style"
             @mouseover="hoverIndex1 = index"
-            @mouseout="hoverIndex1 = -1" :key="index">
+            @mouseout="hoverIndex1 = - 1" :key="index">
             <span>{{item.SPECIMEN_NAME}}</span>
             <div class="button-style fr" v-if="hoverIndex1 === index || clickIndex1 === index">
               <span type="text" @click="handleEdit(item,'标本部位')">修改</span>
@@ -218,15 +218,28 @@ export default {
       console.log(id);
       
     },
-    async succData(){
+    async succData(e,v){
+      console.log(e,v);
       if (this.title === '标本部位') {
+        if (e === 'nihao') {
+          const res = await apiData.getQuery({id:v})
+          this.nameList = res.data
+        } 
         const res = await apiData.getQuery({id:this.idValue})
         this.positionList = res.data
+        console.log(this.idValue);
       } else if (this.title === '标本名称') {
         const res = await apiData.getQuery({id:this.idValue})
         this.nameList = res.data
       } else {
-        this.getOrganList()
+        if (e === 'nihao') {
+          console.log(v);
+          const res = await apiData.getQuery({id:v})
+          this.positionList = res.data
+          this.getOrganList({id:v})
+        } else {
+         this.getOrganList()
+        }
       }
     },
     handleAdd (title) {
@@ -257,12 +270,34 @@ export default {
     },
     async handleDelete (item, title) {
       const res = await apiData.getDelete({id: item.ID})
-      // if(res.type )
       this.showMsg1(res, '删除')
-      // this.succData()
-      console.log(item);
-      this.getOrganList()
-      // await this.getQuery({id:''})
+      let list = ''
+      this.idData()
+        if (this.title === '标本部位') { 
+        list = this.positionList
+      } else if (this.title === '标本名称') { 
+        list = this.nameLIst
+      } else {
+        list = this.organList
+      }
+      let find = ''
+      if (list[list.length-1].ID === item.ID){
+        if (this.title === '标本部位') {
+          this.clickIndex1 = this.clickIndex1 -1
+        } else if (this.title === '标本名称') {
+          this.clickIndex2 = this.clickIndex2 -1
+        } else {
+          this.clickIndex = this.clickIndex -1
+        }
+        // index = index -1
+        find = list.slice(0,-1)[list.slice(0,-1).length-1].ID
+        // console.log(list.slice(0,-1)[list.slice(0,-1).length-1].ID,'listlistlist',index);
+      } else {
+        find = list.find(it =>it.SEQ_NO === item.SEQ_NO+1)
+        find = find.ID
+      }
+        console.log(item,find,list[list.length-1]);
+        this.succData('nihao',find)
     },
     async handleChangeInput (val) {
       const dynamicArr = []
