@@ -14,11 +14,13 @@ const DEBUGAPI = 'http://172.17.1.211:20034'
 const url = {
   query: DEBUGAPI + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
   addUpdateItem:DEBUGAPI + '/clf/pafbase/addOrUpdateItem', // 添加或修改申请单项目信息
-  Info:DEBUGAPI + '/clf/pafbase/findItemInfo', // 申请单项目详情查看，项目点击申请单编辑时候查询项目相关的数据
-  delete:DEBUGAPI + '/clf/pafbase/deleteTempItem', // 删除申请单下的具体一个项目
+  findItemInfo:DEBUGAPI + '/clf/pafbase/findItemInfo', // 申请单项目详情查看，项目点击申请单编辑时候查询项目相关的数据
+  deleteTempItem:DEBUGAPI + '/clf/pafbase/deleteTempItem', // 删除申请单下的具体一个项目
   findPafTemplate:DEBUGAPI + '/clf/pafbase/findPafTemplate', // 查看申请单模板
+  pafTemplate:DEBUGAPI +'/clf/pafbase/getPafTemplateDetails', // 查看申请单详情
   pafTemplateitems:DEBUGAPI + '/clf/pafbase/getPafTemplateitems', // 获得申请单下的项目集合
   copy: DEBUGAPI + '/clf/pafbase/copyTemplate',  // 申请单模板复制
+  deletePafTemplate: DEBUGAPI + '/clf/pafbase/deletePafTemplate',  // 删除申请单模板,根据ID进行
   addUpdateTemplate:DEBUGAPI + '/clf/pafbase/addOrUpdatePafTemplate' // 添加或者更新申请单模板，包含了医嘱检查项目信息
   // ceshi: DEBUGAP + 'Pacs/common/request/gethospitalinfo'
 
@@ -31,6 +33,9 @@ export default {
   // ceshi(params) {
   //   return httpUtils.post(url.ceshi, params)
   // },
+  getPafTemplate(params) {
+    return httpUtils.postJsonRequest(url.pafTemplate, params)
+  },
   getQuery(params) {
     return httpUtils.postJsonRequest(url.query, params)
   },
@@ -40,11 +45,14 @@ export default {
   getAddUpdateTemplate(params) {
     return httpUtils.postJsonRequest(url.addUpdateTemplate, params)
   },
-  getInfo(params) {
-    return httpUtils.postJsonRequest(url.Info, params)
+  getFindItemInfo(params) {
+    return httpUtils.postJsonRequest(url.findItemInfo, params)
   },
-  getDelete(params) {
-    return httpUtils.postJsonRequest(url.delete, params)
+  getDeleteTempItem(params) {
+    return httpUtils.postJsonRequest(url.deleteTempItem, params)
+  },
+  getDeletePafTemplate(params) {
+    return httpUtils.postJsonRequest(url.deletePafTemplate, params)
   },
   // 项目
   getPafTemplateitems(params) {

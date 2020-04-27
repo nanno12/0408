@@ -10,11 +10,31 @@
 		"scope": "javascript,typescript",
 		"prefix": "msg",
 		"body": [
-		"	if (res.type === 'SUCCESS') {",
-		"   	this.showMsg('修改成功','success')",
-		"	} else {",
-		"		this.showMsg('修改失败','error')",
-		"	}",
+		"if (res.type === 'SUCCESS') {",
+		"  this.showMsg('修改成功','success')",
+		"} else {",
+		"	 this.showMsg('修改失败','error')",
+		"}",
+		],
+		"description": "Log output to console"
+	},
+	"Print to api": {
+		"scope": "javascript,typescript",
+		"prefix": "api",
+		"body": [
+		"async getPafTemplate () {",
+		"	const res = await apiData.$1()",
+		"	console.log(res);",
+		"},"
+		],
+		"description": "Log output to console"
+	},
+	"Print to res": {
+		"scope": "javascript,typescript",
+		"prefix": "res",
+		"body": [
+		"	const res = await apiData.$1()",
+		"	console.log(res);",
 		],
 		"description": "Log output to console"
 	}

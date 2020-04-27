@@ -26,10 +26,22 @@
       </w-table-column>
       <slot name="handleColumn"></slot>
     </w-table>
+    <w-pagination 
+      :total="QUERY_PAGE.total" :page-size="4"
+      v-if="isShow.pagination"
+      @size-change='sizeChange'
+      @current-change="currentChange"
+      :page-sizes="[4, 8, 12, 16]"
+      :show="['prev', 'next', 'total', 'jump']">
+    </w-pagination>
   </div>
 </template>
 <script>
+  import {QUERY_PAGE} from '../constant.js'
   export default {
+    data () {
+      QUERY_PAGE
+    },
     props :{
       // 这是相应的字段展示
         listTable: {
@@ -53,6 +65,21 @@
         }
       }
     },
+    // watch:{
+    // tableData (oldVal, newVal) {
+    //   this.$nextTick(() => {
+    //     this.tableData.map(item => {
+    //       let arr = [...this.multipleSelection]
+    //       if (arr) {
+    //         const find = arr.find(it => it.chargeItemCode === item.chargeItemCode)
+    //         if (find) {
+    //           this.$refs.tableData.toggleRowSelection(item, true)
+    //         }
+    //       }
+    //     })
+    //   })
+    // }
+    // },
      data () {
       return {
         multipleSelection: [] // 多行选中
@@ -74,7 +101,16 @@
         this.$emit('handleCopy', row)
       },
       handleDelete (row, index) {
-        this.$emit('handleEdit',{row, index})
+        this.$emit('handleDelete',row, index)
+      },
+      sizeChange(val){
+      console.log(`每页${val}条`)
+      // 向父组件传递sizeChange事件，传入val值
+      this.$emit('sizeChange',val)
+      },
+      currentChange(val){
+        console.log(`当前页:${val}`)
+        this.$emit('currentChange',val)
       }
     }
   }
