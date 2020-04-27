@@ -123,7 +123,7 @@
             <w-col :span="12">
               <w-form-item
                 label="项目编码"
-                prop="itemCode">
+                prop="item.itemCode">
                 <w-input
                   :maxlength="20"
                   placeholder="请输入项目编码"
@@ -135,7 +135,7 @@
             <w-col :span="12">
               <w-form-item
                 label="项目名称"
-                prop="itemName">
+                prop="item.itemName">
                 <w-input
                   :maxlength="20"
                   placeholder="请输入项目名称"
@@ -149,7 +149,7 @@
             <w-col :span="12">
               <w-form-item
                 label="项目价格"
-                prop="itemPrice">
+                prop="item.itemPrice">
                 <w-input
                   :maxlength="20"
                   placeholder="请输入项目价格"
@@ -164,7 +164,8 @@
             <w-col>
               <w-form-item
                 label="收费项目"
-                prop="chargeItems">
+                prop="item.chargeItems"
+               >
                 <w-input
                   @focus="handleIputVal"
                   readonly
@@ -193,13 +194,24 @@
             </w-col>
           </w-row>
         </w-row>
-        <w-table v-else :data=costList  ref="costList" border
-          @selection-change="handleSelectionChange">
-          <w-table-column type="selection"  key="1" width="55"></w-table-column>
-          <w-table-column prop="chargeItemCode"  key="2" width= '120px' label="收费编码"></w-table-column>
-          <w-table-column prop="chargeItemName"  key="3" label="收费项目"></w-table-column>
-          <w-table-column prop="chargeItemPrice"  key="4" width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
-        </w-table>
+        <div v-else>
+          <w-input v-model="search" placeholder="请输入关键字进行搜索"
+            @keyup.enter.native="handleSearch(search)">
+            <template slot="suf-append">
+              <i @click="handleSearch" class="w-icon-search"></i>
+            </template>
+          </w-input>
+          <w-table  :data=costList
+            v-loading="loading"
+            win-loading-text="正在获取数据..."
+            ref="costList" border
+            @selection-change="handleSelectionChange">
+            <w-table-column type="selection"  key="1" width="55"></w-table-column>
+            <w-table-column prop="CHARGE_CODE"  key="2" width= '120px' label="收费编码"></w-table-column>
+            <w-table-column prop="CHARGE_NAME"  key="3" label="收费项目"></w-table-column>
+            <w-table-column prop="CHARGE_PRICE"  key="4" width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+          </w-table>
+        </div>
       </w-form>
       <span
         class="dialog-footer"
@@ -225,6 +237,8 @@ export default {
       MODAL_TITLE,
       QUERY_PAGE,
       clickIndex:0,
+      search:'',
+      loading:true,
       hoverIndex: 0,
       h : '',
       value2: "", // 搜索值
@@ -339,25 +353,26 @@ export default {
       costList: [],
       selectionVal: [],
       rules: {
-        itemCode: [
+        'item.itemCode': [
           {
             required: true,
             message: "请输入项目编码",
             trigger: "change"
           }
         ],
-        itemName: [
+        'item.itemName': [
           {
             required: true,
+            type: 'array',
             message: "请输入项目名称",
             trigger: "change"
           }
         ],
-        itemPrice: [
+        'item.itemPrice': [
           { required: true, message: '项目价格不能为空'},
           { type: 'number', message: '项目价格必须为数字值'}
         ],
-        chargeItems: [
+        'item.chargeItems': [
           {
             required: true,
             message: "请选择区域",
@@ -549,23 +564,16 @@ export default {
       const res = await apiData.getQuery()
       console.log(res,'res');
       console.log(this.form.chargeItems,'value1');
-      this.costList.map(item => {
-        this.form.chargeItems.map(ite => {
-          if (item === ite) {
-            console.log('itemite',item);
-          }
-        })
-        // let arr = [...this.form.chargeItems]
-        // if (arr) {
-          // const find = arr.
-          this.form.chargeItems.find(it => it.chargeItemCode === item.chargeItemCode)
-          if (find) {
-            this.$refs.costList.toggleRowSelection(item, true)
-          }
-        // }
-      })
       this.costList = res.data
-      console.log(this.costList,'472890');
+      this.loading = false
+    },
+    async handleSearch(search) {
+      const res = await apiData.getQuery({search})
+      console.log(res,'res');
+      this.loading = true
+      this.costList = res.data
+      this.loading = false
+      console.log(search,'search',this.search);
     },
     // 点击收费项目列表多选
     handleSelectionChange (val) {
@@ -574,7 +582,11 @@ export default {
       let www = []
       let ci =[]
       val.map(item => {
-        www.push(item)
+        www.push({
+          chargeItemCode:item.CHARGE_CODE,	// --收费编码
+          chargeItemName:item.CHARGE_NAME,	// --收费项目名称
+          chargeItemPrice:item.CHARGE_PRICE	// --收费项目价格
+        })
         ci.push(item.chargeItemName)
       })
       console.log(ci);
