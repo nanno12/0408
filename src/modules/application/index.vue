@@ -205,7 +205,6 @@
 <script>
 import apiData from './api/api'
 
-// import { MODAL_TITLE } from '@/constant'
 import { MODAL_TITLE, QUERY_PAGE} from '../constant'
 export default {
   data() {
