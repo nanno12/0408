@@ -198,12 +198,11 @@
           <w-input v-model="search" placeholder="请输入关键字进行搜索"
             @keyup.enter.native="handleSearch(search)">
             <template slot="suf-append">
-              <i @click="handleSearch" class="w-icon-search"></i>
+              <i @click="handleSearch(search)" class="w-icon-search"></i>
             </template>
           </w-input>
           <w-table  :data=costList
             v-loading="loading"
-            win-loading-text="正在获取数据..."
             ref="costList" border
             @selection-change="handleSelectionChange">
             <w-table-column type="selection"  key="1" width="55"></w-table-column>
@@ -561,7 +560,7 @@ export default {
       this.visible = true
       this.h = ''
       this.modalTitle = MODAL_TITLE.CHARGE_ITEM
-      const res = await apiData.getQuery()
+      const res = await apiData.getQuery({search:''})
       console.log(res,'res');
       console.log(this.form.chargeItems,'value1');
       this.costList = res.data
@@ -587,7 +586,7 @@ export default {
           chargeItemName:item.CHARGE_NAME,	// --收费项目名称
           chargeItemPrice:item.CHARGE_PRICE	// --收费项目价格
         })
-        ci.push(item.chargeItemName)
+        ci.push(item.CHARGE_NAME)
       })
       console.log(ci);
       this.value2 = ci
