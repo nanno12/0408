@@ -3,36 +3,47 @@
     <w-row class="home-page-body">
       <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
-          <w-button class="po_ab top_16 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
         </title-style>
-         <ul class="mg-right_16 list-style">
-            <li class="application" v-for="(item, index) in leftData"
-              :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
-              @mouseover="hoverIndex = index"
-              @mouseout="hoverIndex = - 1"
-              @click="handleLeftRow(item, index)" :key="index" > 
-              <h4>{{item.TEMPLATE_NAME}}
+        <ul class="mg-right_16 list-style">
+          <li class="application" v-for="(item, index) in leftData"
+            :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
+            @mouseover="hoverIndex = index"
+            @mouseout="hoverIndex = - 1"
+            @click="handleLeftRow(item, index)" :key="index" > 
+            <div class="po_re">
+              <h4 class="inline-block ">{{item.TEMPLATE_NAME}}</h4>
+              <div class="inline-block po_ab top_-9 right_0">
                 <w-button type="text" @click="handleRowL(item,index,'copy')">复制</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'edit')">修改</w-button>
-                <w-button type="text" @click="handleRowL(item,index,'delete')">删除</w-button></h4>
-              <!-- <p class="mg-bottom_5">申请单号：12345678910</p> -->
-              <p class="po_re"><span class="inline-block po_ab top_0">元素：</span>
-                <span class=" inline-block mg-left_40">
-                  {{item.IS_SHOW_GYNECOLOGICAL}}{{item.IS_SHOW_OTHERFINDINGS}}{{item.IS_SHOW_SPECIMEN}}{{item.IS_SHOW_TUMOUR}}
-                </span></p>
-            </li>
-          </ul>
+                <w-button type="text" @click="handleRowL(item,index,'delete')">删除</w-button>
+              </div>
+            </div>
+            <!-- <p class="mg-bottom_5">申请单号：12345678910</p> -->
+            <p class="po_re"><span class="inline-block po_ab top_0">元素：</span>
+              <span class=" inline-block mg-left_40">
+                  <span>临床信息、</span>
+                  <span>标本信息、</span>
+                  <span>遗嘱信息、</span>
+                  <span>既往病理检查结果、</span>
+                {{item.IS_SHOW_GYNECOLOGICAL!==0?'妇科信息、':''}}
+                {{item.IS_SHOW_OTHERFINDINGS!==0?'手术信息、':''}}
+                <!-- {{item.IS_SHOW_SPECIMEN!==0?'标本信息、':''}} -->
+                {{item.IS_SHOW_TUMOUR!==0?'肿瘤信息、':''}}
+              </span></p>
+          </li>
+        </ul>
       </w-col>
       <w-col :span="17">
         <title-style class="pd-bottom_22 po_re"><span slot="header">申请单项目列表</span>
-          <w-button class="po_ab top_16 right_0" @click="handleAdd('rigth')"  type="primary" plain>新增</w-button>
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('rigth')"  type="primary" plain>新增</w-button>
         </title-style>
         <win-table :listTable=tableTitle
-        @handleEdit="handleEdit"
-        :tableData=rigthData
-        @handleRow="handleRowR"
-        @handleDelete="handleDelete"
-        :isShow=isShow></win-table>
+          @handleEdit="handleEdit"
+          :tableData=rigthData
+          @handleRow="handleRowR"
+          @handleDelete="handleDelete"
+          :isShow=isShow></win-table>
         <!-- <win-page
           :total="100"
           :current-page="currentPage"
@@ -41,6 +52,7 @@
           @currentChange="currentChange"></win-page> -->
           <w-pagination
             :total="total"
+            class="fr pd-top_16"
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange"
@@ -152,7 +164,7 @@
             <w-col>
               <w-form-item
                 label="收费项目"
-                prop="region">
+                prop="chargeItems">
                 <w-input
                   @focus="handleIputVal"
                   readonly
@@ -327,24 +339,37 @@ export default {
       costList: [],
       selectionVal: [],
       rules: {
-        // region: [
-        //   {
-        //     required: true,
-        //     message: "请选择区域",
-        //     trigger: "change"
-        //   }
-        // ],
-        // name: [
-        //   {
-        //     required: true,
-        //     message: "请选择区域",
-        //     trigger: "change"
-        //   }
-        // ]
+        itemCode: [
+          {
+            required: true,
+            message: "请输入项目编码",
+            trigger: "change"
+          }
+        ],
+        itemName: [
+          {
+            required: true,
+            message: "请输入项目名称",
+            trigger: "change"
+          }
+        ],
+        itemPrice: [
+          { required: true, message: '项目价格不能为空'},
+          { type: 'number', message: '项目价格必须为数字值'}
+        ],
+        chargeItems: [
+          {
+            required: true,
+            message: "请选择区域",
+            trigger: "change"
+          }
+        ]
       },
       rigthData: [],
       rowLi:{},
-      leftData: []
+      leftData: {
+        IS_SHOW_GYNECOLOGICAL:'1234'
+      }
     };
   },
   watch: {
@@ -378,7 +403,24 @@ export default {
     async list () {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
       this.leftData = res.data
+      if (res.data === null)return
       this.rowLi = res.data[0]
+      console.log('res.data',res.data[3]);
+      // this.value2=['临床信息','标本信息', '遗嘱信息', '既往病理检查结果']
+      console.log(this.value2,'this.value2');
+      res.data.map(item=>{
+        console.log('item',item);
+        if (item.isShowOtherfindings === '1') {
+          this.value.push(1)
+        } 
+        if (item.isShowGynecological === '1') {
+          this.value.push(5)
+        } 
+        if (item.isShowTumour === '1') {
+          this.value.push(6)
+        }
+
+      })
       if ( res.data !== null) {
       this.getPafTemplateitems(this.rowLi.ID)
     }
@@ -418,9 +460,14 @@ export default {
           break;
         default:
           this.h =  MODAL_TITLE.CLONE
-           this.visible = true
+          this.getcopy(item.ID)
           console.log(t);
       } 
+    },
+    async getcopy (id) {
+      const res = await apiData.getcopy({id:id})
+      this.showMsg1(res, '复制申请单')
+      console.log(res,'getcopygetcopy');
     },
     
     // 点击申请单项目列表的莫一行
@@ -431,6 +478,7 @@ export default {
     },
     // 项目修改查询
     async handleEdit (row) {
+      this.h =  MODAL_TITLE.EADIT
       this.modalTitle = MODAL_TITLE.ITEM
       this.visible = true
       const res = await apiData.getFindItemInfo({
@@ -458,19 +506,20 @@ export default {
     },
     // 获取申请单查看接口
     async getPafTemplate (id) {
-      const res = await apiData.getPafTemplate({pafTemplateId:id})
+      const res = await apiData.getPafTemplate({id:id})
+      console.log(res,'获取当前申请单数据');
       this.showMsg1(res, '获取当前申请单数据')
-       if (res.data === null)return
-      if (res.data[0].isShowOtherfindings === '1') {
+      if (res.data === null)return
+      if (res.data.isShowOtherfindings === '1') {
         this.value.push(1)
       } 
-      if (res.data[0].isShowGynecological === '1') {
+      if (res.data.isShowGynecological === '1') {
         this.value.push(5)
       } 
-      if (res.data[0].isShowTumour === '1') {
+      if (res.data.isShowTumour === '1') {
         this.value.push(6)
       }
-      this.form = res.data[0]
+      this.form = res.data
     },
     // 删除申请列表数据
     async getDeletePafTemplate (id,index) {
@@ -499,6 +548,22 @@ export default {
       this.modalTitle = MODAL_TITLE.CHARGE_ITEM
       const res = await apiData.getQuery()
       console.log(res,'res');
+      console.log(this.form.chargeItems,'value1');
+      this.costList.map(item => {
+        this.form.chargeItems.map(ite => {
+          if (item === ite) {
+            console.log('itemite',item);
+          }
+        })
+        // let arr = [...this.form.chargeItems]
+        // if (arr) {
+          // const find = arr.
+          this.form.chargeItems.find(it => it.chargeItemCode === item.chargeItemCode)
+          if (find) {
+            this.$refs.costList.toggleRowSelection(item, true)
+          }
+        // }
+      })
       this.costList = res.data
       console.log(this.costList,'472890');
     },
@@ -517,38 +582,50 @@ export default {
       this.form.chargeItems = www
     },
     async submit(e) {
-        console.log(this.form.item,'list');
-      if (this.modalTitle === MODAL_TITLE.FORM) {
-        const list = {
-          templateName: this.form.templateName,
-          printTemplate: this.form.printTemplate,
-          isShowOtherfindings: this.form.isShowOtherfindings,
-          isShowGynecological: this.form.isShowGynecological,
-          isShowTumour: this.form.isShowTumour
+      this.$refs.form.validateForm(async (valid) => {
+        if (valid) {
+          console.log(this.form.item,'list');
+          if (this.modalTitle === MODAL_TITLE.FORM) {
+            const list = {
+              templateName: this.form.templateName,
+              printTemplate: this.form.printTemplate,
+              isShowOtherfindings: this.form.isShowOtherfindings,
+              isShowGynecological: this.form.isShowGynecological,
+              isShowTumour: this.form.isShowTumour
+            }
+            const res = await apiData.getAddUpdateTemplate({...list, id:this.rowLeftList.ID})
+            this.showMsg1(res,'新增申请单')
+            this.visible = false
+            this.list()
+          } else if (this.modalTitle === MODAL_TITLE.ITEM) {
+            console.log('this.rowLeftList',this.rowLeftList);
+            delete this.form.templateName
+            delete this.form.printTemplate
+            delete this.form.isShowOtherfindings
+            delete this.form.isShowGynecological
+            delete this.form.isShowTumour
+            this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
+            this.form.item['seqNo'] = this.rigthData.length+1
+            const res = await apiData.getAddUpdateItem({
+              ...this.form
+            })
+            this.showMsg1(res,'新增项目')
+            this.value = false
+          } else {
+            console.log(this.h,'this.h');
+            // this.h = MODAL_TITLE.ADD
+            this.modalTitle = MODAL_TITLE.ITEM
+          }
+       } else {
+          // 未通过
+          console.log('invalid form !')
         }
-        const res = await apiData.getAddUpdateTemplate({...list, id:this.rowLeftList.ID})
-        this.showMsg1(res,'新增申请单')
-        this.visible = false
-        this.list()
-      } else if (this.modalTitle === MODAL_TITLE.ITEM) {
-        console.log('this.rowLeftList',this.rowLeftList);
-        delete this.form.templateName
-        delete this.form.printTemplate
-        delete this.form.isShowOtherfindings
-        delete this.form.isShowGynecological
-        delete this.form.isShowTumour
-        this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
-        this.form.item['seqNo'] = this.rigthData.length+1
-        const res = await apiData.getAddUpdateItem({
-          ...this.form
-        })
-        this.showMsg1(res,'新增项目')
-      } else {
-        this.modalTitle = MODAL_TITLE.ITEM
-      }
+      })
     },
     reset() {
+      this.$refs.form.resetFields()
       if (this.modalTitle === MODAL_TITLE.CHARGE_ITEM) {
+        //  this.h = MODAL_TITLE.ADD
          this.modalTitle = MODAL_TITLE.ITEM
       } else {
         this.visible = false
@@ -623,6 +700,9 @@ export default {
 .list-style {
   height: calc(100vh - 120px);
   overflow-y: auto;
+}
+.w-row {
+  margin-bottom: 15px;
 }
 </style>
 <style lang='stylus' scoped>
