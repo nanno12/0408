@@ -188,7 +188,7 @@ export default {
 
   .wrapper-content {
     background: rgba(234, 237, 244, 1);
-    // padding: 16px;
+    padding: 16px;
     // position: absolute;
     // left: 0px;
     // right: 0px;

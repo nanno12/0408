@@ -12,5 +12,5 @@ export const MODAL_TITLE = {
 }
 export const QUERY_PAGE = {
   pageIndex:1,
-  pageSize:4,
+  pageSize:10,
 }

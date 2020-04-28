@@ -3,7 +3,7 @@
     <w-row class="home-page-body">
       <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
-          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span>+</span> 新增</w-button>
         </title-style>
         <ul class="mg-right_16 list-style">
           <li class="application" v-for="(item, index) in leftData"
@@ -26,23 +26,24 @@
                   <span>标本信息、</span>
                   <span>遗嘱信息、</span>
                   <span>既往病理检查结果、</span>
-                {{item.IS_SHOW_GYNECOLOGICAL!==0?'妇科信息、':''}}
-                {{item.IS_SHOW_OTHERFINDINGS!==0?'手术信息、':''}}
+                {{item.IS_SHOW_GYNECOLOGICAL===1 ?'妇科信息、':''}}
+                {{item.IS_SHOW_OTHERFINDINGS===1 ?'手术信息、':''}}
                 <!-- {{item.IS_SHOW_SPECIMEN!==0?'标本信息、':''}} -->
-                {{item.IS_SHOW_TUMOUR!==0?'肿瘤信息、':''}}
+                {{item.IS_SHOW_TUMOUR ===1 ?'肿瘤信息、':''}}
               </span></p>
           </li>
         </ul>
       </w-col>
       <w-col :span="17">
         <title-style class="pd-bottom_22 po_re"><span slot="header">申请单项目列表</span>
-          <w-button class="po_ab top_-4 right_0" @click="handleAdd('rigth')"  type="primary" plain>新增</w-button>
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('rigth')"  type="text" plain> <span>+</span> 新增</w-button>
         </title-style>
         <win-table :listTable=tableTitle
           @handleEdit="handleEdit"
           :tableData=rigthData
           @handleRow="handleRowR"
           @handleDelete="handleDelete"
+          style="height: calc(100vh - 150px); overflow-y: auto;"
           :isShow=isShow></win-table>
         <!-- <win-page
           :total="100"
@@ -139,7 +140,6 @@
                 <w-input
                   :maxlength="20"
                   placeholder="请输入项目名称"
-                  showCounter
                   v-model="form.item.itemName"
                 ></w-input>
               </w-form-item>
@@ -154,7 +154,8 @@
                   :maxlength="20"
                   placeholder="请输入项目价格"
                   showCounter
-                  v-model="form.item.itemPrice"
+                  :readonly=true
+                  v-model.number="form.item.itemPrice"
                 ></w-input>
               </w-form-item>
             </w-col>
@@ -164,13 +165,17 @@
             <w-col>
               <w-form-item
                 label="收费项目"
-                prop="item.chargeItems"
+                prop="value2"
+                :rules="[{
+                  required: true,type: 'array', message: '请选择区域', trigger: 'change'
+                }]"
                >
                 <w-input
                   @focus="handleIputVal"
                   readonly
+                  sufAppendIsButton
                   placeholder="请输入关键字搜索收费项目"
-                  v-model="value2">
+                  v-model="form.value2">
                   <template slot="suf-append">
                     <i class="w-icon-search"></i>
                   </template>
@@ -194,33 +199,50 @@
             </w-col>
           </w-row>
         </w-row>
-        <div v-else>
-          <w-input v-model="search" placeholder="请输入关键字进行搜索"
+        <div v-else class="search-style">
+
+          <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
             @keyup.enter.native="handleSearch(search)">
             <template slot="suf-append">
               <i @click="handleSearch(search)" class="w-icon-search"></i>
             </template>
           </w-input>
-          <w-table  :data=costList
+          <w-table
+            :data="costList.slice((QUERY_PAGE.pageIndex-1)*QUERY_PAGE.pageSize,QUERY_PAGE.pageIndex*QUERY_PAGE.pageSize) || []"
             v-loading="loading"
-            ref="costList" border
+            stripe
+            ref="costList"
+            border
+            style="height: calc(100vh - 500px); overflow-y: auto;"
+            :row-key="getRowKeys"
             @selection-change="handleSelectionChange">
-            <w-table-column type="selection"  key="1" width="55"></w-table-column>
+            <w-table-column type="selection" :reserve-selection="true" key="1" width="55"></w-table-column>
             <w-table-column prop="CHARGE_CODE"  key="2" width= '120px' label="收费编码"></w-table-column>
             <w-table-column prop="CHARGE_NAME"  key="3" label="收费项目"></w-table-column>
             <w-table-column prop="CHARGE_PRICE"  key="4" width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
           </w-table>
+          <w-pagination 
+            class=" pd-y_16"
+            :current-page="QUERY_PAGE.pageIndex"
+            :page-size="QUERY_PAGE.pageSize"
+            @actived-change="currentChange1"
+            @page-size-change="sizeChange1"
+            :total="costList.length"
+            :page-sizes="[10, 20, 50, 100]"
+            :show="['prev', 'next', 'total', 'jump']">
+          </w-pagination>
         </div>
+        
       </w-form>
-      <span
-        class="dialog-footer"
-        slot="footer" >
-        <w-button @click="reset">取 消</w-button>
-        <w-button
-          @click="submit"
-          type="primary"
-        >确 定</w-button>
-      </span>
+      <div
+          class="dialog-footer"
+          slot="footer" >
+          <w-button @click="reset">取 消</w-button>
+          <w-button
+            @click="submit"
+            type="primary"
+          >确 定</w-button>
+        </div>
     </w-modal>
   </div>
 </template>
@@ -233,6 +255,7 @@ export default {
   data() {
     return {
       modalTitle:'',
+      height:'200px',
       MODAL_TITLE,
       QUERY_PAGE,
       clickIndex:0,
@@ -240,11 +263,11 @@ export default {
       loading:true,
       hoverIndex: 0,
       h : '',
-      value2: "", // 搜索值
-      pageSize:10,
-      currentPage:20,
+      value2: [], // 搜索值
+      // pageSize:10,
+      // currentPage:20,
       total:100,
-      value: [2,3,4,8],
+      value: [1,2,3,4],
       rowRightList: {},
       rowLeftList: {},
       visible: false,
@@ -288,6 +311,7 @@ export default {
         }
       ],
       form: {
+        value2:[],
         templateName: "", // 申请单名称
         printTemplate: '' , // 打印模板
         isShowOtherfindings:"0",	//--是否显示手术/内窥镜
@@ -313,44 +337,47 @@ export default {
       },
       checkboxList: [
         {
-          label:1,
-          name: '手术信息',
-          disabled: false
-        },
-        {
-          label:2,
+          label:1, // 2
           name: '临床信息',
           disabled: true
-
         },
         {
-          label:3,
+          label:2, // 3
           name: '标本信息',
           disabled: true
         },
         {
-          label:4,
+          label:3, // 4
           name: '医嘱信息',
           disabled: true
         },
         {
-          label:5,
+          label:4, // 8
+          name: '既往病理检查结果',
+          disabled: true
+        },
+        {
+          label:5, // 5
           name: '妇科信息',
           disabled: false
         },
         {
-          label:6,
-          name: '肿瘤信息',
+          label:6, //1
+          name: '手术信息',
           disabled: false
         },
         {
-          label:8,
-          name: '既往病理检查结果',
-          disabled: true
-        }
+          label:7,//6
+          name: '肿瘤信息',
+          disabled: false
+        },
+        
       ],
       costList: [],
       selectionVal: [],
+      getRowKeys(row) {
+        return row.CHARGE_CODE;
+      },
       rules: {
         'item.itemCode': [
           {
@@ -362,7 +389,6 @@ export default {
         'item.itemName': [
           {
             required: true,
-            type: 'array',
             message: "请输入项目名称",
             trigger: "change"
           }
@@ -374,6 +400,7 @@ export default {
         'item.chargeItems': [
           {
             required: true,
+            type: 'array',
             message: "请选择区域",
             trigger: "change"
           }
@@ -383,30 +410,39 @@ export default {
       rowLi:{},
       leftData: {
         IS_SHOW_GYNECOLOGICAL:'1234'
-      }
+      },
+      a:[]
     };
   },
+  computed:{
+//   'form.item.itemPrice'(){
+//      var sum = 0;
+//      for(var i= 0 ;i< this.a.length; i++) {
+//         sum += parseInt(this.a[i]);
+//      }
+//      return sum;
+//    }
+ },
   watch: {
-    clickIndex (oldVal, newVal) {
-      this.rowLi = this.rowLeftList
-      if (newVal) {
-        console.log('123');
-      } else {
-        console.log('456');
-      }
-      console.log('oldVal, newVal',oldVal, newVal);
-    },
+    // clickIndex (oldVal, newVal) {
+    //   this.rowLi = this.rowLeftList
+    //   if (newVal) {
+    //     console.log('123');
+    //   } else {
+    //     console.log('456');
+    //   }
+    //   console.log('oldVal, newVal',oldVal, newVal);
+    // },
     costList (oldVal, newVal) {
+      console.log(this.form.chargeItems,'oldVal, newVal');
       this.$nextTick(() => {
-        // this.costList.map(item => {
-        //   let arr = [...this.selectionVal]
-        //   if (arr) {
-        //     const find = arr.find(it => it.chargeItemCode === item.chargeItemCode)
-        //     if (find) {
-        //       this.$refs.costList.toggleRowSelection(item, true)
-        //     }
-        //   }
-        // })
+        this.selectionVal.find(it => {
+            this.costList.find(item => {
+            if (it.CHARGE_CODE === item.CHARGE_CODE) {
+              this.$refs.costList.toggleRowSelection(item, true)
+            }
+          })
+        })
       })
     }
   },
@@ -419,19 +455,15 @@ export default {
       this.leftData = res.data
       if (res.data === null)return
       this.rowLi = res.data[0]
-      console.log('res.data',res.data[3]);
-      // this.value2=['临床信息','标本信息', '遗嘱信息', '既往病理检查结果']
-      console.log(this.value2,'this.value2');
       res.data.map(item=>{
-        console.log('item',item);
         if (item.isShowOtherfindings === '1') {
-          this.value.push(1)
+          this.value.push(6)
         } 
         if (item.isShowGynecological === '1') {
           this.value.push(5)
         } 
         if (item.isShowTumour === '1') {
-          this.value.push(6)
+          this.value.push(7)
         }
 
       })
@@ -441,6 +473,7 @@ export default {
     },
     // 点击申请单列表单行
     async handleLeftRow (row,index) {
+      console.log(row,'row');
       this.rowLeftList = row
       this.clickIndex = index;
       this.getPafTemplateitems(row.ID)
@@ -451,13 +484,11 @@ export default {
         pafTemplateId:id,
         ...QUERY_PAGE
       })
-      console.log(res.data.itemList,'res.data.itemList');
       this.rigthData = res.data.itemList
       this.total = res.data.itemSum
     },
     // 点击申请单某一行
     handleRowL (item,index,t) {
-      console.log('item',item);
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
       console.log(item,index,t, 'item,index,t');
@@ -479,7 +510,8 @@ export default {
       } 
     },
     async getcopy (id) {
-      const res = await apiData.getcopy({id:id})
+      const res = await apiData.getcopy({id})
+      this.list()
       this.showMsg1(res, '复制申请单')
       console.log(res,'getcopygetcopy');
     },
@@ -488,7 +520,6 @@ export default {
     handleRowR(row) {
       this.rowRightList = row
       console.log(row,'单项目列表的莫一行');
-      // if ()
     },
     // 项目修改查询
     async handleEdit (row) {
@@ -499,7 +530,6 @@ export default {
         id:row.pafTemplateitemId
       })
       this.form = res.data
-      console.log(res,'getFindItemInfo');
       console.log(row,'项目修改');
       let list = []
       res.data.chargeItems.map(item=>{
@@ -507,7 +537,7 @@ export default {
         console.log(item,'item');
       })
       console.log(list,'list');
-      this.value2 = list
+      this.form.value2 = list
     },
     // 项目删除
     async handleDelete (row) {
@@ -520,49 +550,63 @@ export default {
     },
     // 获取申请单查看接口
     async getPafTemplate (id) {
-      const res = await apiData.getPafTemplate({id:id})
-      console.log(res,'获取当前申请单数据');
+      const res = await apiData.getPafTemplate({id})
+      console.log(res.data,'获取当前申请单数据');
       this.showMsg1(res, '获取当前申请单数据')
       if (res.data === null)return
       if (res.data.isShowOtherfindings === '1') {
-        this.value.push(1)
+        this.value.push(6)
       } 
       if (res.data.isShowGynecological === '1') {
         this.value.push(5)
       } 
       if (res.data.isShowTumour === '1') {
-        this.value.push(6)
+        this.value.push(7)
       }
+      console.log(this.value,'this.value');
       this.form = res.data
     },
     // 删除申请列表数据
     async getDeletePafTemplate (id,index) {
+      this.leftData.map((item,index) => {
+        item['index']=index
+      })
       const res = await apiData.getDeletePafTemplate({id})
       this.showMsg1(res,'删除申请单')
-      this.leftData.slice(index,1)
-      console.log('id,index',id,index,this.leftData.length);
-      // if (this.leftData.length === index) {
+      // this.leftData.slice(index,1)
+      let ids = ''
+      if (this.leftData[this.leftData.length-1].ID === id) {
         this.clickIndex = index-1
-      // } else {
-      //   this.clickIndex = index+1
-      // }
+        ids = this.leftData[this.leftData.length-2].ID
+        console.log('end',this.leftData[this.leftData.length-2].ID);
+      } else {
+        const find = this.leftData.find(item => item.index === index+1) 
+        if (find) {
+          ids = find.ID
+        }
+        this.clickIndex = index
+      }
       this.list()
+      
+      this.getPafTemplateitems(ids)
     },
     // 删除申请单项目列表数据
     async getDeleteTempItem (id) {
       const res = await apiData.getDeleteTempItem(id)
       this.handleLeftRow()
-      console.log(res);
     },
     // 点击收费项目收费项目
     async handleIputVal () {
       console.log('收费项目');
+      this.value2 = []
+      this.costList = []
       this.visible = true
       this.h = ''
       this.modalTitle = MODAL_TITLE.CHARGE_ITEM
       const res = await apiData.getQuery({search:''})
-      console.log(res,'res');
-      console.log(this.form.chargeItems,'value1');
+      console.log('res',this.selectionVal);
+      if (res.data === null) return
+      this.loading = true
       this.costList = res.data
       this.loading = false
     },
@@ -574,13 +618,22 @@ export default {
       this.loading = false
       console.log(search,'search',this.search);
     },
-    // 点击收费项目列表多选
-    handleSelectionChange (val) {
-      this.selectionVal = val
-      console.log(val,'点击收费项目列表多选');
+     // 当选择项发生变化时会触发该事件
+    handleSelectionChange (rows) {
+      this.selectionVal = [];
+      console.log('rows',this.selectionVal,rows);
+      const me = 0
+      if (rows) {
+        rows.forEach(row => {
+          if (row) {
+            this.selectionVal.push(row);
+          }
+        });
+      }
       let www = []
-      let ci =[]
-      val.map(item => {
+      let ci = []
+      console.log('this.selectionVal',this.selectionVal);
+      this.selectionVal.map(item => {
         www.push({
           chargeItemCode:item.CHARGE_CODE,	// --收费编码
           chargeItemName:item.CHARGE_NAME,	// --收费项目名称
@@ -588,8 +641,15 @@ export default {
         })
         ci.push(item.CHARGE_NAME)
       })
-      console.log(ci);
-      this.value2 = ci
+      console.log('this',this.selectionVal);
+      let sum = 0;
+      this.selectionVal.map(item =>{
+        sum += parseInt(item.CHARGE_PRICE)
+      })
+      console.log(sum,'sumsum');
+      this.form.value2 = ci
+      this.form.item.itemPrice = sum
+      this.form.chargeItems = []
       this.form.chargeItems = www
     },
     async submit(e) {
@@ -615,13 +675,14 @@ export default {
             delete this.form.isShowOtherfindings
             delete this.form.isShowGynecological
             delete this.form.isShowTumour
+            delete this.form.value2
             this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
             this.form.item['seqNo'] = this.rigthData.length+1
             const res = await apiData.getAddUpdateItem({
               ...this.form
             })
             this.showMsg1(res,'新增项目')
-            this.value = false
+            this.visible = false
           } else {
             console.log(this.h,'this.h');
             // this.h = MODAL_TITLE.ADD
@@ -701,8 +762,19 @@ export default {
     currentChange(val) {
       console.log(val,this.rowLi, '当前页');
       this.QUERY_PAGE.pageIndex = val // 当前页
-      console.log(this.leftData[0].ID,'this.leftData');
       this.getPafTemplateitems(this.rowLi.ID)  // 刷新
+    },
+    sizeChange1(val){
+      console.log(val, '每页多少条');
+      QUERY_PAGE.pageSize = val // 每页多少条
+      // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
+    },
+    // 当前页
+    currentChange1(val) {
+      console.log(val,this.rowLi, '当前页');
+      this.QUERY_PAGE.pageIndex = val // 当前页
+      // console.log(this.leftData[0].ID,'this.leftData');
+      // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
   }
 };
@@ -715,13 +787,32 @@ export default {
 .w-row {
   margin-bottom: 15px;
 }
+
+.search-style {
+  .w-input,
+  .w-input.is-expansion {
+    width: 260px!important;
+  }
+}
+</style>
+
+<style lang ='scss'>
+  .w-modal__body {
+    padding: 16px 20px!important;
+  }
 </style>
 <style lang='stylus' scoped>
 
 .addclass {
   color: red;
 }
-
+.w-checkbox+.w-checkbox {
+  margin-left: 0px!important;
+}
+.w-checkbox {
+  margin-right: 24px!important;
+  margin-bottom:8px!important;
+}
 .home-page-body {
   background: rgba(255, 255, 255, 1);
   padding: 16px;

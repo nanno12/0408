@@ -1,8 +1,5 @@
 <template>
   <div class='home-page-wrap-in'>
-    <!-- <win-modal :title="titlee" :isShow="isShow">
-        <span>this is a dialog</span>
-    </win-modal> -->
     <w-row style="background:rgba(255,255,255,1);">
       <w-col :span="8">
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">器官/系统</span>

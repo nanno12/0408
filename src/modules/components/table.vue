@@ -63,7 +63,8 @@
         default: function () {
           return {}
         }
-      }
+      },
+      
     },
     // watch:{
     // tableData (oldVal, newVal) {
@@ -82,6 +83,7 @@
     // },
      data () {
       return {
+        height:'calc(100vh - 150px)',
         multipleSelection: [] // 多行选中
       }
     },

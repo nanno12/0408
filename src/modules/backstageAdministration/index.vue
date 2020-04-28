@@ -1,34 +1,36 @@
 <template>
   <div class="home-page-wrap-ba">
-    
     <w-row  class="home-page-body">
-      <w-col :span="6" >
-        <title-style class="pd-y_22 po_re"><span slot="header">申请单列表</span>
-          <w-button class="po_ab top_16 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
+      <w-col :span="7" >
+        <title-style class=" po_re pd-bottom_22"><span slot="header">申请单列表</span>
+          <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
         </title-style>
-        <w-table class="mt-15" @row-click="handleRow" 
-        :highlight-current-row="true"
-        :row-class-name="tableRowClassName"
-         ref="interfaceTable"
-        :data="listMoulds" :border="true" style="width: 100%">
-          <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
-          <w-table-column prop="MOULD_LEVEL" label="类型"></w-table-column>
-          <w-table-column prop="MOULD_NAME" label="名称" width="100"></w-table-column>
-          <w-table-column fixed="right" label="操作" align="center" width="150" reference-cell>
-            <template slot-scope="scope">
-                <w-button type="text" @click="onEditing(scope.row,'left')">修改</w-button>
-                <w-button type="text" @click="handleClone(scope.row, 'left')">复制</w-button>
-                <w-button @click="handleConfirm(scope.row, 'left', scope.$index)" type="text">删除</w-button>
-            </template>
-          </w-table-column>
-        </w-table>
+        <div class="list-style">
+          <w-table class="mt-15" @row-click="handleRow" 
+            :highlight-current-row="true"
+            :row-class-name="tableRowClassName"
+            ref="interfaceTable"
+            :data="listMoulds" :border="true" style="width: 100%">
+            <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
+            <w-table-column prop="MOULD_LEVEL" label="类型" width="70"></w-table-column>
+            <w-table-column prop="MOULD_NAME" label="名称" ></w-table-column>
+            <w-table-column fixed="right" label="操作" align="center" width="170" reference-cell>
+              <template slot-scope="scope">
+                  <w-button type="text" @click="onEditing(scope.row,'left')">修改</w-button>
+                  <w-button type="text" @click="handleClone(scope.row, 'left')">复制</w-button>
+                  <w-button @click="handleConfirm(scope.row, 'left', scope.$index)" type="text">删除</w-button>
+              </template>
+            </w-table-column>
+          </w-table>
+        </div>
       </w-col>
-      <w-col :span="18">
+      <w-col :span="17">
         <div class="pd-left_15">
-          <title-style class="pd-y_22  po_re"><span slot="header">项目列表</span>
-            <w-button class="po_ab top_16 right_0" @click="handleAdd('right')"  type="primary" plain>新增</w-button>
+          <title-style class="pd-bottom_22  po_re"><span slot="header">项目列表</span>
+            <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="primary" plain>新增</w-button>
           </title-style>
-          <w-table :data="listMouldItems"  :border="true" style="width: 100%">
+          <div class="list-style">
+          <w-table  :data="listMouldItems"  :border="true" style="width: 100%">
             <w-table-column type="index" width="70" align="center" label="序号">
             </w-table-column>
             <w-table-column prop="MOULD_ITEM_NAME" label="项目名称">
@@ -57,15 +59,17 @@
               </template>
             </w-table-column>
           </w-table>
+          </div>
         </div>
       </w-col>
     </w-row>
     <w-modal  :visible.sync="visible"
       :title="modalType+modalTitle"
       :showClose="false"
+      class="modal"
       :close-on-click-modal="false"
       width="60%">
-      <w-form label-align="right"  :model="form" ref="form" label-width="120px" :rules="rules">
+      <w-form label-align="right"  :model="form" ref="form" label-width="130px" :rules="rules">
         <!-- 新增申请单 -->
         <w-row v-if="modalTitle === MODAL_TITLE.FORM || modalTitle=== MODAL_TITLE.CLONE">
           <w-row>
@@ -139,9 +143,8 @@
         <!-- 新增项目 -->
         <w-row v-else-if="modalTitle===MODAL_TITLE.ITEM">
           <w-row>
-            <w-col :span="11">
-              <w-form-item label="成分大类"
-              required>
+            <w-col :span="12" class="po_re">
+              <w-form-item label="成分大类" required >
                 <w-select v-model="form.maincode" @change="handleSelChange" placeholder="请选择成分大类">
                   <w-option
                     v-for="item in mainTypesList"
@@ -154,10 +157,10 @@
                     }">
                   </w-option>
                 </w-select>
+                <span class="inline-block po_ab top_0 right_-35"><i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i></span>
               </w-form-item>
             </w-col>
-            <w-col :span="1"><i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i></w-col>
-            <w-col :span="11">
+            <w-col :span="12" class="po_re">
               <w-form-item label="成分小类" prop="detailcode"
               :rules="[
                 { required: true, message: '请选择成分小类'},
@@ -174,12 +177,12 @@
                     }">
                   </w-option>
                 </w-select>
-
+                <span v-if="form.maincode !==''" class="inline-block po_ab top_0 right_-35">
+                  <i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i>
+                </span>
               </w-form-item>
             </w-col>
-            <w-col :span="1"  v-if="form.maincode !==''">
-              <i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i>
-            </w-col>
+            
           </w-row>
           <w-row>
             <w-col :span="12">
@@ -198,13 +201,15 @@
           <w-row>
             <w-col>
               <w-form-item class=" pd-right" label="费用对应" prop="">
-                <div @click="hadleInputFocus"  class="unitDepartment-tag" >
-                  <w-tag size="mini" @close="handleClose(tag)" closable
-                  v-for="(tag, index) in selection" :key="index">{{tag.name}}</w-tag>
-                  <span style="">点击选择费用对应内容</span>
-                </div>
-                <w-input placeholder="输入内容进行搜索" class="po_ab top_0 right_0" v-if="showInput"></w-input>
-                <w-button size="mini"  type="text" class="po_ab top_0 right_0" @click="add(showInput)">{{h = showInput === true? '取消':'添加'}}</w-button>
+                <w-input
+                  @focus="hadleInputFocus"
+                  readonly
+                  placeholder="请输入关键字搜索收费项目"
+                  v-model="form.value2">
+                  <template slot="suf-append">
+                    <i class="w-icon-search"></i>
+                  </template>
+                </w-input>
               </w-form-item>
             </w-col>
           </w-row>
@@ -283,9 +288,9 @@
 
 </template>
 <script>
-// import Common from '@/app/api/common.js';
-// import autoResize from '@/app/components/autoResize';
 import dataApi from './api/api.js';
+import {MODAL_TITLE} from '../constant';
+
 export default {
    
   // mixins: [autoResize],
@@ -294,15 +299,9 @@ export default {
   },
   data() {
     return {
-      listTable:[
-        {
-          prop: 'name',   //<String>  对应属性名
-          label: '姓名',  //<String>   表头标签
-
-        }
-      ],
       value: '', // 搜索框
       visible: false,
+      MODAL_TITLE,
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
       modalTitle: '', // 模态框标题
@@ -397,25 +396,10 @@ export default {
           name:'全部'
         }
       ], // 开单类别下拉列表
-      MODAL_TITLE : {
-        ADD:'新1111增',
-        EADIT:'修改',
-        FORM:'申请单',
-        ITEM:'项目',
-        LARGE_CLASS:'成分大类',
-        SUB_CLASS:'成分小类',
-        SELECT_ITEM:'选择对应项目',
-        TIPS:'提示',
-        CLONE:'复制'
-      },
       codeLIst: {
         code:'',
         name:''
       },
-      // ceshi:  {
-      //       MAIN_CODE: '01',
-      //       MAIN_NAME: "全血类"
-      //     },
       form: {
         mouldcode:'', // 模板代码
         mouldname: '', // 模板名称
@@ -475,27 +459,8 @@ export default {
         }]
       },
       selection: [],
-      options: [
-        {
-          value: '选项1',
-          label: '安徽'
-        }, {
-          value: '选项2',
-          label: '上海'
-        }, {
-          value: '选项3',
-          label: '北京'
-        }, {
-          value: '选项4',
-          label: '南京'
-        }, {
-          value: '选项5',
-          label: '深圳'
-        }
-      ],
       listMouldItems: [],
-      listMoulds: [],
-      optionsValue: '选项1'
+      listMoulds: []
     };
   },
   computed: {
@@ -503,18 +468,7 @@ export default {
   watch: {
     "form.maincode"(o , n) {
       console.log(o , n);
-      
-      // if (o) {
-      //   if (this.form.maincode !== ' ') {
-      //   this.getListDetailTypes(o.DETAIL_CODE)
-      //   this.getListMainTypes()
-      //   } 
-      // }
     },
-    // ceshi:function (value) {
-
-    //     console.log(value, 'test value');
-    //   },
     'form.detailcode'(o, n) {
       console.log(o, n);
     },
@@ -541,12 +495,6 @@ export default {
   mounted() {
   },
   methods: {
-    handleRowe(row) {
-      console.log(row);
-    },
-    handleSelectionChangew (val) {
-    console.log('val:', val)
-   },
     async MouldItems (row) { 
       const res = await dataApi.getMouldItems({
         mouldcode: row.MOULD_CODE
@@ -564,7 +512,6 @@ export default {
     handleSelectionChange (val) {
       this.selection = val
       console.log(this.selection)
-      
     },
     hadleInputFocus () {
       this.visible = true
@@ -591,7 +538,6 @@ export default {
     },
     handleSelChange(row) {
       console.log(row);
-      // this.getListMainTypes()
       this.getListDetailTypes(row.DETAIL_CODE)
       this.maincode = row.DETAIL_CODE
       this.form.detailname = ''
@@ -744,10 +690,8 @@ export default {
     // 点击模态框取消按钮事件
     reset () {
       this.$refs.form.resetFields()
-      
       if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
         this.modalTitle = '项目'
-        // this.modalTitle = '新增申请单'
       } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
         this.modalTitle = '项目'
       } else {
@@ -759,6 +703,7 @@ export default {
         this.$refs.form.resetFields()
         this.visible = false
       }
+      this.visible = false
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
@@ -882,7 +827,6 @@ export default {
       console.log(t)
     },
     handlePageSizeChange(val) {
-
       console.log(val, '条/页');
     },
     // 成分大类接口
@@ -932,14 +876,21 @@ export default {
       float right
       background #fff
 </style>
-<style lang="scss">
-
-.pd-right {
-  .w-input {
-    width:200px!important
-  }
+<style lang="scss" scoped>
+.list-style {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
 }
-  
+// .pd-right {
+//   .w-input {
+//     width:200px!important
+//   }
+// }
+.w-select {
+  width:100%!important;
+}
+
+
 .w-row {
   padding-bottom: 16px;
 }
@@ -961,6 +912,7 @@ export default {
       color:#999;
     }
     .w-input,
+    .w-select,
     .w-input__inner {
       width:100%!important;
       min-height: 44px!important;
@@ -974,4 +926,16 @@ export default {
   //   border-color: #5175f4;
   //   box-shadow: #2d5afa 0px 0px 0px;
   // }
+</style>
+<style lang="scss">
+.modal {
+  .w-modal__footer,
+  .w-modal__body {
+    margin-right: 30px!important;
+  }
+  .w-modal__body {
+    padding: 20px 20px 0px 0px;
+  }
+}
+
 </style>
