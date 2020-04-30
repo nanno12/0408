@@ -6,6 +6,8 @@
 import Vue from 'vue'
 import App from './components/App'
 import router from './router'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 import store from './store'
 // import WuedUI from 'wn-tech-ui'
 // import { Message } from 'win-design';
@@ -27,6 +29,7 @@ import '../modules/components'
 import mixin  from '../modules/mixin'
 
 // import './components/WinCard'
+  Vue.use(ElementUI);
  
 /** 注册组件的动作放在此 */ 
 const registerComponent = () => {
@@ -47,7 +50,6 @@ const registerComponent = () => {
     throttleWait: 100,
     attempt: 2
   });
-
 
   Vue.use(VXETable);
   Vue.use(sortTable);

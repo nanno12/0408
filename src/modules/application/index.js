@@ -287,7 +287,14 @@ export default {
         id:row.pafTemplateitemId
       })
       this.showMsg1(res,'删除申请单项目')
-      this.getPafTemplateitems(this.rowLi.ID)
+      console.log('rowLeftList',this.rowLeftList);
+      let id = ''
+      if (this.rowLeftList.ID) {
+        id = this.rowLeftList.ID
+      } else {
+        id = this.leftData[0].ID
+      }
+      this.getPafTemplateitems(id)
     },
     // 获取申请单查看接口
     async getPafTemplate (id) {
@@ -328,13 +335,8 @@ export default {
         this.clickIndex = index
       }
       // this.list()
-      // this.leftData.splice(index,1)
+      this.leftData.splice(index,1)
       this.getPafTemplateitems(ids)
-    },
-    // 删除申请单项目列表数据
-    async getDeleteTempItem (id) {
-      const res = await apiData.getDeleteTempItem(id)
-      this.handleLeftRow()
     },
     // 点击收费项目收费项目
     async handleIputVal () {
@@ -422,22 +424,23 @@ export default {
             const res = await apiData.getAddUpdateItem({
               ...this.form
             })
-            this.showMsg1(res,'新增项目')
-            let id = ''
-            console.log('this.rowLeftList',this.rowLeftList);
-            if (this.rowLeftList.length >0) {
-              id = this.rowLeftList.ID
-              console.log('this.rowLeftList',this.leftData);
+            if (res.type === 'SUCCESS') {
+              this.showMsg('修改成功','success')
+              let id = ''
+              console.log('this.rowLeftList',this.rowLeftList);
+              if (this.rowLeftList.length >0) {
+                id = this.rowLeftList.ID
+                console.log('this.rowLeftList',this.leftData);
+              } else {
+                console.log('this.leftData',this.leftData);
+                id = this.leftData[0].ID
+              }
+              this.getPafTemplateitems(id)
+              this.visible = false
             } else {
-              console.log('this.leftData',this.leftData);
-              id = this.leftData[0].ID
+               this.showMsg('修改失败','error')
             }
-            this.getPafTemplateitems(id)
-            this.init()
-            this.$refs.form.resetFields()
-            this.visible = false
           } else {
-            console.log(this.h,'this.h');
             // this.h = MODAL_TITLE.ADD
             this.modalTitle = MODAL_TITLE.ITEM
           }
@@ -448,11 +451,18 @@ export default {
       })
     },
     init () {
-      this.form = ''
-      // this.value = []
+      this.form.chargeItems = []
+      // this.form = {} 
+      console.log(this.form.item.itemName);
+      this.form.item.itemName = ''
+      this.form.item.itemPrice = ''
+      this.form.item.itemCode = ''
+
+      this.form.value2 = []
     },
     reset() {
-      this.init()
+      // this.init()
+      console.log('123');
       this.$refs.form.resetFields()
       if (this.modalTitle === MODAL_TITLE.CHARGE_ITEM) {
         //  this.h = MODAL_TITLE.ADD
@@ -463,6 +473,7 @@ export default {
     },
     // 界面新增按钮
     async handleAdd(w) {
+      this.init()
       this.h = MODAL_TITLE.ADD
       switch(w) {
         case 'left':
