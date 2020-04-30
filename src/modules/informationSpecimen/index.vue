@@ -39,8 +39,8 @@
         <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本名称</span>
           <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
         </title-style>
-        <!--  v-show="show" -->
-        <div>
+        <!--   -->
+        <div v-show="show">
           <div class="list-style">
             <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
               :class="{'clickBg':index==clickIndex2,'hoverBg':index==hoverIndex2}"
