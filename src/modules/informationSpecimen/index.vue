@@ -209,8 +209,6 @@ export default {
       }
     },
     idData(item) {
-      console.log(item);
-      
       // 如果点击单独某一条 false没有
       let id = ''
       if (this.row === false) {
@@ -238,25 +236,23 @@ export default {
             id = this.rowOrgList.ID || this.organList[0].ID
             console.log('哈哈哈哈');
           }
-          console.log('true有点计', this.rowOrgList);
         }
       }
       this.idValue = id
-      console.log(id);
-      
+      console.log('this.idValue',this.idValue);
     },
     async succData(e,v){
-      console.log(e,v);
+      this.idData()
       if (this.title === '标本部位') {
-        if (e === 'nihao') {
-          console.log(v, 'vvvvvv');
-          const res = await apiData.getQuery({id:v})
-          this.nameList = res.data
-        }
-        console.log(this.idValue,'this.idValue');
-        const res = await apiData.getQuery({id:this.idValue})
+        // if (e === 'nihao') {
+        //   console.log(v, 'vvvvvv');
+        //   const res = await apiData.getQuery({id:v})
+        //   this.nameList = res.data
+        // }
+
+        console.log(this.idValue,'this.idValue',this.rowOrgList);
+        const res = await apiData.getQuery({id:this.rowOrgList.ID || this.organList[0].ID})
         this.positionList = res.data
-        console.log(this.idValue);
       } else if (this.title === '标本名称') {
         const res = await apiData.getQuery({id:this.idValue})
         this.nameList = res.data

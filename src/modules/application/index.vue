@@ -586,8 +586,8 @@ export default {
         }
         this.clickIndex = index
       }
-      this.list()
-      
+      // this.list()
+      // this.leftData.splice(index,1)
       this.getPafTemplateitems(ids)
     },
     // 删除申请单项目列表数据
