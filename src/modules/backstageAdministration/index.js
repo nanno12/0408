@@ -202,7 +202,7 @@ export default {
   },
   methods: {
     async remoteMethod(query) {
-      console.log('eee',query,t);
+      console.log('eee',query);
       this.loading = true;
       const openings = await dataApi.getDeptInfos({
         depttype:'1',
@@ -211,6 +211,9 @@ export default {
       this.loading = false;
       this.openings = openings.data
     },
+    // filterMethod (query) {
+    //   console.log('query',query);
+    // },
     async remoteMethod1(query) {
       console.log('eee',query,t);
       // this.loading = true;

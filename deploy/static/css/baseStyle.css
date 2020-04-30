@@ -1,0 +1,117 @@
+﻿.base-dialog {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.base-dialog .el-dialog__header {
+  background: url('../image/bg.jpg') top center no-repeat;
+}
+
+.base-dialog .el-dialog__headerbtn {
+  border: none;
+  background: none;
+}
+
+.base-dialog .el-dialog__footer {
+  padding: 0 15px 15px 15px !important;
+  margin: 0 !important;
+}
+
+.base-dialog .el-button--info {
+  background: linear-gradient(#3B8CFF, #1260C8);
+}
+
+.base-button {
+  width: 92px;
+  background: linear-gradient(#fff, #F0F0F0);
+}
+
+.base-dialog .el-table tr {
+  font-size: 12px; 
+  padding: 8px;
+  line-height: 1.42857143 !important;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+.base-dialog .el-table tr:hover {
+  transition: transform 0.25s ease;
+  /*transform: scale(1.002,1.1);*/
+  background-color: #EDF7FF;
+  box-shadow: 0 0 6px #EDF7FF !important;
+}
+
+.base-dialog .el-table--enable-row-hover .el-table__body tr:hover>td {
+  background-color: #EDF7FF;
+  border-bottom: 1px solid #EDF7FF !important;
+  border-right: 1px solid #dfe6ec !important;
+}
+
+.base-dialog .el-table .cell,
+.base-dialog .el-table th>div {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  line-height: 1.42857143 !important;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+}
+
+.base-dialog .el-table td,
+.el-table th {
+  height: 30px !important;
+}
+
+.base-dialog .el-table tr:hover input {
+  transition: -webkit-transform 0.25s ease;
+  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, -webkit-transform 0.25s ease;
+  /* transform: scale(1.002,1.1); */
+  background-color: #edf7ff;
+  /*box-shadow: 0 0 6px #edf7ff !important;*/
+}
+
+.base-dialog .el-button {
+  height: 30px;
+  line-height: 0.3;
+  width: 13%;
+}
+
+.base-dialog .el-button--default {
+  color: #20a0ff;
+  border-color: #20a0ff;
+  background: none;
+}
+
+.base-dialog-autoinput {
+  padding: 1px;
+}
+
+.base-dialog-autoinput input {
+  text-align: center;
+  border: 0;
+  height: 30px;
+}
+
+
+/** checkBox*/
+.baseCheckBox .el-checkbox__inner{
+  width: 14px;
+  height: 14px;
+  position:initial;
+}
+
+.baseCheckBox .el-checkbox__label{
+
+  font-size: 12px;
+
+}
+
+.baseCheckBox  .el-checkbox__input{
+  outline: 0;
+  line-height: 1;
+  vertical-align: middle;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+}
