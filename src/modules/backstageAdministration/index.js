@@ -201,11 +201,11 @@ export default {
   mounted() {
   },
   methods: {
-    handleChange (e) {
+    async handleChange (e) {
       if (e === '1' || e ==='2') {
         console.log('12412');
-      } else {
-        console.log('000000');
+        const res = await dataApi.getFindMould({mouldtype:e})
+        console.log('res',res);
       }
       console.log('e',e);
     },

@@ -12,7 +12,7 @@
             ref="interfaceTable"
             :data="listMoulds" :border="true" style="width: 100%">
             <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
-            <w-table-column prop="MOULD_LEVEL" label="类型" width="70"></w-table-column>
+            <w-table-column prop="MOULD_TYPE_STR" label="类型" width="70"></w-table-column>
             <w-table-column prop="MOULD_NAME" label="名称" ></w-table-column>
             <w-table-column fixed="right" label="操作" align="center" width="170" reference-cell>
               <template slot-scope="scope">
