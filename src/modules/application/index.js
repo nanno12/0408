@@ -5,6 +5,7 @@ export default {
   data() {
     return {
       modalTitle:'',
+      fileList: [],
       height:'200px',
       MODAL_TITLE,
       QUERY_PAGE,
@@ -191,6 +192,9 @@ export default {
     this.list()
   },
   methods: {
+    handlePreview(file) {
+      console.log(file);
+    },
     async list () {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
       this.leftData = res.data
@@ -229,7 +233,7 @@ export default {
       this.total = res.data.itemSum
     },
     // 点击申请单某一行
-    handleRowL (item,index,t) {
+    async handleRowL (item,index,t) {
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
       console.log(item,index,t, 'item,index,t');
@@ -247,12 +251,15 @@ export default {
         default:
           this.h =  MODAL_TITLE.CLONE
           this.getcopy(item.ID)
-          console.log(t);
+          const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
+          this.leftData = res.data
+          this.getPafTemplateitems(item.ID)
+          console.log(t,item);
       } 
     },
     async getcopy (id) {
       const res = await apiData.getcopy({id})
-      this.list()
+      // this.list()
       this.showMsg1(res, '复制申请单')
       console.log(res,'getcopygetcopy');
     },

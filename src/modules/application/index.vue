@@ -108,13 +108,26 @@
               <w-form-item
                 label="申请单模版"
                 prop="printTemplate" >
-                <w-input
+                <template>
+
+                <!-- <w-input
                   :maxlength="20"
                   placeholder="点击浏览选择申请单模版"
                   showCounter
                   v-model="form.printTemplate"
-                ></w-input>
-                
+                ></w-input> -->
+                <el-upload
+                  class="upload-demo"
+                  ref="upload"
+                  :limit=1
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :on-preview="handlePreview"
+                  :file-list="fileList"
+                  :auto-upload="false">
+                  <w-button slot="trigger" size="small" type="primary">选取文件</w-button>
+                  <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                </el-upload>
+                </template>
               </w-form-item>
             </w-col>
           </w-row>
@@ -167,7 +180,7 @@
                 label="收费项目"
                 prop="value2"
                 :rules="[{
-                  required: true,type: 'array', message: '请选择区域', trigger: 'change'
+                  required: true,type: 'array', message: '请选择收费项目', trigger: 'change'
                 }]"
                >
                 <w-input

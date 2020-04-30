@@ -3,7 +3,7 @@
     <w-row  class="home-page-body">
       <w-col :span="7" >
         <title-style class=" po_re pd-bottom_22"><span slot="header">申请单列表</span>
-          <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="primary" plain>新增</w-button>
+          <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
         </title-style>
         <div class="list-style">
           <w-table class="mt-15" @row-click="handleRow" 
@@ -27,7 +27,7 @@
       <w-col :span="17">
         <div class="pd-left_15">
           <title-style class="pd-bottom_22  po_re"><span slot="header">项目列表</span>
-            <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="primary" plain>新增</w-button>
+            <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="text" plain>+ 新增</w-button>
           </title-style>
           <div class="list-style">
           <w-table  :data="listMouldItems"  :border="true" style="width: 100%">
@@ -89,7 +89,7 @@
           <w-row>
             <w-col :span="12">
               <w-form-item label="模版类型" prop="mouldtype">
-                <w-select v-model="form.mouldtype" placeholder="请选择模版类型">
+                <w-select v-model="form.mouldtype" @change="handleChange" placeholder="请选择模版类型">
                   <w-option
                     v-for="item in mtype"
                     :key="item.value"

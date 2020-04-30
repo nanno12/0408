@@ -71,7 +71,7 @@ export default {
           name:'常规用血'
         },
         {
-          value:3,
+          value:'3',
           name:'紧急用血'
         },
         {
@@ -201,6 +201,14 @@ export default {
   mounted() {
   },
   methods: {
+    handleChange (e) {
+      if (e === '1' || e ==='2') {
+        console.log('12412');
+      } else {
+        console.log('000000');
+      }
+      console.log('e',e);
+    },
     async remoteMethod(query) {
       console.log('eee',query);
       this.loading = true;
