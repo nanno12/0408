@@ -2,59 +2,37 @@
   <div class="home-page-wrap-us">
     <w-row  class="home-page-body ">
       <w-col :span="12" >
-        <div class="mb-15 title">审核流程列表</div>
-        <w-button @click="handleAdd('left')" class="fr mb-15" type="primary" plain>新增</w-button>
-        <w-table class="mt-15" :data="tableData" :border="true" style="width: 100%">
-          <w-table-column prop="time" label="审核名称">
-          </w-table-column>
-          <w-table-column prop="name" label="审核范围" width="100">
-          </w-table-column>
-          <w-table-column prop="name" label="描述" width="100">
-          </w-table-column>
-          <w-table-column fixed="right" label="操作" align="center" width="120" reference-cell>
-            <template slot-scope="scope">
-                <w-button type="text" @click="handleModify(scope.row)">修改</w-button>
-                <w-popconfirm  title="确认删除这条内容吗? "
-                  @document-click="handleCancel(scope.$index)"
-                  @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
-                  <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text" @click="handleDelete(scope.row)">删除</w-button>
-                  </span>
-                </w-popconfirm>
-            </template>
-          </w-table-column>
-        </w-table>
+        <div class="mg-right_16">
+          <title-style class=" po_re pd-bottom_22"><span slot="header">审核流程列表</span>
+            <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
+          </title-style>
+          <win-table :listTable=tableLeftTitle
+            @handleEdit="handleEdit"
+            :tableData=tableData
+            @handleRow="handleRowR"
+            :isShow=isShowTableLeft
+            @handleDelete="handleDelete('left')"
+            style="height: calc(100vh - 150px); overflow-y: auto;"
+            >
+          </win-table>
+        </div>
       </w-col>
       <w-col :span="12">
         <div class="pl-15 pd-right">
-          <div class="mb-15 title">流程明细列表</div>
-          <w-button class="fr mb-15" type="primary" @click="handleAdd('right')" plain>新增</w-button>
-          <w-table :data="tableData" class="mt-15 " :border="true" style="width: 100%">
-            <w-table-column type="index" label="步骤" width="80">
-            </w-table-column>
-            <w-table-column prop="name" label="步骤名称">
-            </w-table-column>
-            <w-table-column prop="status" label="操作角色">
-            </w-table-column>
-            <w-table-column prop="status" label="描述">
-            </w-table-column>
-            <w-table-column label="操作"  align="center" width="120">
-              <template slot-scope="scope">
-                <w-button type="text" @click="handleModify(scope.row)">修改</w-button>
-                <w-popconfirm  title="确认删除这条内容吗? "
-                  @document-click="handleCancel(scope.$index)"
-                  @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
-                  <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text" @click="handleDelete(scope.row)">删除</w-button>
-                  </span>
-                </w-popconfirm>
-              </template>
-            </w-table-column>
-          </w-table>
+          <title-style class=" po_re pd-bottom_22"><span slot="header">审核流程列表</span>
+          <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="text" plain>+ 新增</w-button>
+        </title-style>
+          <win-table :listTable=tableRightTitle
+            @handleEdit="handleEdit"
+            :tableData=tableData
+            @handleDelete="handleDelete"
+            style="height: calc(100vh - 150px); overflow-y: auto;"
+            :isShow=isShow>
+          </win-table>
         </div>
       </w-col>
     </w-row>
-      <w-modal
+    <w-modal
       :close-on-click-modal="false"
       :showClose="false"
       :title="title"
@@ -133,7 +111,6 @@
           <w-col>
              <w-form-item
               label="描述"
-              prop="region"
             >
               <w-input v-model="value" placeholder="请输入描述" type="textarea" showCounter></w-input>
              </w-form-item>
@@ -154,17 +131,12 @@
   </div>
 </template>
 <script>
-// import Common from '@/app/api/common.js';
-// import autoResize from '@/app/components/autoResize';
-// import dataApi from './api/api.js';
+import apiData from '../api/authorityAudit.js';
 export default {
-  // mixins: [autoResize],
-  components: {
-    // LeftInfoBody,
-  },
   data() {
     return {
       visible: false,
+      modalTitle:'123',
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
       title: '', // 模态框标题
@@ -202,32 +174,72 @@ export default {
           label: '深圳'
         }
       ],
-      tableData: [{
-        time: '2019.05.12 11:02:33',
-        status: '其他区签约',
-        name: '赵宇翔',
-        type: '其他'
-      }, {
-        time: '2019.05.12 12:24:30',
-        status: '未签约',
-        name: '肖新宇',
-        type: '本地医保'
-      }, {
-        time: '2019.05.13 08:15:10',
-        status: '已签约',
-        name: '陈慕杰',
-        type: '本地医保'
-      }, {
-        time: '2019.05.14 09:23:09',
-        status: '未签约',
-        name: '李自然',
-        type: '本地医保'
-      }, {
-        time: '2019.05.15 08:45:48',
-        status: '未签约',
-        name: '尤道礼',
-        type: '本地医保'
-      }]
+      tableLeftTitle:[
+        {
+          prop:'time',
+          label:'审核名称'
+        },
+        {
+          prop:'name',
+          label:'审核范围',
+          width:'100px'
+        },
+        {
+          prop:'name',
+          label:'描述'
+        }
+      ],
+      tableRightTitle:[
+        {
+          prop:'name',
+          label:'步骤名称'
+        },
+        {
+          prop:'status',
+          label:'操作角色',
+          width:'100px'
+        },
+        {
+          prop:'status',
+          label:'描述'
+        }
+      ],
+      tableData: [
+        {
+          time: '2019.05.12 11:02:33',
+          status: '其他区签约',
+          name: '赵宇翔',
+          type: '其他'
+        }, {
+          time: '2019.05.12 12:24:30',
+          status: '未签约',
+          name: '肖新宇',
+          type: '本地医保'
+        }, {
+          time: '2019.05.13 08:15:10',
+          status: '已签约',
+          name: '陈慕杰',
+          type: '本地医保'
+        }, {
+          time: '2019.05.14 09:23:09',
+          status: '未签约',
+          name: '李自然',
+          type: '本地医保'
+        }, {
+          time: '2019.05.15 08:45:48',
+          status: '未签约',
+          name: '尤道礼',
+          type: '本地医保'
+        }
+      ],
+      isShow: {
+        width:'120px',
+        index:true,
+        indexTitle:'步骤'
+      },
+      isShowTableLeft: {
+        width:'120px',
+      }
     };
   },
   computed: {
@@ -236,12 +248,37 @@ export default {
 
   },
   created() {
+    // this.getPafTemplate()
   },
   mounted() {
   },
   methods: {
+    // async getPafTemplate () {
+    //   const res = await apiData.getMouldItems()
+    //   console.log(res,'getMouldI123tems');
+    // },
+    // 新增按钮
+    handleAdd (title) {
+      if (title === 'left') {
+        this.title = '新增审核'
+        this.visible = true
+      } else {
+        this.title = '新增明细流程'
+        this.visible = true
+      }
+      console.log(title)
+    },
+    handleEdit (row,t) {
+      console.log('edit',row,t);
+    },
+    handleRowR (row) {
+      console.log('row',row);
+    },
     handlePlus () {
 
+    },
+    handleDelete (row,t) {
+      console.log('Delete',row,t);
     },
     // 模态框表格多选值
     handleSelectionChange (val) {
@@ -268,21 +305,10 @@ export default {
         this.tableData[index].switch = !this.tableData[index].switch // 恢复状态
       }, 200) // 等关闭气泡后修改状态， 避免出现数据状态过度，影响体验
     },
-    // 新增按钮
-    handleAdd (title) {
-      if (title === 'left') {
-        this.title = '新增审核'
-        this.visible = true
-      } else {
-        this.title = '新增明细流程'
-        this.visible = true
-      }
-      console.log(title)
-    },
-    // 列表删除
-    handleDelete (row) {
-     console.log(row)
-    }
+    // // 列表删除
+    // handleDelete (row) {
+    //  console.log(row)
+    // }
   }
 };
 </script>

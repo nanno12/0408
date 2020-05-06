@@ -4,7 +4,7 @@
       @selection-change="handleSelectionChange"
       @row-click="handleRow" >
       <w-table-column v-if="isShow.selection" type="selection" width="55"></w-table-column>
-      <w-table-column v-if="isShow.index" type="index" label="序号"  width="80"></w-table-column>
+      <w-table-column v-if="isShow.index" type="index" :label="isShow.indexTitle" align="center"  width="80"></w-table-column>
       <w-table-column v-for="(item,index) in listTable" :key="index" 
         :prop="item.prop"
         :label="item.label"
@@ -21,7 +21,7 @@
           <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text" size="small">复制</w-button>
           <!-- <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text" size="small">复制</w-button> -->
           <w-button @click="handleEdit(scope.row)" v-if="!isShow.edit" type="text" size="small">修改</w-button>
-          <w-button @click="handleDelete(scope.row,scope.$index)" type="text" size="small">删除</w-button>
+          <w-button @click="handleDelete(scope.row,scope.$index,t)" type="text" size="small">删除</w-button>
         </template>
       </w-table-column>
       <slot name="handleColumn"></slot>
@@ -39,9 +39,6 @@
 <script>
   import {QUERY_PAGE} from '../constant.js'
   export default {
-    data () {
-      QUERY_PAGE
-    },
     props :{
       // 这是相应的字段展示
         listTable: {
@@ -66,6 +63,13 @@
       },
       
     },
+     data () {
+      return {
+        height:'calc(100vh - 150px)',
+        multipleSelection: [] // 多行选中
+      }
+    },
+    
     // watch:{
     // tableData (oldVal, newVal) {
     //   this.$nextTick(() => {
@@ -81,12 +85,6 @@
     //   })
     // }
     // },
-     data () {
-      return {
-        height:'calc(100vh - 150px)',
-        multipleSelection: [] // 多行选中
-      }
-    },
     methods:{
       //将选中的行发送到父组件
       handleSelectionChange(val) {

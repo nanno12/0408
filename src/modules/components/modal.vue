@@ -1,10 +1,12 @@
 <template>
   <div>
     <w-modal
-      :visible.sync="isShow"
+      :visible.sync="isShowVisible"
       :title="title"
       :showClose="false"
       :close-on-click-modal="false">
+      <w-form :model="form" ref="form" label-width="85px" :rules="rules">
+      </w-form>
       <span>this is a dialog</span>
       <slot></slot>
       <span slot="footer" class="dialog-footer">
@@ -19,22 +21,34 @@
 export default {
   data () {
       return {
-        isShow: true
+        // isShowVisible: true
       };
   },
   props: {
-    isShow: {
-        type: Boolean,
-        default: true
-      },
-     title: {
-        type: String,
-        default: '标题'
-     }
+    isShowVisible: {
+      type: Boolean,
+      default: true
+    },
+    title: {
+      type: String,
+      default: '标题'
+    },
+    rules: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    },
+    form: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
   },
   methods:{
     handleModalClose(){
-      this.isShow = false
+      this.isShowVisible = false
     },
     handleque () {
       
