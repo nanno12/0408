@@ -134,7 +134,7 @@ export default {
         mainname:'', // 成分大类名称
         detailcode:'', // 成分小类代码
         detailname:'', // 成分小类名称
-        amount:0, // 默认数量
+        amount:1, // 默认数量
         hisitemcode:'', // 对应费用明细项编号
         addfactor: '', // 增减因子
         remark: '', // 备注
@@ -558,9 +558,9 @@ export default {
       this.modalType = ''
       this.isShowRow(t,'clone',row)
     },
-    handleClose (tag) {
-      this.selection.splice(this.selection.indexOf(tag), 1)
-    },
+    // handleClose (tag) {
+    //   this.selection.splice(this.selection.indexOf(tag), 1)
+    // },
     add (showInput) {
       if (showInput === true ) {
         this.showInput = false

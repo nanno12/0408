@@ -179,8 +179,7 @@
                     }">
                   </w-option>
                 </w-select>
-                
-                <span class="inline-block po_ab top_0 right_-35"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"  style="font-size: 33px;"></i></span>
+                <span class="inline-block po_ab top_0 right_-20"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
               </w-form-item>
             </w-col>
             <w-col :span="12" class="po_re">
@@ -201,7 +200,7 @@
                   </w-option>
                 </w-select>
                 <span v-if="form.maincode !==''" class="inline-block po_ab top_0 right_-35">
-                  <i  @click="handlePlus('sma')" class="iconfont iconweibiaoti--" style="font-size: 33px;"></i>
+                  <i  @click="handlePlus('sma')" class="iconfont iconweibiaoti--"></i>
                 </span>
               </w-form-item>
             </w-col>
@@ -390,6 +389,9 @@
       background #fff
 </style>
 <style lang="scss" scoped>
+.iconfont {
+  font-size: 16px;
+}
 .opSetting{
     text-align: center;
     margin-top:30px;
@@ -449,7 +451,14 @@
   // }
 </style>
 <style lang="scss">
+
 .modal {
+  .iconfont {
+    font-size: 16px!important;
+    font-weight: 700;
+    display: inline-block;
+    padding-right: 10px;
+  }
   .w-modal__footer,
   .w-modal__body {
     margin-right: 30px!important;

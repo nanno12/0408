@@ -7,6 +7,7 @@ export default {
       modalTitle:'',
       fileList: [],
       height:'200px',
+      isDisabled: true,
       MODAL_TITLE,
       QUERY_PAGE,
       clickIndex:0,
@@ -176,26 +177,23 @@ export default {
     };
   },
   watch: {
-    // clickIndex (oldVal, newVal) {
-    //   this.rowLi = this.rowLeftList
-    //   if (newVal) {
-    //     console.log('123');
-    //   } else {
-    //     console.log('456');
-    //   }
-    //   console.log('oldVal, newVal',oldVal, newVal);
+    // costList (oldVal, newVal) {
+    //   console.log(this.form.chargeItems,'oldVal, newVal');
+    //     this.costList.map(it => {
+    //       this.form.chargeItems.find(item => {
+    //         if (it.CHARGE_CODE === item.CHARGE_CODE) {
+    //           this.$nextTick(() => {
+    //           this.$refs.costList.toggleRowSelection(item, true)
+    //           })
+    //         }
+    //       })
+    //   })
     // },
-    costList (oldVal, newVal) {
-      console.log(this.form.chargeItems,'oldVal, newVal');
-      this.$nextTick(() => {
-        this.selectionVal.find(it => {
-            this.costList.find(item => {
-            if (it.CHARGE_CODE === item.CHARGE_CODE) {
-              this.$refs.costList.toggleRowSelection(item, true)
-            }
-          })
-        })
-      })
+    selectionVal (oldVal, newVal) {
+      if (oldVal) {
+        this.isDisabled = false
+        console.log('oldVal',oldVal,newVal);
+      }
     }
   },
   created() {
@@ -300,9 +298,7 @@ export default {
       let list = []
       res.data.chargeItems.map(item=>{
         list.push(item.chargeItemName)
-        console.log(item,'item');
       })
-      console.log(list,'list');
       this.form.value2 = list
     },
     // 项目删除
@@ -376,35 +372,54 @@ export default {
       });
     });
     },
-    // 点击收费项目收费项目
+    // 点击收费项目
     async handleIputVal () {
       this.innerVisible  = true
-      console.log('收费项目');
-      this.costList = []
-      this.form.chargeItems = []
-      this.form.value2 = []
-      this.visible = true
-      // this.h = ''
-      const res = await apiData.getQuery({search:''})
-      console.log('res',this.selectionVal);
+      this.isDisabled = true
+      // this.costList = []
+      // this.form.chargeItems = []
+      // this.form.value2 = []
+      let list = []
+      this.form.chargeItems.forEach((vv,ii) => {
+        list.push({
+          CHARGE_CODE:vv.chargeItemCode,
+          CHARGE_NAME:vv.chargeItemName,
+          CHARGE_PRICE:vv.chargeItemPrice
+        })
+      })
+      await this.getCostList()
+      console.log(this.form,this.selectionVal,this.form.chargeItems,'oldVal, newVal');
+      // this.$nextTick(() => {
+          this.costList.forEach((v,i) => {
+            list.forEach(it =>{
+              if (v.CHARGE_CODE === it.CHARGE_CODE) {
+                console.log('vvvvv',it);
+                this.$nextTick(() => {
+                  console.log('list',list);
+                  this.$refs.costList.toggleRowSelection(it,true)
+                })
+              }
+            })
+          })
+        // })
+        
+    },
+    async handleSearch(search) {
+      await this.getCostList(search)
+    },
+    //  获取收费项目列表
+    async getCostList (search) {
+      const res = await apiData.getQuery({search})
       if (res.data === null) return
       this.loading = true
       this.costList = res.data
       this.loading = false
+      console.log(res);
+      console.log(this.form,this.selectionVal,this.form.chargeItems,'oldVal, newVal');
+
     },
-    async handleSearch(search) {
-      const res = await apiData.getQuery({search})
-      console.log(res,'res');
-      this.loading = true
-      this.costList = res.data
-      this.loading = false
-      console.log(search,'search',this.search);
-    },
-    
     // 界面新增按钮
     async handleAdd(w) {
-    console.log('wwwwwww',w);
-      // this.init()
       this.h = MODAL_TITLE.ADD
       switch(w) {
         case 'left':
@@ -419,51 +434,39 @@ export default {
       this.visible = true
     },
      // 当选择项发生变化时会触发该事件
-    handleSelectionChange (rows) {
-      this.selectionVal = [];
-      console.log('rows',this.selectionVal,rows);
-      const me = 0
+     handleSelectionChange (rows) {
+      this.selectionVal = []
+      this.form.chargeItems = []
+      this.form.value2 = []
       if (rows) {
+        let sum = 0;
+        console.log(sum,'sumsum');
         rows.forEach(row => {
           if (row) {
             this.selectionVal.push(row);
           }
         });
-      }
-      let www = []
-      let ci = []
-      console.log('this.selectionVal',this.selectionVal);
-      this.selectionVal.map(item => {
-        www.push({
-          chargeItemCode:item.CHARGE_CODE,	// --收费编码
-          chargeItemName:item.CHARGE_NAME,	// --收费项目名称
-          chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
-          chargeItemType:item.CHARGE_TYPE //  --收费项目类型
+        this.selectionVal.map(item => {
+          if (item) {
+            this.form.chargeItems.push({
+              chargeItemCode:item.CHARGE_CODE,	// --收费编码
+              chargeItemName:item.CHARGE_NAME,	// --收费项目名称
+              chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
+              chargeItemType:item.CHARGE_TYPE //  --收费项目类型
+            })
+            this.form.value2.push(item.CHARGE_NAME)
+            sum += parseInt(item.CHARGE_PRICE)
+          }
         })
-        ci.push(item.CHARGE_NAME)
-      })
-      console.log('this',this.selectionVal);
-      let sum = 0;
-      this.selectionVal.map(item =>{
-        sum += parseInt(item.CHARGE_PRICE)
-      })
-      console.log(sum,'sumsum');
-      this.form.value2 = ci
-      this.form.item.itemPrice = sum
-      this.form.chargeItems = []
-      this.form.chargeItems = www
+        this.form.item.itemPrice = sum
+      }
     },
     async submit(t) {
       if (t !== 'out') {
-        console.log('12357885',this.modalTitle,MODAL_TITLE.SELECT_ITEM);
-        if(this.modalTitle === '选择对应项目') {
-
-        }
         this.innerVisible = false
         this.visible = true
         this.h = MODAL_TITLE.ADD
         this.modalTitle = MODAL_TITLE.ITEM
-        this.form.chargeItems = [] 
       }else {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {
@@ -493,7 +496,7 @@ export default {
               this.visible = false
               this.list()
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
-              console.log('this.rowLeftList',this.rowLeftList);
+              console.log('this.rowLeftList',this.rowLeftList,this.form.chargeItems);
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -506,6 +509,7 @@ export default {
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
+              console.log('this.form',this.form);
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''
@@ -518,6 +522,7 @@ export default {
                   id = this.leftData[0].ID
                 }
                 this.init()
+                this.form.chargeItems = []
                 // this.$refs.form.resetFields()
                 // this.form.item.itemExplain  = ''
                 this.getPafTemplateitems(id)
@@ -549,7 +554,6 @@ export default {
       }
     },
     reset(t) {
-      this.init()
       if (t !== 'out') {
         this.innerVisible = false
         this.visible = true
@@ -557,18 +561,14 @@ export default {
         // this.modalTitle = MODAL_TITLE.ITEM
         // this.form.chargeItems = []
         // this.selectionVal = []
+        // this.$nextTick(() => {
+        //   this.$refs.costList.clearSelection(); 
+        // });
       } else {
         this.visible = false
-
+        this.init()
       }
       console.log('123',this.modalTitle,MODAL_TITLE.FORM);
-      
-      // if (this.modalTitle === MODAL_TITLE.CHARGE_ITEM) {
-      //   //  this.h = MODAL_TITLE.ADD
-      //    this.modalTitle = MODAL_TITLE.ITEM
-      // } else {
-      //   this.visible = false
-      // }
     },
     // 包含元素多选框
     handleChangeCheckbox (row,index) {

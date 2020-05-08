@@ -84,7 +84,7 @@
                 label="申请单名称"
                 prop="templateName">
                 <w-input
-                  :maxlength="20"
+                   
                   placeholder="请输入申请单名称"
                   showCounter
                   v-model="form.templateName"
@@ -113,7 +113,7 @@
                 <template>
 
                 <!-- <w-input
-                  :maxlength="20"
+                   
                   placeholder="点击浏览选择申请单模版"
                   showCounter
                   v-model="form.printTemplate"
@@ -141,7 +141,7 @@
                 label="项目编码"
                 prop="item.itemCode">
                 <w-input
-                  :maxlength="20"
+                   
                   placeholder="请输入项目编码"
                   showCounter
                   v-model="form.item.itemCode"
@@ -153,7 +153,6 @@
                 label="项目名称"
                 prop="item.itemName">
                 <w-input
-                  :maxlength="20"
                   placeholder="请输入项目名称"
                   v-model="form.item.itemName"
                 ></w-input>
@@ -166,7 +165,7 @@
                 label="项目价格"
                 prop="item.itemPrice">
                 <w-input
-                  :maxlength="20"
+                   
                   placeholder="请输入项目价格"
                   showCounter
                   :readonly=true
@@ -204,7 +203,7 @@
                 label="描述"
                 prop="itemExplain">
                 <w-input
-                  :maxlength="20"
+                   
                   type="textarea"
                   placeholder="请输入描述内容"
                   showCounter
@@ -262,6 +261,7 @@
         <span slot="footer" class="dialog-footer ">
          <w-button @click="reset('inner')">取 消</w-button>
           <w-button
+            :disabled="isDisabled"
             @click="submit('inner')"
             type="primary"
           >确 定</w-button>
