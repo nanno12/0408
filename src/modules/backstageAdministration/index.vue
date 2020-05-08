@@ -1,7 +1,7 @@
 <template>
   <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
-      <w-col :span="7" >
+      <w-col :span="10" >
         <title-style class=" po_re pd-bottom_22"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
         </title-style>
@@ -23,8 +23,8 @@
             </w-table-column>
           </w-table>
         </div>
-      </w-col>
-      <w-col :span="17">
+      </w-col> 
+      <w-col :span="14">
         <div class="pd-left_15">
           <title-style class="pd-bottom_22  po_re"><span slot="header">项目列表</span>
             <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="text" plain>+ 新增</w-button>
@@ -179,7 +179,8 @@
                     }">
                   </w-option>
                 </w-select>
-                <span class="inline-block po_ab top_0 right_-35"><i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i></span>
+                
+                <span class="inline-block po_ab top_0 right_-35"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"  style="font-size: 33px;"></i></span>
               </w-form-item>
             </w-col>
             <w-col :span="12" class="po_re">
@@ -200,7 +201,7 @@
                   </w-option>
                 </w-select>
                 <span v-if="form.maincode !==''" class="inline-block po_ab top_0 right_-35">
-                  <i  @click="handlePlus('sma')" class="w-icon-plus" style="font-size: 33px;"></i>
+                  <i  @click="handlePlus('sma')" class="iconfont iconweibiaoti--" style="font-size: 33px;"></i>
                 </span>
               </w-form-item>
             </w-col>
@@ -296,7 +297,38 @@
         </div>
         <!-- 新增成分类 -->
         <w-row v-else>
-          <w-row>
+          <w-col :span="11">
+            <p>已选择大类列表</p>
+            <win-table :listTable=tableTitle
+              :tableData=tableData
+              @handleSelectionChange="checkAll"
+              
+              :isShow=isShow>
+            </win-table>
+          </w-col>
+          <w-col :span="2">
+            <div class="opSetting">
+              <div @click="handelSelect">
+                <w-button :disabled="nowSelectData.length?false:true" :size="buttonSize" type="primary" > 
+                  >
+                </w-button>
+              </div>
+              <div class="spacing" @click="handleRemoveSelect">
+                <w-button  :disabled="nowSelectRightData.length?false:true" :size="buttonSize" type="primary">
+                  <
+                </w-button>
+              </div>
+            </div>
+          </w-col>
+          <p>未选择大类列表</p>
+          <w-col :span="11">
+            <win-table :listTable=tableTitle
+              :tableData=selectArr
+              @handleSelectionChange="checkRightAll"
+              :isShow=isShow>
+            </win-table>
+          </w-col>
+          <!-- <w-row>
             <w-col :span="24">
               <w-form-item :label="modalTitle+'代码'" prop="code"
               :rules="[
@@ -314,7 +346,7 @@
                   placeholder="请填写成分名称"></w-input>
               </w-form-item>
             </w-col>
-          </w-row>
+          </w-row> -->
         </w-row>
       
       </w-form>
@@ -358,6 +390,14 @@
       background #fff
 </style>
 <style lang="scss" scoped>
+.opSetting{
+    text-align: center;
+    margin-top:30px;
+  }
+  .spacing{
+    margin-top:10px;
+  }
+
 .list-style {
   height: calc(100vh - 120px);
   overflow-y: auto;

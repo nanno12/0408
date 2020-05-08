@@ -11,9 +11,9 @@
 		"prefix": "msg",
 		"body": [
 		"if (res.type === 'SUCCESS') {",
-		"  this.showMsg('修改成功','success')",
+		"  this.showMsg('成功','success')",
 		"} else {",
-		"	 this.showMsg('修改失败','error')",
+		"	 this.showMsg('失败','error')",
 		"}",
 		],
 		"description": "Log output to console"

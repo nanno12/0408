@@ -18,10 +18,10 @@
         align="center"
         label="操作">
         <template slot-scope="scope">
-          <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text" size="small">复制</w-button>
+          <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text">复制</w-button>
           <!-- <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text" size="small">复制</w-button> -->
-          <w-button @click="handleEdit(scope.row)" v-if="!isShow.edit" type="text" size="small">修改</w-button>
-          <w-button @click="handleDelete(scope.row,scope.$index,t)" type="text" size="small">删除</w-button>
+          <w-button @click="handleEdit(scope.row)" v-if="!isShow.edit" type="text">修改</w-button>
+          <w-button @click="handleDelete(scope.row,scope.$index,t)" type="text" >删除</w-button>
         </template>
       </w-table-column>
       <slot name="handleColumn"></slot>

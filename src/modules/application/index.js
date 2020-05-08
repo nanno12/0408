@@ -14,6 +14,7 @@ export default {
       loading:true,
       hoverIndex: 0,
       h : '',
+      formTitle:'',
       value2: [], // 搜索值
       // pageSize:10,
       // currentPage:20,
@@ -24,7 +25,8 @@ export default {
       visible: false,
       isShow:{
         index:true,
-        width:'110px'
+        indexTitle:'序号',
+        width:'120px'
       },
       options: [
         {
@@ -65,10 +67,11 @@ export default {
         value2:[],
         templateName: "", // 申请单名称
         printTemplate: '' , // 打印模板
-        isShowOtherfindings:"0",	//--是否显示手术/内窥镜
+        isShowOperation:"0",	//--是否显示手术/内窥镜
         // isShowSpecimen:"0",		//--是否显示标本
         isShowGynecological:"0",//	--是否显示妇科
         isShowTumour:"0",	//	--是否显示肿瘤
+        isShowHpv:"0", // --是否显示HPV信息
         item: {
           pafTemplateId:"",		// --申请单id
           itemCode:"",			// --项目编码
@@ -83,7 +86,8 @@ export default {
         chargeItems:[{              // --勾选弹框的数据集合
           chargeItemCode:"",	// --收费编码
           chargeItemName:"",	// --收费项目名称
-          chargeItemPrice:""	// --收费项目价格
+          chargeItemPrice:"",	// --收费项目价格
+          chargeItemType:""  // --收费项目类型
         }],
       },
       checkboxList: [
@@ -120,6 +124,11 @@ export default {
         {
           label:7,//6
           name: '肿瘤信息',
+          disabled: false
+        },
+        {
+          label:8,//6
+          name: '细胞学活HPV检查结果',
           disabled: false
         },
         
@@ -201,14 +210,17 @@ export default {
       if (res.data === null)return
       this.rowLi = res.data[0]
       res.data.map(item=>{
-        if (item.isShowOtherfindings === '1') {
-          this.value.push(6)
-        } 
         if (item.isShowGynecological === '1') {
           this.value.push(5)
         } 
+        if (item.isShowOperation === '1') {
+          this.value.push(6)
+        } 
         if (item.isShowTumour === '1') {
           this.value.push(7)
+        }
+        if (item.isShowHpv === '1') {
+          this.value.push(8)
         }
 
       })
@@ -236,6 +248,7 @@ export default {
     async handleRowL (item,index,t) {
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
+      this.formTitle = t
       console.log(item,index,t, 'item,index,t');
        switch(t) {
         case 'edit':
@@ -260,7 +273,11 @@ export default {
     async getcopy (id) {
       const res = await apiData.getcopy({id})
       // this.list()
-      this.showMsg1(res, '复制申请单')
+      if (res.type === 'SUCCESS') {
+        this.showMsg('复制申请单成功','success')
+      } else {
+         this.showMsg('复制申请单失败','error')
+      }
       console.log(res,'getcopygetcopy');
     },
     
@@ -309,7 +326,7 @@ export default {
       console.log(res.data,'获取当前申请单数据');
       this.showMsg1(res, '获取当前申请单数据')
       if (res.data === null)return
-      if (res.data.isShowOtherfindings === '1') {
+      if (res.data.isShowOperation === '1') {
         this.value.push(6)
       } 
       if (res.data.isShowGynecological === '1') {
@@ -318,17 +335,24 @@ export default {
       if (res.data.isShowTumour === '1') {
         this.value.push(7)
       }
+      if (res.data.isShowHpv === '1') {
+        this.value.push(8)
+      }
       console.log(this.value,'this.value');
       this.form = res.data
     },
     // 删除申请列表数据
     async getDeletePafTemplate (id,index) {
-      this.leftData.map((item,index) => {
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type:'warning'
+      }).then(async() => {
+      this.leftData.map( (item,index) => {
         item['index']=index
       })
       const res = await apiData.getDeletePafTemplate({id})
       this.showMsg1(res,'删除申请单')
-      // this.leftData.slice(index,1)
       let ids = ''
       if (this.leftData[this.leftData.length-1].ID === id) {
         this.clickIndex = index-1
@@ -344,6 +368,12 @@ export default {
       // this.list()
       this.leftData.splice(index,1)
       this.getPafTemplateitems(ids)
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消删除'
+      });
+    });
     },
     // 点击收费项目收费项目
     async handleIputVal () {
@@ -368,6 +398,25 @@ export default {
       this.loading = false
       console.log(search,'search',this.search);
     },
+    
+    // 界面新增按钮
+    async handleAdd(w) {
+    console.log('wwwwwww',w);
+      // this.init()
+      this.h = MODAL_TITLE.ADD
+      switch(w) {
+        case 'left':
+          this.modalTitle = MODAL_TITLE.FORM
+          break;
+        case 'rigth':
+          this.modalTitle = MODAL_TITLE.ITEM
+          break;
+        default:
+          this.modalTitle = MODAL_TITLE.SELECT_ITEM
+      } 
+      console.log("新增");
+      this.visible = true
+    },
      // 当选择项发生变化时会触发该事件
     handleSelectionChange (rows) {
       this.selectionVal = [];
@@ -387,7 +436,8 @@ export default {
         www.push({
           chargeItemCode:item.CHARGE_CODE,	// --收费编码
           chargeItemName:item.CHARGE_NAME,	// --收费项目名称
-          chargeItemPrice:item.CHARGE_PRICE	// --收费项目价格
+          chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
+          chargeItemType:item.CHARGE_TYPE //  --收费项目类型
         })
         ci.push(item.CHARGE_NAME)
       })
@@ -407,24 +457,37 @@ export default {
         if (valid) {
           console.log(this.form.item,'list');
           if (this.modalTitle === MODAL_TITLE.FORM) {
+            console.log('this.form.isShowOperation',this.form);
             const list = {
               templateName: this.form.templateName,
               printTemplate: this.form.printTemplate,
-              isShowOtherfindings: this.form.isShowOtherfindings,
+              isShowOperation: this.form.isShowOperation,
               isShowGynecological: this.form.isShowGynecological,
-              isShowTumour: this.form.isShowTumour
+              isShowTumour: this.form.isShowTumour,
+              isShowHpv: this.form.isShowHpv
+              
             }
             const res = await apiData.getAddUpdateTemplate({...list, id:this.rowLeftList.ID})
-            this.showMsg1(res,'新增申请单')
+
+            if (res.type === 'SUCCESS') {
+              this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
+              // this.form.templateName = ''
+              // this.form.value = []
+              this.init()
+            } else {
+               this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
+            }
+            // this.showMsg1(res,'新增申请单')
             this.visible = false
             this.list()
           } else if (this.modalTitle === MODAL_TITLE.ITEM) {
             console.log('this.rowLeftList',this.rowLeftList);
             delete this.form.templateName
             delete this.form.printTemplate
-            delete this.form.isShowOtherfindings
+            delete this.form.isShowOperation
             delete this.form.isShowGynecological
             delete this.form.isShowTumour
+            delete this.form.isShowHpv
             delete this.form.value2
             this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
             this.form.item['seqNo'] = this.rigthData.length+1
@@ -432,7 +495,7 @@ export default {
               ...this.form
             })
             if (res.type === 'SUCCESS') {
-              this.showMsg('修改成功','success')
+              this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
               let id = ''
               console.log('this.rowLeftList',this.rowLeftList);
               if (this.rowLeftList.length >0) {
@@ -442,10 +505,13 @@ export default {
                 console.log('this.leftData',this.leftData);
                 id = this.leftData[0].ID
               }
+              this.init()
+              // this.$refs.form.resetFields()
+              // this.form.item.itemExplain  = ''
               this.getPafTemplateitems(id)
               this.visible = false
             } else {
-               this.showMsg('修改失败','error')
+              this.showMsg(this.formTitle ==='edit'?'修改申请单项目失败':'新增申请单项目失败','error')
             }
           } else {
             // this.h = MODAL_TITLE.ADD
@@ -458,42 +524,30 @@ export default {
       })
     },
     init () {
-      this.form.chargeItems = []
-      // this.form = {} 
-      console.log(this.form.item.itemName);
-      this.form.item.itemName = ''
-      this.form.item.itemPrice = ''
-      this.form.item.itemCode = ''
-
-      this.form.value2 = []
-    },
-    reset() {
-      // this.init()
-      console.log('123');
-      this.$refs.form.resetFields()
-      if (this.modalTitle === MODAL_TITLE.CHARGE_ITEM) {
-        //  this.h = MODAL_TITLE.ADD
-         this.modalTitle = MODAL_TITLE.ITEM
+      if (this.modalTitle === MODAL_TITLE.FORM) {
+        this.form.templateName = ''
+        this.value = [1,2,3,4]
       } else {
-        this.visible = false
+        this.form.item.itemExplain  = ''
+        // this.form.chargeItems = []
+        this.$refs.form.resetFields()
+        this.form.item.itemName = ''
+        this.form.item.itemPrice = ''
+        // this.form.item.itemCode = ''
+        // this.form.value2 = []
       }
     },
-    // 界面新增按钮
-    async handleAdd(w) {
+    reset() {
       this.init()
-      this.h = MODAL_TITLE.ADD
-      switch(w) {
-        case 'left':
-          this.modalTitle = MODAL_TITLE.FORM
-          break;
-        case 'rigth':
-          this.modalTitle = MODAL_TITLE.ITEM
-          break;
-        default:
-          this.modalTitle = MODAL_TITLE.SELECT_ITEM
-      } 
-      console.log("新增");
-      this.visible = true
+      console.log('123',this.modalTitle,MODAL_TITLE.FORM);
+      
+      this.visible = false
+      // if (this.modalTitle === MODAL_TITLE.CHARGE_ITEM) {
+      //   //  this.h = MODAL_TITLE.ADD
+      //    this.modalTitle = MODAL_TITLE.ITEM
+      // } else {
+      //   this.visible = false
+      // }
     },
     // 包含元素多选框
     handleChangeCheckbox (row,index) {
@@ -501,29 +555,34 @@ export default {
       const val = this.value.includes(row.label)
       if (val === true) {
         switch(row.label) {
-          case 1:
-              this.form.isShowOtherfindings = '1'
-              break;
           case 5:
               this.form.isShowGynecological = '1'
               break;
           case 6:
+              this.form.isShowOperation = '1'
+              break;
+          case 7:
               this.form.isShowTumour = '1'
-              break;;
+              break;
+          case 8:
+            this.form.isShowHpv = '1'
+            break;
           default:
             // console.log(9999);
         } 
       } else {
          switch(row.label) {
-           case 1:
-              this.form.isShowOtherfindings = '0'
-              break;
-          case 5:
+           case 5:
               this.form.isShowGynecological = '0'
               break;
           case 6:
+              this.form.isShowOperation = '0'
+              break;
+          case 7:
               this.form.isShowTumour = '0'
-              break;;
+              break;
+          case 8:
+            this.form.isShowHpv = '0'
           default:
             // console.log(9999);
         } 

@@ -5,36 +5,34 @@
       label-align="right"
       :model="searchData"
       :rules="rules"
+      label-width="90px"
       ref="searchForm"
-      :label-width="labelWidth">
-        <w-row>
+      >
+        <w-row :gutter="20">
+          <div  v-for="(item,index) in searchForm" :key="index">
+            <w-col :span="item.col">
+
           <w-form-item
-            v-for="item in searchForm"
             :label="item.label"
-            :key="item.prop"
             :prop="item.prop">
             <!-- 输入框 -->
-            <w-row>
-            <w-col :span="item.col">
-              <w-input
-                v-if="item.type === 'Input'"
-                v-model="searchData[item.prop]"
-                :placeholder="item.placeholder"
-              ></w-input>
+                <w-input
+                  v-if="item.type === 'Input'"
+                  v-model="searchData[item.prop]"
+                  :placeholder="item.placeholder"
+                ></w-input>
+          </w-form-item>
             </w-col>
-            </w-row>
-            <!-- 数字输入框 -->
-             <w-form-item>
-            <w-col :span="item.col">
-              
-            <w-input-number
-              v-if="item.type === 'number'"
-              :placeholder="item.placeholder"
-              v-model.number="searchData[item.prop]">
-            </w-input-number>
-            </w-col>
-               </w-form-item>
 
+          
+            <!-- 数字输入框 -->
+            <w-col :span="item.col">
+              <w-input-number
+                v-if="item.type === 'number'"
+                :placeholder="item.placeholder"
+                v-model.number="searchData[item.prop]">
+              </w-input-number>
+            </w-col>
             <w-col :span="item.col">
             <w-input
               type="textarea"
@@ -57,6 +55,8 @@
 
             <!-- 下拉框 -->
             <!-- $forceUpdate() 下拉刷新,修复数据改变下拉框不变的bug -->
+
+            <w-col :span="item.col">
             <w-select
               v-if="item.type === 'Select'"
               v-model="searchData[item.prop]"
@@ -68,7 +68,7 @@
                 :value="op.value"
                 :key="op.value">{{ op.label }}</w-option>
             </w-select>
-
+            </w-col>
             <!-- 单选 -->
             <w-radio-group
               v-if="item.type === 'Radio'"
@@ -161,7 +161,9 @@
               :props="item.props.defaultParams"
               @change="item.change(searchData[item.prop], item)">
             </w-cascader>
-          </w-form-item>
+
+          </div>
+
         </w-row>
       <!-- button 操作按钮 -->
       <w-form-item class="search_input_button" v-if="isHandle">

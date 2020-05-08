@@ -3,7 +3,7 @@
     <w-row class="home-page-body">
       <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
-          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span>+</span> 新增</w-button>
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+</span> 新增</w-button>
         </title-style>
         <ul class="mg-right_16 list-style">
           <li class="application" v-for="(item, index) in leftData"
@@ -13,7 +13,7 @@
             @click="handleLeftRow(item, index)" :key="index" > 
             <div class="po_re">
               <h4 class="inline-block ">{{item.TEMPLATE_NAME}}</h4>
-              <div class="inline-block po_ab top_-9 right_0">
+              <div class="inline-block po_ab top_-9 right_0" v-if="hoverIndex === index || clickIndex === index">
                 <w-button type="text" @click="handleRowL(item,index,'copy')">复制</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'edit')">修改</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'delete')">删除</w-button>
@@ -27,9 +27,10 @@
                   <span>医嘱信息、</span>
                   <span>既往病理检查结果、</span>
                 {{item.IS_SHOW_GYNECOLOGICAL===1 ?'妇科信息、':''}}
-                {{item.IS_SHOW_OTHERFINDINGS===1 ?'手术信息、':''}}
+                {{item.IS_SHOW_OPERATION===1 ?'手术信息、':''}}
                 <!-- {{item.IS_SHOW_SPECIMEN!==0?'标本信息、':''}} -->
                 {{item.IS_SHOW_TUMOUR ===1 ?'肿瘤信息、':''}}
+                {{item.IS_SHOW_HPV=== 1 ?'细胞学活HPV检查结果、': ''}}
               </span></p>
           </li>
         </ul>
@@ -68,6 +69,7 @@
       :showClose="false"
       :title="h + modalTitle"
       :visible.sync="visible"
+      @submit.native.prevent
       width="50%">
       <w-form
         :model="form"
@@ -212,14 +214,21 @@
             </w-col>
           </w-row>
         </w-row>
-        <div v-else class="search-style">
-
+        <div v-else class="search-style clearfix">
           <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
             @keyup.enter.native="handleSearch(search)">
             <template slot="suf-append">
               <i @click="handleSearch(search)" class="w-icon-search"></i>
             </template>
           </w-input>
+           <!-- <div
+            class="fr" >
+            <w-button @click="reset">取 消</w-button>
+            <w-button
+              @click="submit"
+              type="primary"
+            >确 定</w-button>
+          </div> -->
           <w-table
             :data="costList.slice((QUERY_PAGE.pageIndex-1)*QUERY_PAGE.pageSize,QUERY_PAGE.pageIndex*QUERY_PAGE.pageSize) || []"
             v-loading="loading"
@@ -235,27 +244,24 @@
             <w-table-column prop="CHARGE_PRICE"  key="4" width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
           </w-table>
           <w-pagination 
-            class=" pd-y_16"
+            class="fr pd-top_20"
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange1"
             @page-size-change="sizeChange1"
             :total="costList.length"
-            :page-sizes="[10, 20, 50, 100]"
-            :show="['prev', 'next', 'total', 'jump']">
+            :show="['prev', 'total', 'jump']">
           </w-pagination>
         </div>
-        
       </w-form>
-      <div
-          class="dialog-footer"
-          slot="footer" >
-          <w-button @click="reset">取 消</w-button>
+      <span slot="footer" class="dialog-footer ">
+        
+         <w-button @click="reset">取 消</w-button>
           <w-button
             @click="submit"
             type="primary"
-          >确 定</w-button>
-        </div>
+          >保 存</w-button>
+      </span>
     </w-modal>
   </div>
 </template>

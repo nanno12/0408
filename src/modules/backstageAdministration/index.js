@@ -3,6 +3,10 @@ import {MODAL_TITLE} from '../constant';
 export default {
   data() {
     return {
+      noData: [{id:1,name:'测试1'},{id:2,name:'测试2'},{id:3,name:'测试3'}],
+      yesData: [1,3],
+      // 注意:key 的字符类型要一致!!!
+
       value: '', // 搜索框
       visible: false,
       loading:false,
@@ -19,9 +23,20 @@ export default {
       openings:[],// 开单科室下拉列表
       mainTypesList:[], // 成分大类拉列表
       detailTypesList:[], // 成分小类拉列表
+      tableTitle:[
+        {
+          prop:'name',
+          label:'编码',
+          width:'100px'
+        },
+        {
+          prop:'name',
+          label:'名称',
+        }
+      ],
       tableData:[
         {
-          name:'1',
+          value:'1',
           name:'悄悄告诉'
         },
         {
@@ -166,7 +181,16 @@ export default {
       },
       selection: [],
       listMouldItems: [],
-      listMoulds: []
+      listMoulds: [],
+      isShow: {
+        operation:true,
+        selection:true
+      },
+      nowSelectData: [], // 左边选中列表数据
+      nowSelectRightData: [], // 右边选中列表数据
+      selectArr:[],  // 右边列表
+      buttonSize: 'large',
+
     };
   },
   computed: {
@@ -201,6 +225,54 @@ export default {
   mounted() {
   },
   methods: {
+    checkAll(val) {
+      this.nowSelectData = val;
+      console.log('row',val);
+    },
+    checkRightAll(val) {
+      this.nowSelectRightData = val;
+    },
+    handelSelect(){   
+      this.selectArr = this.handleConcatArr(this.selectArr, this.nowSelectData) 
+      this.handleRemoveTabList(this.nowSelectData,  this.tableData);
+      this.nowSelectData = [];
+   },
+    // 取消
+    handleRemoveSelect() {
+      this.tableData = this.handleConcatArr(this.tableData, this.nowSelectRightData) 
+      this.handleRemoveTabList(this.nowSelectRightData,  this.selectArr);
+      this.nowSelectRightData = [];
+    },
+    handleConcatArr(selectArr, nowSelectData) {
+      let arr = [];
+      arr = arr.concat(selectArr, nowSelectData);   
+      console.log(arr,'selectArr, nowSelectData',selectArr, nowSelectData);
+
+      return arr;
+    },
+    handleRemoveTabList(isNeedArr,  originalArr) {
+      console.log('isNeedArr',isNeedArr);
+      if(isNeedArr.length && originalArr.length) {
+         for(let i=0; i<isNeedArr.length; i++) {
+            for(let k=0; k<originalArr.length; k++) {
+              if(isNeedArr[i]["name"] === originalArr[k]["name"]) {
+                originalArr.splice(k, 1);   
+              }
+            }
+         }
+      }
+    },
+    handleChange(value, direction, movedKeys) {
+      console.log(value, direction, movedKeys);
+       //可以通过direction回调right/left 来进行操作，right：把数字移到右边，left把数据移到左边
+       if(direction === "right") {
+          
+       }
+       if(direction === "left") {
+          
+       }
+          
+  },
     async handleChange (e) {
       if (e === '1' || e ==='2') {
         console.log('12412');

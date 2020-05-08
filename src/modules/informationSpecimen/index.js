@@ -73,8 +73,10 @@ export default {
   methods:{
     async handle (item, title, index) {
       this.isTitle(title)
+      console.log('item, title, index',item, title, index);
       // debugger
       if (title === "器官/系统") {
+        this.isHandlePosRow = false
         this.rowOrgList = item
         this.clickIndex = index;
         this.isHandleOrgRow = true
@@ -96,6 +98,7 @@ export default {
         }
       } else if (title === "标本部位") {
         this.isHandlePosRow = true
+        console.log('this.isHandlePosRow',this.isHandlePosRow);
         this.rowPosList = item
         this.clickIndex1 = index;
         this.clickIndex2 = -1;
@@ -155,10 +158,13 @@ export default {
           }
         }
       } else if (this.title === '标本名称' ) {
+        console.log('this.isHandlePosRow',this.isHandlePosRow);
         if (this.isHandlePosRow === false) {
           ids = this.positionList[0].ID
+          console.log(this.positionList[0].ID,'this.positionList[0].ID');
         } else {
           ids = this.rowPosList.ID 
+          console.log(ids,'this.positionList[0].ID');
         }
       }
       this.idValue = ids
@@ -169,12 +175,26 @@ export default {
         const res = await apiData.getQuery({id:this.idValue})
         this.positionList = res.data
       } else if (this.title === '标本名称' ) {
+        console.log('标本名称idValue',this.idValue);
         const res = await apiData.getQuery({id:this.idValue})
         this.nameList = res.data
       } else {
+        console.log('meicuo');
         this.isHandleOrgRow = false
         const res = await apiData.getQuery()
         this.organList = res.data
+        if (this.positionList.length>0 ) {
+          console.log('this.positionList.specimenName',this.positionList.specimenName);
+            const res1 = await apiData.getQuery({id:this.positionList[0].ID})
+            this.nameList = []
+            if(res1.data===null) return
+            if (res1.type === 'SUCCESS') {
+              this.nameList = res1.data
+            }
+            this.show = true
+        } else {
+          this.show = false
+        }
       }
     },
     handleAdd (title) {
@@ -184,6 +204,7 @@ export default {
       this.isTitle(title)
       this.h = '新增'
       this.idData()
+      console.log('title',title);
       this.form.dynamicArr.push({
         pafTemplateId:'',
         specimenName:'',
@@ -227,9 +248,13 @@ export default {
         item['index']=index
       })
       if (item.SPECIMEN_TYPE === 3) {
-        console.log('this.idValue',this.idValue,this.title);
-        const res = await apiData.getQuery({id:this.idValue})
-        this.nameList = res.data
+        console.log('this.idValue',this.idValue,this.title,this.positionList[0].ID);
+        // if (this.positionList[0].ID) {
+          
+        // }
+        // const res = await apiData.getQuery({id:this.idValue})
+
+        // this.nameList = res.data
       } else if (item.SPECIMEN_TYPE === 2) {
         console.log('list.index',list.index,list.length);
         if(list.length !==1) {
@@ -244,6 +269,7 @@ export default {
           this.clickIndex1 = index
         }}else {
           ids = ''
+          console.log('????');
         }
       } else {
         console.log('this.rowOrgList',this.rowOrgList);

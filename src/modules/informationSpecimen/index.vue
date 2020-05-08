@@ -2,8 +2,8 @@
   <div class='home-page-wrap-in'>
     <w-row style="background:rgba(255,255,255,1);">
       <w-col :span="8">
-        <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">器官/系统</span>
-          <w-button class="po_ab top_16 right_8" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
+        <title-style class="pd-x_16 pd-top_16 po_re  pd-bottom_14" > <span slot="header">器官/系统</span>
+          <w-button class="po_ab top_10 right_8" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
         </title-style>
         <div class="list-style">
           <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
@@ -19,7 +19,7 @@
         </div>
       </w-col>
       <w-col :span="8"  class="center">
-        <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本部位</span>
+        <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本部位</span>
           <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
         </title-style>
         <div class="list-style">
@@ -36,7 +36,7 @@
         </div>
       </w-col>
       <w-col :span="8" >
-        <title-style class="pd-x_16 pd-top_16 po_re"> <span slot="header">标本名称</span>
+        <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本名称</span>
           <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
         </title-style>
         <!--   -->
@@ -62,7 +62,7 @@
       :close-on-click-modal="false"
       class="home-page-body"
       width="50%">
-      <w-form :model="form" ref="form">
+      <w-form :model="form" ref="form" class="inputs-height">
         <w-form-item v-if="editVal" prop="editVal" :rules="rules.test">
           <w-input v-model="form.editVal"></w-input>
         </w-form-item>
@@ -76,11 +76,14 @@
               @input="handleChangeInput"></w-input>
           </w-form-item>
         </template>
-        <w-form-item style="text-align: right;">
-          <w-button @click="reset">取 消</w-button>
-          <w-button type="primary" @click="submit(h)">保 存</w-button>
-        </w-form-item>
+        <!-- <w-form-item style="text-align: right;">
+          
+        </w-form-item> -->
       </w-form>
+      <span slot="footer" class="dialog-footer">
+        <w-button @click="reset">取 消</w-button>
+        <w-button type="primary" @click="submit(h)">保 存</w-button>
+      </span>
     </w-modal>
   </div>
 </template>
@@ -89,6 +92,10 @@
 .list-style {
   height: calc(100vh - 70px);
   overflow-y: auto;
+}
+.inputs-height {
+  height: 300px;
+  overflow: auto;
 }
 // .list-style:hover {
 //     overflow-y: auto;
@@ -129,7 +136,7 @@
       background rgba(243,245,249,1)
       border-radius 2px
       cursor pointer
-      margin 16px 10px 16px
+      margin 10px 16px
     .center 
       // height 100%
       // width 100%
