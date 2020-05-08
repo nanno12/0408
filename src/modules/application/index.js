@@ -384,8 +384,7 @@ export default {
       this.form.chargeItems = []
       this.form.value2 = []
       this.visible = true
-      this.h = ''
-      this.modalTitle = MODAL_TITLE.CHARGE_ITEM
+      // this.h = ''
       const res = await apiData.getQuery({search:''})
       console.log('res',this.selectionVal);
       if (res.data === null) return
@@ -415,7 +414,6 @@ export default {
           this.modalTitle = MODAL_TITLE.ITEM
           break;
         default:
-          this.modalTitle = MODAL_TITLE.SELECT_ITEM
       } 
       console.log("新增");
       this.visible = true
@@ -456,84 +454,86 @@ export default {
       this.form.chargeItems = www
     },
     async submit(t) {
-      this.$refs.form.validateForm(async (valid) => {
-        if (valid) {
-          console.log(this.form.item,'list');
-          if (t !== 'out') {
-            console.log('12357885');
-            this.innerVisible = false
-            this.visible = true
-            this.h = MODAL_TITLE.ADD
-            this.modalTitle = MODAL_TITLE.ITEM
-            this.form.chargeItems = []
-         } else {
-          if (this.modalTitle === MODAL_TITLE.FORM) {
-            console.log('this.form.isShowOperation',this.form);
-            const list = {
-              templateName: this.form.templateName,
-              printTemplate: this.form.printTemplate,
-              isShowOperation: this.form.isShowOperation,
-              isShowGynecological: this.form.isShowGynecological,
-              isShowTumour: this.form.isShowTumour,
-              isShowHpv: this.form.isShowHpv
-              
-            }
-            const res = await apiData.getAddUpdateTemplate({...list, id:this.rowLeftList.ID})
+      if (t !== 'out') {
+        console.log('12357885',this.modalTitle,MODAL_TITLE.SELECT_ITEM);
+        if(this.modalTitle === '选择对应项目') {
 
-            if (res.type === 'SUCCESS') {
-              this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
-              // this.form.templateName = ''
-              // this.form.value = []
-              this.init()
-            } else {
-               this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
-            }
-            // this.showMsg1(res,'新增申请单')
-            this.visible = false
-            this.list()
-          } else if (this.modalTitle === MODAL_TITLE.ITEM) {
-            console.log('this.rowLeftList',this.rowLeftList);
-            delete this.form.templateName
-            delete this.form.printTemplate
-            delete this.form.isShowOperation
-            delete this.form.isShowGynecological
-            delete this.form.isShowTumour
-            delete this.form.isShowHpv
-            delete this.form.value2
-            this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
-            this.form.item['seqNo'] = this.rigthData.length+1
-            const res = await apiData.getAddUpdateItem({
-              ...this.form
-            })
-            if (res.type === 'SUCCESS') {
-              this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
-              let id = ''
-              console.log('this.rowLeftList',this.rowLeftList);
-              if (this.rowLeftList.length >0) {
-                id = this.rowLeftList.ID
-                console.log('this.rowLeftList',this.leftData);
-              } else {
-                console.log('this.leftData',this.leftData);
-                id = this.leftData[0].ID
+        }
+        this.innerVisible = false
+        this.visible = true
+        this.h = MODAL_TITLE.ADD
+        this.modalTitle = MODAL_TITLE.ITEM
+        this.form.chargeItems = [] 
+      }else {
+        this.$refs.form.validateForm(async (valid) => {
+          if (valid) {
+            console.log(this.form.item,'list');
+            if (this.modalTitle === MODAL_TITLE.FORM) {
+              console.log('this.form.isShowOperation',this.form);
+              const list = {
+                templateName: this.form.templateName,
+                printTemplate: this.form.printTemplate,
+                isShowOperation: this.form.isShowOperation,
+                isShowGynecological: this.form.isShowGynecological,
+                isShowTumour: this.form.isShowTumour,
+                isShowHpv: this.form.isShowHpv
+                
               }
-              this.init()
-              // this.$refs.form.resetFields()
-              // this.form.item.itemExplain  = ''
-              this.getPafTemplateitems(id)
+              const res = await apiData.getAddUpdateTemplate({...list, id:this.rowLeftList.ID})
+
+              if (res.type === 'SUCCESS') {
+                this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
+                // this.form.templateName = ''
+                // this.form.value = []
+                this.init()
+              } else {
+                this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
+              }
+              // this.showMsg1(res,'新增申请单')
               this.visible = false
+              this.list()
+            } else if (this.modalTitle === MODAL_TITLE.ITEM) {
+              console.log('this.rowLeftList',this.rowLeftList);
+              delete this.form.templateName
+              delete this.form.printTemplate
+              delete this.form.isShowOperation
+              delete this.form.isShowGynecological
+              delete this.form.isShowTumour
+              delete this.form.isShowHpv
+              delete this.form.value2
+              this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
+              this.form.item['seqNo'] = this.rigthData.length+1
+              const res = await apiData.getAddUpdateItem({
+                ...this.form
+              })
+              if (res.type === 'SUCCESS') {
+                this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
+                let id = ''
+                console.log('this.rowLeftList',this.rowLeftList);
+                if (this.rowLeftList.length >0) {
+                  id = this.rowLeftList.ID
+                  console.log('this.rowLeftList',this.leftData);
+                } else {
+                  console.log('this.leftData',this.leftData);
+                  id = this.leftData[0].ID
+                }
+                this.init()
+                // this.$refs.form.resetFields()
+                // this.form.item.itemExplain  = ''
+                this.getPafTemplateitems(id)
+                this.visible = false
+              } else {
+                this.showMsg(this.formTitle ==='edit'?'修改申请单项目失败':'新增申请单项目失败','error')
+              }
             } else {
-              this.showMsg(this.formTitle ==='edit'?'修改申请单项目失败':'新增申请单项目失败','error')
+              this.modalTitle = MODAL_TITLE.ITEM
             }
-          } else {
-            // this.h = MODAL_TITLE.ADD
-            this.modalTitle = MODAL_TITLE.ITEM
+        } else {
+            // 未通过
+            console.log('invalid form !')
           }
-        }
-       } else {
-          // 未通过
-          console.log('invalid form !')
-        }
-      })
+        })
+      }
     },
     init () {
       if (this.modalTitle === MODAL_TITLE.FORM) {
@@ -545,7 +545,7 @@ export default {
         this.form.item.itemName = ''
         this.form.item.itemPrice = ''
         this.form.item.itemCode = ''
-        this.form.value2 = []
+        // this.form.value2 = []
       }
     },
     reset(t) {
@@ -553,11 +553,12 @@ export default {
       if (t !== 'out') {
         this.innerVisible = false
         this.visible = true
-        this.h = MODAL_TITLE.ADD
-        this.modalTitle = MODAL_TITLE.ITEM
-        this.form.chargeItems = []
+        // this.h = MODAL_TITLE.ADD
+        // this.modalTitle = MODAL_TITLE.ITEM
+        // this.form.chargeItems = []
+        // this.selectionVal = []
       } else {
-      this.visible = false
+        this.visible = false
 
       }
       console.log('123',this.modalTitle,MODAL_TITLE.FORM);

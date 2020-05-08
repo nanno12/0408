@@ -216,6 +216,7 @@
         </w-row>
         <w-modal
           width="50%"
+          :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
           append-to-body>
