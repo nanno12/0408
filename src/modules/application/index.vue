@@ -214,7 +214,12 @@
             </w-col>
           </w-row>
         </w-row>
-        <div v-else class="search-style clearfix">
+        <w-modal
+          width="50%"
+          :title=" MODAL_TITLE.SELECT_ITEM"
+          :visible.sync="innerVisible"
+          append-to-body>
+          <div class="search-style clearfix">
           <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
             @keyup.enter.native="handleSearch(search)">
             <template slot="suf-append">
@@ -253,12 +258,21 @@
             :show="['prev', 'total', 'jump']">
           </w-pagination>
         </div>
+        <span slot="footer" class="dialog-footer ">
+         <w-button @click="reset('inner')">取 消</w-button>
+          <w-button
+            @click="submit('inner')"
+            type="primary"
+          >确 定</w-button>
+      </span>
+        </w-modal>
+        
       </w-form>
       <span slot="footer" class="dialog-footer ">
         
-         <w-button @click="reset">取 消</w-button>
+         <w-button @click="reset('out')">取 消</w-button>
           <w-button
-            @click="submit"
+            @click="submit('out')"
             type="primary"
           >保 存</w-button>
       </span>

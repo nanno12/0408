@@ -12,6 +12,7 @@ export default {
       clickIndex:0,
       search:'',
       loading:true,
+      innerVisible:false,
       hoverIndex: 0,
       h : '',
       formTitle:'',
@@ -377,9 +378,11 @@ export default {
     },
     // 点击收费项目收费项目
     async handleIputVal () {
+      this.innerVisible  = true
       console.log('收费项目');
-      this.value2 = []
       this.costList = []
+      this.form.chargeItems = []
+      this.form.value2 = []
       this.visible = true
       this.h = ''
       this.modalTitle = MODAL_TITLE.CHARGE_ITEM
@@ -452,10 +455,18 @@ export default {
       this.form.chargeItems = []
       this.form.chargeItems = www
     },
-    async submit(e) {
+    async submit(t) {
       this.$refs.form.validateForm(async (valid) => {
         if (valid) {
           console.log(this.form.item,'list');
+          if (t !== 'out') {
+            console.log('12357885');
+            this.innerVisible = false
+            this.visible = true
+            this.h = MODAL_TITLE.ADD
+            this.modalTitle = MODAL_TITLE.ITEM
+            this.form.chargeItems = []
+         } else {
           if (this.modalTitle === MODAL_TITLE.FORM) {
             console.log('this.form.isShowOperation',this.form);
             const list = {
@@ -517,6 +528,7 @@ export default {
             // this.h = MODAL_TITLE.ADD
             this.modalTitle = MODAL_TITLE.ITEM
           }
+        }
        } else {
           // 未通过
           console.log('invalid form !')
@@ -529,19 +541,27 @@ export default {
         this.value = [1,2,3,4]
       } else {
         this.form.item.itemExplain  = ''
-        // this.form.chargeItems = []
         this.$refs.form.resetFields()
         this.form.item.itemName = ''
         this.form.item.itemPrice = ''
-        // this.form.item.itemCode = ''
-        // this.form.value2 = []
+        this.form.item.itemCode = ''
+        this.form.value2 = []
       }
     },
-    reset() {
+    reset(t) {
       this.init()
+      if (t !== 'out') {
+        this.innerVisible = false
+        this.visible = true
+        this.h = MODAL_TITLE.ADD
+        this.modalTitle = MODAL_TITLE.ITEM
+        this.form.chargeItems = []
+      } else {
+      this.visible = false
+
+      }
       console.log('123',this.modalTitle,MODAL_TITLE.FORM);
       
-      this.visible = false
       // if (this.modalTitle === MODAL_TITLE.CHARGE_ITEM) {
       //   //  this.h = MODAL_TITLE.ADD
       //    this.modalTitle = MODAL_TITLE.ITEM
