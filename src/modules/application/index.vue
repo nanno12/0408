@@ -52,16 +52,18 @@
           :page-size="pageSize"
           @sizeChange="sizeChange"
           @currentChange="currentChange"></win-page> -->
+          <div
+             v-if="paginationBoxReflow">
           <w-pagination
             :total="total"
             class="fr pd-top_16"
+             @current-change="handleCurrentChange"
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange"
-            @page-size-change="sizeChange"
-            :page-sizes="[4, 8, 12, 16]"
             :show="['prev', 'next', 'total', 'jump']">
           </w-pagination>
+          </div>
       </w-col>
     </w-row>
     <w-modal
@@ -253,7 +255,6 @@
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange1"
-            @page-size-change="sizeChange1"
             :total="costList.length"
             :show="['prev', 'total', 'jump']">
           </w-pagination>

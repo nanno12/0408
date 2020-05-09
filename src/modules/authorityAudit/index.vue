@@ -51,19 +51,10 @@
               prop="region"
             >
               <w-input
-                v-if="title !=='新增明细流程'"
                 placeholder="请输入审核名称"
                 showCounter
                 v-model="form.name"
               ></w-input>
-              <w-select v-else v-model="form.region" placeholder="请选择操作角色">
-                <w-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </w-option>
-              </w-select>
             </w-form-item>
           </w-col>
           <w-col :span="12" v-if="title ==='新增明细流程'">
@@ -91,7 +82,6 @@
                   :value="item.value">
                 </w-option>
               </w-select>
-              <i @click="handlePlus('big')" class="w-icon-plus" style="font-size: 33px;"></i>
             </w-form-item>
           </w-col>
         </w-row>
@@ -253,29 +243,22 @@ export default {
   mounted() {
   },
   methods: {
-    // async getPafTemplate () {
-    //   const res = await apiData.getMouldItems()
-    //   console.log(res,'getMouldI123tems');
-    // },
     // 新增按钮
     handleAdd (title) {
+      this.visible = true
       if (title === 'left') {
-        this.title = '新增审核'
-        this.visible = true
+        this.title = '新增审核流程'
       } else {
-        this.title = '新增明细流程'
-        this.visible = true
+        this.title = '新增流程明细'
       }
       console.log(title)
     },
     handleEdit (row,t) {
       console.log('edit',row,t);
     },
+    // 点击流程列表某一行数据
     handleRowR (row) {
       console.log('row',row);
-    },
-    handlePlus () {
-
     },
     handleDelete (row,t) {
       console.log('Delete',row,t);
@@ -286,7 +269,12 @@ export default {
     },
     // 点击模态框新增按钮事件
     submit () {
-      this.visible = false
+      this.$refs.form.validateForm(async (valid) => {
+        if (valid) {
+          this.visible = false
+
+        }
+      })
     },
     // 点击模态框取消按钮事件
      reset () {
@@ -313,36 +301,24 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
-.home-page-wrap-us
-  height 100%
-  padding 12px 15px
-  background rgba(234,237,244,1)
-  overflow-x auto
-  overflow-y hidden
-  .title
-    font-weight 500;
-    font-size 14px;
-    color #000622;
-  .home-page-body
-    padding 16px
-    background rgba(255,255,255,1)
-    border-radius 2px
-    .left-body
-      height 100%
-      width calc(100% - 415px)
-      float left
-    .right-body
-      width 400px
-      margin-left 15px
-      height 100%
-      float right
-      background #fff
+<style lang="scss" scoped>
+.home-page-wrap-us {
+  .home-page-body {
+    padding: 16px;
+    background: rgba(255,255,255,1);
+    border-radius: 2px;
+  }
+}
+
 </style>
-<style lang="stylus">
-.pd-right
-  .w-input
-    width 200px!important
-.w-row
-  padding-bottom 16px
+<style lang="scss">
+.w-select,
+.w-input {
+  width: 100% !important;
+}
+
+.w-row {
+  padding-bottom: 16px;
+
+}
 </style>

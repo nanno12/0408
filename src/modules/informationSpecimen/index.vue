@@ -2,7 +2,7 @@
   <div class='home-page-wrap-in'>
     <w-row style="background:rgba(255,255,255,1);">
       <w-col :span="8">
-        <title-style class="pd-x_16 pd-top_16 po_re  pd-bottom_14" > <span slot="header">器官/系统</span>
+        <title-style class="pd-x_16 pd-top_16 po_re  pd-bottom_14" > <span slot="header">人体器官/系统</span>
           <w-button class="po_ab top_10 right_8" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
         </title-style>
         <div class="list-style">

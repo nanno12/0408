@@ -43,7 +43,7 @@
             </w-table-column>
             <w-table-column prop="ITEM_USEAREA" label="对应费用明细" width="150">
             </w-table-column>
-            <w-table-column prop="ITEM_ADDFACTOR" label="费用价格" width="150">
+            <w-table-column prop="ITEM_ADDFACTOR" label="费用价格" width="120">
             </w-table-column>
             <w-table-column prop="ITEM_REMARK" label="备注"> </w-table-column>
             <w-table-column fixed="right" label="操作" reference-cell align="center" width="120">
@@ -179,7 +179,7 @@
                     }">
                   </w-option>
                 </w-select>
-                <span class="inline-block po_ab top_0 right_-20"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
+                <span class="inline-block po_ab top_0 right_-20" style="z-index:999"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
               </w-form-item>
             </w-col>
             <w-col :span="12" class="po_re">
@@ -291,7 +291,7 @@
           </w-table>
           <w-pagination :total="10" :page-size="4"
             @page-size-change="handlePageSizeChange"
-            :page-sizes="[4, 8, 12, 16]" :show="['prev', 'next', 'total', 'jump']">
+            :show="['prev', 'next', 'total', 'jump']">
           </w-pagination>
         </div>
         <!-- 新增成分类 -->

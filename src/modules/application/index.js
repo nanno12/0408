@@ -14,7 +14,8 @@ export default {
       search:'',
       loading:true,
       innerVisible:false,
-      hoverIndex: 0,
+      paginationBoxReflow:true,
+      hoverIndex: -1,
       h : '',
       formTitle:'',
       value2: [], // 搜索值
@@ -69,8 +70,9 @@ export default {
         value2:[],
         templateName: "", // 申请单名称
         printTemplate: '' , // 打印模板
-        isShowOperation:"0",	//--是否显示手术/内窥镜
-        // isShowSpecimen:"0",		//--是否显示标本
+        isShowOperation:"0",	//--是否显示手术
+        isShowSpecimen:"1",		//--是否显示标本
+        isShowEndpscopic:"1", //是否显示内镜信息
         isShowGynecological:"0",//	--是否显示妇科
         isShowTumour:"0",	//	--是否显示肿瘤
         isShowHpv:"0", // --是否显示HPV信息
@@ -203,7 +205,7 @@ export default {
     handlePreview(file) {
       console.log(file);
     },
-    async list () {
+    async list (id) {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
       this.leftData = res.data
       if (res.data === null)return
@@ -224,18 +226,28 @@ export default {
 
       })
       if ( res.data !== null) {
-      this.getPafTemplateitems(this.rowLi.ID)
+        console.log('this.rowLi.ID',this.rowLi.ID);
+        if (id === undefined) {
+          id = this.rowLi.ID
+        }
+        console.log('ididi',id);
+
+      this.getPafTemplateitems(id)
     }
     },
     // 点击申请单列表单行
     async handleLeftRow (row,index) {
-      console.log(row,'row');
+      this.QUERY_PAGE.pageIndex = 1
+      this.QUERY_PAGE.currentPager = 1 
+
+      console.log(row,QUERY_PAGE.currentPager,'row',this.QUERY_PAGE.pageIndex,QUERY_PAGE.pageIndex);
       this.rowLeftList = row
       this.clickIndex = index;
       this.getPafTemplateitems(row.ID)
     },
     // 获取申请单项目列表接口
     async getPafTemplateitems (id) {
+      console.log('idididiaaaaa',id);
       const res = await apiData.getPafTemplateitems({
         pafTemplateId:id,
         ...QUERY_PAGE
@@ -243,8 +255,29 @@ export default {
       this.rigthData = res.data.itemList
       this.total = res.data.itemSum
     },
+    
+    async getcopy (id) {
+      console.log('ididiidid',id);
+      const res = await apiData.getcopy({id})
+      // this.list()
+      if (res.type === 'SUCCESS') {
+        this.showMsg('复制申请单成功','success')
+        this.list(id)
+        // const res = await apiData.getPafTemplateitems({
+        //   pafTemplateId:id,
+        //   ...QUERY_PAGE
+        // })
+        // this.rigthData = res.data.itemList
+        // this.total = res.data.itemSum
+        // this.getPafTemplateitems(id)
+      } else {
+         this.showMsg('复制申请单失败','error')
+      }
+      console.log(res,'getcopygetcopy');
+    },
     // 点击申请单某一行
     async handleRowL (item,index,t) {
+     
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
       this.formTitle = t
@@ -263,21 +296,12 @@ export default {
         default:
           this.h =  MODAL_TITLE.CLONE
           this.getcopy(item.ID)
-          const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
-          this.leftData = res.data
-          this.getPafTemplateitems(item.ID)
+          // const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
+          // console.log('res,res,',res);
+          // this.leftData = res.data
+          
           console.log(t,item);
       } 
-    },
-    async getcopy (id) {
-      const res = await apiData.getcopy({id})
-      // this.list()
-      if (res.type === 'SUCCESS') {
-        this.showMsg('复制申请单成功','success')
-      } else {
-         this.showMsg('复制申请单失败','error')
-      }
-      console.log(res,'getcopygetcopy');
     },
     
     // 点击申请单项目列表的莫一行
@@ -479,13 +503,27 @@ export default {
                 isShowOperation: this.form.isShowOperation,
                 isShowGynecological: this.form.isShowGynecological,
                 isShowTumour: this.form.isShowTumour,
+                isShowSpecimen:"1",		//--是否显示标本
+                isShowEndpscopic:"1", //是否显示内镜信息
                 isShowHpv: this.form.isShowHpv
                 
               }
-              const res = await apiData.getAddUpdateTemplate({...list, id:this.rowLeftList.ID})
+              const res = await apiData.getAddUpdateTemplate({
+                ...list, 
+                id:this.formTitle ==='edit'?this.rowLeftList.ID:''})
 
               if (res.type === 'SUCCESS') {
+                console.log('this.formTitle',this.formTitle);
                 this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
+                if (this.formTitle ==='edit') {
+                  this.list(this.rowLeftList.ID)
+                  this.formTitle= ''
+                } else {
+                  const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
+                  this.leftData = res.data
+                }
+                this.visible = false
+
                 // this.form.templateName = ''
                 // this.form.value = []
                 this.init()
@@ -493,8 +531,6 @@ export default {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
               }
               // this.showMsg1(res,'新增申请单')
-              this.visible = false
-              this.list()
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
               console.log('this.rowLeftList',this.rowLeftList,this.form.chargeItems);
               delete this.form.templateName
@@ -513,8 +549,8 @@ export default {
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''
-                console.log('this.rowLeftList',this.rowLeftList);
-                if (this.rowLeftList.length >0) {
+                console.log('this.rowLeftList',this.rowLeftList.ID);
+                if (this.rowLeftList.ID !== undefined) {
                   id = this.rowLeftList.ID
                   console.log('this.rowLeftList',this.leftData);
                 } else {
@@ -609,21 +645,18 @@ export default {
         } 
       }
     },
-    sizeChange(val){
-      console.log(val, '每页多少条');
-      QUERY_PAGE.pageSize = val // 每页多少条
-      this.getPafTemplateitems(this.rowLi.ID)  // 刷新
-    },
     // 当前页
     currentChange(val) {
-      console.log(val,this.rowLi, '当前页');
+      console.log(val,this.rowLi, '当前页',QUERY_PAGE.currentPager+1);
       this.QUERY_PAGE.pageIndex = val // 当前页
+      
       this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     },
-    sizeChange1(val){
-      console.log(val, '每页多少条');
-      QUERY_PAGE.pageSize = val // 每页多少条
-      // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
+    handleCurrentChange () {
+      this.paginationBoxReflow = false;
+      this.$nextTick(() => {
+        this.paginationBoxReflow = true;
+      });
     },
     // 当前页
     currentChange1(val) {

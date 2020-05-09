@@ -9,7 +9,7 @@ import * as systemParam from '@/app/api/system-param';
 
 /**  模块主服务前缀，如果用到其他服务，可以应用下面的常量进行处理 */
 const MAIN_API_PREFIX = systemParam.SYS_BASE_API.APPLYFORM.url;
-const DEBUGAPI = 'http://172.17.1.211:20032'
+const DEBUGAPI = 'http://172.17.1.211:20034'
 // const DEBUGAPI = 'http://172.17.17.91:30002'
 const url = {
   query: DEBUGAPI + '/clf/pafbase/findSpecimenDic',  // 查询标本，器官/系统、部位、名称等配置数据
@@ -17,6 +17,7 @@ const url = {
   update:DEBUGAPI + '/clf/pafbase/updateSpecimenDic', // 修改
   delete:DEBUGAPI + '/clf/pafbase/deleteSpecimenDic', // 删除
   isHaveReName:DEBUGAPI + '/clf/pafbase/isHaveReName', // 根据名称，判断标本部位、申请单是否有重
+  isHaveReName2:DEBUGAPI +'/clf/pafbase/isHaveReName2'
 
 };
 export default {
@@ -35,5 +36,8 @@ export default {
   },
   isHaveReName(params) {
     return httpUtils.postJsonRequest(url.isHaveReName, params)
+  },
+  isHaveReName2(params) {
+    return httpUtils.postJsonRequest(url.isHaveReName2, params)
   },
 };

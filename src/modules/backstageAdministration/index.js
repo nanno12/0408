@@ -275,9 +275,22 @@ export default {
   },
     async handleChange (e) {
       if (e === '1' || e ==='2') {
-        console.log('12412');
-        const res = await dataApi.getFindMould({mouldtype:e})
-        console.log('res',res);
+        let id = ''
+        if (this.mouldItemsRow.ID === undefined) {
+          id = this.listMoulds[0].ID
+        } else {
+          id = this.mouldItemsRow.ID
+        }
+        console.log('12412',id);
+        const res = await dataApi.getFindMould({mouldtype:e+1,mouldcode:id})
+        console.log('resres',res);
+        if (res.type === 'SUCCESS') {
+          this.showMsg('成功','success')
+          // const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
+          // console.log('res',res);
+        } else {
+           this.showMsg('失败','error')
+        }
       }
       console.log('e',e);
     },
@@ -411,7 +424,7 @@ export default {
                   detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
                   amount: this.form.amount, // 默认数量
                   hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-                  addfactor:  this.form.addfactor, // 增减因子
+                  addfactor:  this.form.addfactor.toString(), // 增减因子
                   remark: this.form.remark // 备注
                 }
                 const res = await dataApi.getModifyMouldItem({...list})
@@ -443,8 +456,13 @@ export default {
                 const res = await dataApi.getAddMouldItem({...list})
                 	if (res.type === 'SUCCESS') {
                     this.showMsg(res.message,'success')
+                    console.log('this.mouldItemsRow',this.mouldItemsRow.ID,this.listMoulds);
+                    if (this.mouldItemsRow.ID === undefined) {
+                      this.MouldItems(this.listMoulds[0])
+                    } else {
+                      this.MouldItems(this.mouldItemsRow)
+                    }
                     this.visible = false
-                    this.MouldItems(this.mouldItemsRow)
                   } else {
                     this.showMsg(res.message,'error')
                   }
@@ -513,19 +531,19 @@ export default {
     reset () {
       this.$refs.form.resetFields()
       if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
-        this.modalTitle = '项目'
+        this.modalTitle = MODAL_TITLE.ITEM
       } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
-        this.modalTitle = '项目'
+        this.modalTitle = MODAL_TITLE.ITEM
       } else {
         this.form.maincode = ''
         this.form.mainname = ''
         this.form.remark = ''
-        this.form.amount = 0
-        this.form.addfactor = ''
+        this.form.amount = "1"
+        this.form.addfactor = 
         this.$refs.form.resetFields()
         this.visible = false
       }
-      this.visible = false
+      // this.visible = false
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
@@ -629,14 +647,14 @@ export default {
             this.showMsg(res.message,'error')
           }
         } else if (isHandle === 'edit') {
+          console.log('this.mouldcode',this.mouldcode,row);
           this.modalTitle = this.MODAL_TITLE.ITEM
-          console.log(this.mouldcode);
-          
           const res = await dataApi.getFindMouldItem({
-            mouldcode:this.mouldcode,
+            mouldcode:row.MOULD_CODE,
             itemcode:row.MOULD_ITEM_CODE})
+            console.log('res',res);
           this.form = res.data
-          console.log(res, row.MOULD_ITEM_CODE);
+          // console.log(res, row.MOULD_ITEM_CODE);
         } else {
           this.modalTitle = this.MODAL_TITLE.ITEM
         
