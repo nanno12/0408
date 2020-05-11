@@ -169,8 +169,7 @@ export default {
           required: true, message: '请选择开单类别', trigger: 'change'
         }],
         addfactor: [
-          { required: true, message: '加减量不能为空'},
-          { type: 'number', message: '加减量必须为数字值'}
+          { required: true, message: '加减量不能为空'}
         ],
         // detailname: [{
         //   required: true, message: '请选择成分小类', trigger: 'change'
@@ -367,7 +366,7 @@ export default {
     },
     handleSelChange(row) {
       console.log(row);
-      this.getListDetailTypes(row.DETAIL_CODE)
+      this.getListDetailTypes(row)
       this.maincode = row.DETAIL_CODE
       this.form.detailname = ''
       this.form.detailcode = ''
@@ -376,6 +375,7 @@ export default {
     },
     // copiedmouldcode
     async handleSelChange1(row) {
+      console.log('row',row);
       if (row) {
         this.form.itemcode = row.DETAIL_CODE
         this.form.itemname = row.DETAIL_NAME
@@ -383,15 +383,10 @@ export default {
       }
       if (this.form.maincode === '') {
         const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
-        // this.mainTypesList = res.data
-        const list = []
-        list.push(res.data)
-        this.mainTypesList = list
-        this.form.maincode = res.data.MAIN_NAME
-        this.getListDetailTypes(res.data.MAIN_CODE)
-        this.getListMainTypes()
+        const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
+        console.log(find,'res',res);
+        this.form.maincode = find.MAIN_CODE
       }
-      
     },
     // 点击模态框新增按钮事件
     async submit () {
@@ -401,6 +396,7 @@ export default {
         this.modalTitle = '项目'
       } else {
         this.$refs.form.validateForm(async (valid) => {
+          console.log('valid',valid);
           if (valid) {
             if (this.modalType === this.MODAL_TITLE.EADIT) {
               if (this.modalTitle === '申请单'){
@@ -418,15 +414,16 @@ export default {
                   mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
                   itemcode: this.form.itemcode, // 项目代码
                   itemname: this.form.itemname, // 项目名称
-                  maincode: this.form.maincode.value, // 成分大类代码
-                  mainname: this.form.maincode.DETAIL_NAME, // 成分大类名称
+                  maincode: this.form.maincode, // 成分大类代码
+                  mainname: this.form.mainname, // 成分大类名称
                   detailcode: this.form.detailcode.value, // 成分小类代码
                   detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
                   amount: this.form.amount, // 默认数量
                   hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-                  addfactor:  this.form.addfactor.toString(), // 增减因子
+                  addfactor:  this.form.addfactor, // 增减因子
                   remark: this.form.remark // 备注
                 }
+                console.log('list',list,this.form.addfactor);
                 const res = await dataApi.getModifyMouldItem({...list})
                 	if (res.type === 'SUCCESS') {
                     this.showMsg(res.message,'success')
@@ -444,15 +441,16 @@ export default {
                   mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
                   itemcode: this.form.itemcode, // 项目代码
                   itemname: this.form.itemname, // 项目名称
-                  maincode: this.form.maincode.value, // 成分大类代码
+                  maincode: this.form.maincode.DETAIL_CODE, // 成分大类代码
                   mainname: this.form.maincode.DETAIL_NAME, // 成分大类名称
-                  detailcode: this.form.detailcode.value, // 成分小类代码
+                  detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
                   detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
                   amount: this.form.amount, // 默认数量
                   hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-                  addfactor:  this.form.addfactor, // 增减因子
+                  addfactor:this.form.addfactor, // 增减因子
                   remark: this.form.remark // 备注
                 }
+                console.log(list, this.form.maincode);
                 const res = await dataApi.getAddMouldItem({...list})
                 	if (res.type === 'SUCCESS') {
                     this.showMsg(res.message,'success')
@@ -522,7 +520,7 @@ export default {
             }
           } else {
             // 未通过
-            console.log('invalid form !')
+            console.log('invalid form !',this.form.addfactor)
           }
         })
       }
@@ -539,7 +537,7 @@ export default {
         this.form.mainname = ''
         this.form.remark = ''
         this.form.amount = "1"
-        this.form.addfactor = 
+        // this.form.addfactor = ''
         this.$refs.form.resetFields()
         this.visible = false
       }
@@ -647,17 +645,17 @@ export default {
             this.showMsg(res.message,'error')
           }
         } else if (isHandle === 'edit') {
-          console.log('this.mouldcode',this.mouldcode,row);
           this.modalTitle = this.MODAL_TITLE.ITEM
           const res = await dataApi.getFindMouldItem({
             mouldcode:row.MOULD_CODE,
             itemcode:row.MOULD_ITEM_CODE})
-            console.log('res',res);
+            console.log('res',res,this.form,row);
           this.form = res.data
-          // console.log(res, row.MOULD_ITEM_CODE);
+          this.form.maincode =  res.data.mainname
+          this.form.detailcode =  res.data.detailname
+          this.getListMainTypes()
         } else {
           this.modalTitle = this.MODAL_TITLE.ITEM
-        
         }
           // 成分小类接口
           this.getListDetailTypes()

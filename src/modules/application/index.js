@@ -161,6 +161,10 @@ export default {
           { required: true, message: '项目价格不能为空'},
           { type: 'number', message: '项目价格必须为数字值'}
         ],
+        
+        templateName: [{
+          required: true, message: '请输入申请单名称', trigger: 'blur'
+        }],
         'item.chargeItems': [
           {
             required: true,
@@ -191,6 +195,9 @@ export default {
     //       })
     //   })
     // },
+    'form' (o,n) {
+      console.log('o,n',o,n);
+    },
     selectionVal (oldVal, newVal) {
       if (oldVal) {
         this.isDisabled = false

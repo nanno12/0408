@@ -53,6 +53,7 @@ export default {
       hoverIndex2: -1,
       clickIndex2: -1, 
       editVal: false,
+      isDisabled:false,
       show: true,
       findId: '',
       findtype:'',
@@ -83,8 +84,13 @@ export default {
     this.getOrganList()
   },
   watch: {
-    'editVal'(o,n) {
-      console.log('o,n',o,n);
+    'form.editVal'(o,n) {
+      console.log('o,n',o,n,this.idVal.SPECIMEN_NAME);
+      if ( o === this.idVal.SPECIMEN_NAME)  {
+        this.isDisabled = true
+      }else {
+        this.isDisabled = false
+      }
     }
   },
   methods:{
@@ -371,13 +377,19 @@ export default {
              this.showMsg1(res, '新增')
             this.succData()
           } else {
+            
             const res = await apiData.getUpdate({
               id: this.idVal.ID,
               specimenType:this.type,
               specimenName: this.form.editVal
             })
-            this.showMsg1(res, '修改')
-            this.succData()
+            console.log('this.form.editVal',this.form.editVal,this.idVal);
+            if (res.type === 'SUCCESS') {
+              this.showMsg('修改成功','success')
+              this.succData()
+            } else {
+               this.showMsg('修改失败','error')
+            }
           }
           this.visible = false
           this.int()

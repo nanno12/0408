@@ -20,7 +20,7 @@ const url = {
   getDeptInfos: WDEBUGAPI + '/clf/trfbase/listDeptInfos', // 获取科室列表
   getFindMouldItem: WDEBUGAPI + '/clf/trfbase/findMouldItem', // 查询模板项目详情
   getFindMould: WDEBUGAPI + '/clf/trfbase/findMould', // 查询模板详情
-  getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
+  getByDetailType: WDEBUGAPI + '/getByDetailTypegetByDetailType', // 
   getExists: WDEBUGAPI + '/clf/trfbase/exists ', // 
   // getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
   // getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 

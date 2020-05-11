@@ -1,7 +1,7 @@
 <template>
   <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
-      <w-col :span="10" >
+      <w-col :span="9" >
         <title-style class=" po_re pd-bottom_22"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
         </title-style>
@@ -12,7 +12,7 @@
             ref="interfaceTable"
             :data="listMoulds" :border="true" style="width: 100%">
             <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
-            <w-table-column prop="MOULD_TYPE_STR" label="类型" width="70"></w-table-column>
+            <w-table-column prop="MOULD_TYPE_STR" label="类型" width="100"></w-table-column>
             <w-table-column prop="MOULD_NAME" label="名称" ></w-table-column>
             <w-table-column fixed="right" label="操作" align="center" width="170" reference-cell>
               <template slot-scope="scope">
@@ -24,7 +24,7 @@
           </w-table>
         </div>
       </w-col> 
-      <w-col :span="14">
+      <w-col :span="15">
         <div class="pd-left_15">
           <title-style class="pd-bottom_22  po_re"><span slot="header">项目列表</span>
             <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="text" plain>+ 新增</w-button>
@@ -35,15 +35,15 @@
             </w-table-column>
             <w-table-column prop="MOULD_ITEM_NAME" label="项目名称">
             </w-table-column>
-            <w-table-column prop="ITEM_AMOUNT" label="默认数量">
+            <w-table-column prop="ITEM_AMOUNT" label="默认数量" width="100">
             </w-table-column>
-            <w-table-column prop="time" label="单位">
+            <w-table-column prop="time" label="单位" width="70">
             </w-table-column>
             <w-table-column prop="MAIN_NAME" label="成分大类">
             </w-table-column>
-            <w-table-column prop="ITEM_USEAREA" label="对应费用明细" width="150">
+            <w-table-column prop="ITEM_USEAREA" label="对应费用明细" width="130">
             </w-table-column>
-            <w-table-column prop="ITEM_ADDFACTOR" label="费用价格" width="120">
+            <w-table-column prop="ITEM_ADDFACTOR" label="费用价格" width="100">
             </w-table-column>
             <w-table-column prop="ITEM_REMARK" label="备注"> </w-table-column>
             <w-table-column fixed="right" label="操作" reference-cell align="center" width="120">
@@ -172,11 +172,7 @@
                     v-for="item in mainTypesList"
                     :key="item.MAIN_CODE"
                     :label="item.MAIN_NAME"
-                    :value="{
-                      value:item.MAIN_CODE,
-                      DETAIL_CODE:item.MAIN_CODE,
-                      DETAIL_NAME:item.MAIN_NAME,
-                    }">
+                    :value="item.MAIN_CODE">
                   </w-option>
                 </w-select>
                 <span class="inline-block po_ab top_0 right_-20" style="z-index:999"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
@@ -187,16 +183,12 @@
               :rules="[
                 { required: true, message: '请选择成分小类'},
               ]">
-                <w-select @change="handleSelChange1" v-model="form.detailcode" placeholder="请选择成分小类">
+                <w-select @change="handleSelChange1" filterable value-key="DETAIL_CODE" v-model="form.detailcode" placeholder="请选择成分小类">
                   <w-option
                     v-for="item in detailTypesList"
                     :key="item.DETAIL_CODE"
                     :label="item.DETAIL_NAME"
-                    :value="{
-                      value:item.DETAIL_CODE,
-                      DETAIL_CODE:item.DETAIL_CODE,
-                      DETAIL_NAME:item.DETAIL_NAME,
-                    }">
+                    :value="item">
                   </w-option>
                 </w-select>
                 <span v-if="form.maincode !==''" class="inline-block po_ab top_0 right_-35">

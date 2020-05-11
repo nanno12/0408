@@ -82,7 +82,7 @@
       </w-form>
       <span slot="footer" class="dialog-footer">
         <w-button @click="reset">取 消</w-button>
-        <w-button type="primary" @click="submit(h)">保 存</w-button>
+        <w-button :disabled="isDisabled" type="primary" @click="submit(h)">保 存</w-button>
       </span>
     </w-modal>
   </div>
