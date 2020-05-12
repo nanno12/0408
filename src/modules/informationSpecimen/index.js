@@ -6,28 +6,37 @@ export default {
     let checkOrgTypeCode = async (rule, value, callback) => {
       if (value) {
         // if ()
-        // console.log(this.inputValue,'this.type',this.form.dynamicArr);
-        // if (this.form.dynamicArr.length>2) {
-          
-        // const list = this.form.dynamicArr.slice(0,this.form.dynamicArr.length-2)
-        // console.log('list',list);
-        // list.map(it=> {
-        //   if (it.specimenName === value) {
-        //     console.log('itit',it);
-        //     return callback(new Error('该名称已存在当前新增数据中！'))
-        //   }
-        //   // console.log('it',it.specimenName,value);
-        // })
-        // }
-        console.log('find',find);
+        // console.log(this.form.dynamicArr.slice(0,this.form.dynamicArr.length-1))
+        if (this.form.dynamicArr.length>2) {
+        const list = this.form.dynamicArr.slice(0,this.form.dynamicArr.length-1)
+        console.log('list',list,value);
+        let nary = [];
+        list.map(it=> {
+          if (it.specimenName === value) {
+            nary.push(it)
+            if (nary.length>1) {
+              this.isDisabled = true
+              return callback(new Error('该名称已存在当前新增数据中！'))
+            } else{
+              this.isDisabled = false
+            }
+            console.log('itit',it,value);
+            // return callback(new Error('该名称已存在当前新增数据中！'))
+          } else {
+            // this.isDisabled = false
+          }
+        })
+        console.log('nary',nary);
+        }
+        console.log('find',this.idVal);
          const params = {
-          type:this.type,
+          type:this.idVal.SPECIMEN_TYPE || this.type,
           name:value
         }
         const res = await apiData.isHaveReName2(params)
 
         if (res.type !== 'SUCCESS') {
-          return callback(new Error('该名称已存在！'))
+          return callback(new Error('该名称或编码已存在！'))
         } else {
           callback()
         }

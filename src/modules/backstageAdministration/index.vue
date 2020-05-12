@@ -167,12 +167,12 @@
           <w-row>
             <w-col :span="12" class="po_re">
               <w-form-item label="成分大类" required >
-                <w-select v-model="form.maincode" @change="handleSelChange" placeholder="请选择成分大类">
+                <w-select v-model="form.maincode" filterable value-key="MAIN_CODE" @change="handleSelChange" placeholder="请选择成分大类">
                   <w-option
                     v-for="item in mainTypesList"
                     :key="item.MAIN_CODE"
                     :label="item.MAIN_NAME"
-                    :value="item.MAIN_CODE">
+                    :value="item">
                   </w-option>
                 </w-select>
                 <span class="inline-block po_ab top_0 right_-20" style="z-index:999"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>

@@ -384,8 +384,11 @@ export default {
       if (this.form.maincode === '') {
         const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
         const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
-        console.log(find,'res',res);
-        this.form.maincode = find.MAIN_CODE
+        console.log(find,'res',res,this.form);
+        this.form.maincode = find.MAIN_NAME
+        this.form.mainname = find.MAIN_NAME
+        // this.getListMainTypes()
+        // // this.getListDetailTypes(res.data.MAIN_CODE)
       }
     },
     // 点击模态框新增按钮事件
@@ -436,13 +439,13 @@ export default {
             } else {
               // const res = await dataApi.getModifyMouldItem({})
               if (this.modalTitle === '项目') {
-                console.log(this.form);
+                console.log(this.form,'wocao');
                 const list = {
                   mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
                   itemcode: this.form.itemcode, // 项目代码
                   itemname: this.form.itemname, // 项目名称
-                  maincode: this.form.maincode.DETAIL_CODE, // 成分大类代码
-                  mainname: this.form.maincode.DETAIL_NAME, // 成分大类名称
+                  maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
+                  mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
                   detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
                   detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
                   amount: this.form.amount, // 默认数量
