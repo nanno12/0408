@@ -7,7 +7,7 @@ export default {
       modalTitle:'',
       fileList: [],
       height:'200px',
-      isDisabled: true,
+      isDisabled: false,
       MODAL_TITLE,
       QUERY_PAGE,
       clickIndex:0,
@@ -159,7 +159,6 @@ export default {
         ],
         'item.itemPrice': [
           { required: true, message: '项目价格不能为空'},
-          { type: 'number', message: '项目价格必须为数字值'}
         ],
         
         templateName: [{
@@ -183,26 +182,35 @@ export default {
     };
   },
   watch: {
-    // costList (oldVal, newVal) {
-    //   console.log(this.form.chargeItems,'oldVal, newVal');
-    //     this.costList.map(it => {
-    //       this.form.chargeItems.find(item => {
-    //         if (it.CHARGE_CODE === item.CHARGE_CODE) {
-    //           this.$nextTick(() => {
-    //           this.$refs.costList.toggleRowSelection(item, true)
-    //           })
-    //         }
-    //       })
-    //   })
-    // },
-    'form' (o,n) {
-      console.log('o,n',o,n);
+    'costList' (oldVal, newVal) {
+      let list = []
+      this.form.chargeItems.forEach((vv,ii) => {
+        list.push({
+          CHARGE_CODE:vv.chargeItemCode,
+          CHARGE_NAME:vv.chargeItemName,
+          CHARGE_PRICE:vv.chargeItemPrice
+        })
+      })
+      this.$nextTick(() => {
+          list.map((v,i) => {
+            this.costList.find(it =>{
+              if (v.CHARGE_CODE === it.CHARGE_CODE) {
+                  this.$refs.costList.toggleRowSelection(it,true)
+              }
+            })
+          })
+        })
+      
     },
-    selectionVal (oldVal, newVal) {
-      if (oldVal) {
-        this.isDisabled = false
-        console.log('oldVal',oldVal,newVal);
-      }
+    // selectionVal (oldVal, newVal) {
+    //   console.log('oldVal',oldVal,newVal);
+    //   if (oldVal) {
+    //     this.isDisabled = false
+    //     console.log('this.isDisabled',this.isDisabled);
+    //   }
+    // },
+    'form.chargeItems' (oldVal, newVal) {
+      console.log('oldVal',oldVal,newVal);
     }
   },
   created() {
@@ -233,11 +241,9 @@ export default {
 
       })
       if ( res.data !== null) {
-        console.log('this.rowLi.ID',this.rowLi.ID);
         if (id === undefined) {
           id = this.rowLi.ID
         }
-        console.log('ididi',id);
 
       this.getPafTemplateitems(id)
     }
@@ -246,15 +252,12 @@ export default {
     async handleLeftRow (row,index) {
       this.QUERY_PAGE.pageIndex = 1
       this.QUERY_PAGE.currentPager = 1 
-
-      console.log(row,QUERY_PAGE.currentPager,'row',this.QUERY_PAGE.pageIndex,QUERY_PAGE.pageIndex);
       this.rowLeftList = row
       this.clickIndex = index;
       this.getPafTemplateitems(row.ID)
     },
     // 获取申请单项目列表接口
     async getPafTemplateitems (id) {
-      console.log('idididiaaaaa',id);
       const res = await apiData.getPafTemplateitems({
         pafTemplateId:id,
         ...QUERY_PAGE
@@ -264,50 +267,32 @@ export default {
     },
     
     async getcopy (id) {
-      console.log('ididiidid',id);
       const res = await apiData.getcopy({id})
       // this.list()
       if (res.type === 'SUCCESS') {
         this.showMsg('复制申请单成功','success')
         this.list(id)
-        // const res = await apiData.getPafTemplateitems({
-        //   pafTemplateId:id,
-        //   ...QUERY_PAGE
-        // })
-        // this.rigthData = res.data.itemList
-        // this.total = res.data.itemSum
-        // this.getPafTemplateitems(id)
       } else {
          this.showMsg('复制申请单失败','error')
       }
-      console.log(res,'getcopygetcopy');
     },
     // 点击申请单某一行
     async handleRowL (item,index,t) {
-     
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
       this.formTitle = t
-      console.log(item,index,t, 'item,index,t');
        switch(t) {
         case 'edit':
-          console.log(t);
           this.visible = true
           this.h =  MODAL_TITLE.EADIT
           this.getPafTemplate(item.ID)
           break;
         case 'delete':
-          console.log(t);
           this.getDeletePafTemplate(item.ID,index)
           break;
         default:
           this.h =  MODAL_TITLE.CLONE
           this.getcopy(item.ID)
-          // const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
-          // console.log('res,res,',res);
-          // this.leftData = res.data
-          
-          console.log(t,item);
       } 
     },
     
@@ -334,12 +319,10 @@ export default {
     },
     // 项目删除
     async handleDelete (row) {
-      console.log('row,index',row);
       const res = await apiData.getDeleteTempItem({
         id:row.pafTemplateitemId
       })
       this.showMsg1(res,'删除申请单项目')
-      console.log('rowLeftList',this.rowLeftList);
       let id = ''
       if (this.rowLeftList.ID) {
         id = this.rowLeftList.ID
@@ -352,7 +335,6 @@ export default {
     async getPafTemplate (id) {
       const res = await apiData.getPafTemplate({id})
       console.log(res.data,'获取当前申请单数据');
-      this.showMsg1(res, '获取当前申请单数据')
       if (res.data === null)return
       if (res.data.isShowOperation === '1') {
         this.value.push(6)
@@ -366,7 +348,6 @@ export default {
       if (res.data.isShowHpv === '1') {
         this.value.push(8)
       }
-      console.log(this.value,'this.value');
       this.form = res.data
     },
     // 删除申请列表数据
@@ -385,7 +366,6 @@ export default {
       if (this.leftData[this.leftData.length-1].ID === id) {
         this.clickIndex = index-1
         ids = this.leftData[this.leftData.length-2].ID
-        console.log('end',this.leftData[this.leftData.length-2].ID);
       } else {
         const find = this.leftData.find(item => item.index === index+1) 
         if (find) {
@@ -406,48 +386,24 @@ export default {
     // 点击收费项目
     async handleIputVal () {
       this.innerVisible  = true
-      this.isDisabled = true
+      // this.isDisabled = true
       // this.costList = []
       // this.form.chargeItems = []
       // this.form.value2 = []
-      let list = []
-      this.form.chargeItems.forEach((vv,ii) => {
-        list.push({
-          CHARGE_CODE:vv.chargeItemCode,
-          CHARGE_NAME:vv.chargeItemName,
-          CHARGE_PRICE:vv.chargeItemPrice
-        })
-      })
+      // this.costList = JSON.parse(JSON.stringify(this.costList))
       await this.getCostList()
-      console.log(this.form,this.selectionVal,this.form.chargeItems,'oldVal, newVal');
-      // this.$nextTick(() => {
-          this.costList.forEach((v,i) => {
-            list.forEach(it =>{
-              if (v.CHARGE_CODE === it.CHARGE_CODE) {
-                console.log('vvvvv',it);
-                this.$nextTick(() => {
-                  console.log('list',list);
-                  this.$refs.costList.toggleRowSelection(it,true)
-                })
-              }
-            })
-          })
-        // })
-        
     },
     async handleSearch(search) {
       await this.getCostList(search)
     },
     //  获取收费项目列表
     async getCostList (search) {
+      this.selectionVal = []
       const res = await apiData.getQuery({search})
       if (res.data === null) return
       this.loading = true
       this.costList = res.data
       this.loading = false
-      console.log(res);
-      console.log(this.form,this.selectionVal,this.form.chargeItems,'oldVal, newVal');
-
     },
     // 界面新增按钮
     async handleAdd(w) {
@@ -467,16 +423,26 @@ export default {
      // 当选择项发生变化时会触发该事件
      handleSelectionChange (rows) {
       this.selectionVal = []
-      this.form.chargeItems = []
-      this.form.value2 = []
+      // this.form.chargeItems = []
       if (rows) {
-        let sum = 0;
-        console.log(sum,'sumsum');
         rows.forEach(row => {
           if (row) {
             this.selectionVal.push(row);
           }
         });
+        
+      }
+    },
+    async submit(t) {
+      if (t !== 'out') {
+        let sum = ''
+        this.innerVisible = false
+        this.visible = true
+        this.h = MODAL_TITLE.ADD
+        this.modalTitle = MODAL_TITLE.ITEM
+        this.form.value2 = []
+        this.form.chargeItems = []
+        this.form.item.itemPrice = ''
         this.selectionVal.map(item => {
           if (item) {
             this.form.chargeItems.push({
@@ -490,20 +456,11 @@ export default {
           }
         })
         this.form.item.itemPrice = sum
-      }
-    },
-    async submit(t) {
-      if (t !== 'out') {
-        this.innerVisible = false
-        this.visible = true
-        this.h = MODAL_TITLE.ADD
-        this.modalTitle = MODAL_TITLE.ITEM
+        
       }else {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {
-            console.log(this.form.item,'list');
             if (this.modalTitle === MODAL_TITLE.FORM) {
-              console.log('this.form.isShowOperation',this.form);
               const list = {
                 templateName: this.form.templateName,
                 printTemplate: this.form.printTemplate,
@@ -520,7 +477,6 @@ export default {
                 id:this.formTitle ==='edit'?this.rowLeftList.ID:''})
 
               if (res.type === 'SUCCESS') {
-                console.log('this.formTitle',this.formTitle);
                 this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
                 if (this.formTitle ==='edit') {
                   this.list(this.rowLeftList.ID)
@@ -539,7 +495,6 @@ export default {
               }
               // this.showMsg1(res,'新增申请单')
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
-              console.log('this.rowLeftList',this.rowLeftList,this.form.chargeItems);
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -552,20 +507,16 @@ export default {
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
-              console.log('this.form',this.form);
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''
-                console.log('this.rowLeftList',this.rowLeftList.ID);
                 if (this.rowLeftList.ID !== undefined) {
                   id = this.rowLeftList.ID
-                  console.log('this.rowLeftList',this.leftData);
                 } else {
-                  console.log('this.leftData',this.leftData);
                   id = this.leftData[0].ID
                 }
                 this.init()
-                this.form.chargeItems = []
+                // this.form.chargeItems = []
                 // this.$refs.form.resetFields()
                 // this.form.item.itemExplain  = ''
                 this.getPafTemplateitems(id)
@@ -576,6 +527,7 @@ export default {
             } else {
               this.modalTitle = MODAL_TITLE.ITEM
             }
+            this.$refs.costList.clearSelection()
         } else {
             // 未通过
             console.log('invalid form !')
@@ -600,9 +552,11 @@ export default {
       if (t !== 'out') {
         this.innerVisible = false
         this.visible = true
+        console.log('this.form.chargeItems',this.form.chargeItems);
+        this.$refs.costList.clearSelection()
         // this.h = MODAL_TITLE.ADD
         // this.modalTitle = MODAL_TITLE.ITEM
-        // this.form.chargeItems = []
+        //  = []
         // this.selectionVal = []
         // this.$nextTick(() => {
         //   this.$refs.costList.clearSelection(); 
@@ -610,12 +564,11 @@ export default {
       } else {
         this.visible = false
         this.init()
+        this.$refs.costList.clearSelection()
       }
-      console.log('123',this.modalTitle,MODAL_TITLE.FORM);
     },
     // 包含元素多选框
     handleChangeCheckbox (row,index) {
-      console.log(row.label,index, this.value,'handleChangeCheckbox');
       const val = this.value.includes(row.label)
       if (val === true) {
         switch(row.label) {
@@ -632,7 +585,6 @@ export default {
             this.form.isShowHpv = '1'
             break;
           default:
-            // console.log(9999);
         } 
       } else {
          switch(row.label) {
@@ -648,7 +600,6 @@ export default {
           case 8:
             this.form.isShowHpv = '0'
           default:
-            // console.log(9999);
         } 
       }
     },
@@ -669,7 +620,6 @@ export default {
     currentChange1(val) {
       console.log(val,this.rowLi, '当前页');
       this.QUERY_PAGE.pageIndex = val // 当前页
-      // console.log(this.leftData[0].ID,'this.leftData');
       // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
   }

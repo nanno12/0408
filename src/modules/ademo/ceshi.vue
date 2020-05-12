@@ -1,11 +1,14 @@
 <template>
     <div>
-      <win-form 
+      <!-- <win-form 
         labelWidth="100px"
         ref="searchForm"
         :searchData="searchData"
         :searchForm="searchForm">
-      </win-form>
+      </win-form> -->
+      <el-select v-model="value8" filterable placeholder="请选择" value-key="id" @change="currentSel">
+        <el-option v-for="item in options" :key="item.id" :label="item.label" :value="item"></el-option>
+      </el-select>
    </div>
 </template>
 
@@ -103,6 +106,41 @@ export default {
           rules: [{ required: true, message: "请选择操作角色", trigger: "change" }]
         },
       ],
+      options: [
+        {
+          value: "选项1",
+          id: 1,
+          code: "xuanxiang1",
+          label: "黄金糕"
+        },
+        {
+          code: "xuanxiang2",
+          id: 2,
+          value: "选项2",
+          label: "双皮奶"
+        },
+        {
+          id: 3,
+          value: "选项3",
+          code: "xuanxiang3",
+          label: "蚵仔煎"
+        },
+        {
+          value: "选项4",
+          id: 4,
+          code: "xuanxiang4",
+          label: "龙须面"
+        },
+        {
+          value: "选项5",
+          label: "北京烤鸭",
+          id: 5,
+          code: "xuanxiang5"
+        }
+      ],
+      value8: {
+        id: 2,
+      },
       // right:[
       //   {
       //     type: "Select",
@@ -124,6 +162,12 @@ export default {
     // 下拉选择分公司，查询部门数据
     changeCompany(row) {
       console.log('changeCompany',row);
+    },
+    currentSel(selVal) {
+      // this.value8 = selVal.id;
+      // this.name = selVal.label;
+      console.log("选择的name为：" + this.name, "选择的code为:" + this.code);
+      console.log(selVal,this.value8);
     },
     // 下拉选择部门，查询职位数据
     changeDepar(row) {

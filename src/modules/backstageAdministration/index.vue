@@ -75,13 +75,13 @@
           <w-row>
             <w-col :span="12">
               <w-form-item label="模版代码" prop="mouldcode">
-                <w-input v-model="form.mouldcode" :maxlength="20" showCounter
+                <w-input v-model="form.mouldcode" showCounter
                   placeholder="请输入代码"></w-input>
               </w-form-item>
             </w-col>
             <w-col :span="12">
               <w-form-item label="模版名称" prop="mouldname">
-                <w-input v-model="form.mouldname" :maxlength="20" showCounter
+                <w-input v-model="form.mouldname" showCounter
                   placeholder="请输入名称"></w-input>
               </w-form-item>
             </w-col>
@@ -175,7 +175,7 @@
                     :value="item">
                   </w-option>
                 </w-select>
-                <span class="inline-block po_ab top_0 right_-20" style="z-index:999"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
+                <span class="inline-block po_ab top_0 right_-20 " style="z-index:999"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
               </w-form-item>
             </w-col>
             <w-col :span="12" class="po_re">
@@ -248,12 +248,12 @@
           <w-row>
             <w-col :span="12">
               <w-form-item label="默认数量">
-                <w-input-number :min=0 v-model.number="form.amount"></w-input-number>
+                <w-input v-model.number="form.amount"></w-input>
               </w-form-item>
             </w-col>
             <w-col :span="12">
               <w-form-item label="加减量"  prop="addfactor">
-                <w-input-number :min=0 v-model.number="form.addfactor"></w-input-number>
+                <w-input v-model.number="form.addfactor"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
@@ -288,7 +288,7 @@
         </div>
         <!-- 新增成分类 -->
         <w-row v-else>
-          <w-col :span="11">
+          <!-- <w-col :span="11">
             <p>已选择大类列表</p>
             <win-table :listTable=tableTitle
               :tableData=tableData
@@ -318,7 +318,7 @@
               @handleSelectionChange="checkRightAll"
               :isShow=isShow>
             </win-table>
-          </w-col>
+          </w-col> -->
           <!-- <w-row>
             <w-col :span="24">
               <w-form-item :label="modalTitle+'代码'" prop="code"
@@ -449,7 +449,7 @@
     font-size: 16px!important;
     font-weight: 700;
     display: inline-block;
-    padding-right: 10px;
+    padding-left: 10px;
   }
   .w-modal__footer,
   .w-modal__body {

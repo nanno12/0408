@@ -130,12 +130,19 @@ export default {
 
         itemcode: '', // 项目代码
         itemname:'', // 项目名称
-        maincode: '', // 成分大类代码
+        maincode: {
+          MAIN_CODE: '',
+          MAIN_NAME: ''
+        }, // 成分大类代码
         mainname:'', // 成分大类名称
-        detailcode:'', // 成分小类代码
+        detailcode:{
+          DETAIL_CODE: '',
+          DETAIL_NAME: '',
+          MAIN_CODE: ''
+        }, // 成分小类代码
         detailname:'', // 成分小类名称
-        amount:1, // 默认数量
-        hisitemcode:'', // 对应费用明细项编号
+        amount:"1", // 默认数量
+        // hisitemcode:'', // 对应费用明细项编号
         addfactor: '', // 增减因子
         remark: '', // 备注
 
@@ -174,9 +181,9 @@ export default {
         // detailname: [{
         //   required: true, message: '请选择成分小类', trigger: 'change'
         // }],
-        hisitemcode: [{
-          required: true, message: '请选择费用对应', trigger: 'change'
-        }]
+        // hisitemcode: [{
+        //   required: true, message: '请选择费用对应', trigger: 'change'
+        // }]
       },
       selection: [],
       listMouldItems: [],
@@ -281,10 +288,53 @@ export default {
           id = this.mouldItemsRow.ID
         }
         console.log('12412',id);
-        const res = await dataApi.getFindMould({mouldtype:e+1,mouldcode:id})
+        const res = await dataApi.getFindMould({mouldtype:e,mouldcode:id})
         console.log('resres',res);
         if (res.type === 'SUCCESS') {
-          this.showMsg('成功','success')
+          if (e === '1')  {
+            if (res.data[0] === null) {
+              this.form = {}
+              this.form =res.data[1]
+              this.form.mouldtype = '1'
+              this.showMsg('已帮您同步已存在的【常规用血】的数据')
+            } else {
+              this.showMsg('您选择的模板类型【常规备血】已存在不能重复新增，请重新选择','warning')
+              this.form = {}
+              this.form.mouldtype = ''
+            }
+            console.log('okffffok');
+          } else {
+            if (res.data[1] === null) {
+              this.form = {}
+              this.form =res.data[0]
+              this.form.mouldtype = '2'
+              // res.data.applydepts.map(item => {
+              //   this.form.applydepts.push(item.deptname)
+              // })
+              console.log('okok11',res.data[0]);
+              this.showMsg('已帮您同步已存在的【常规备血】的数据')
+            }  else {
+              this.showMsg('您选择的模板类型【常规用血】已存在，不能重复新增，请重新选择','warning')
+              this.form.mouldtype = ''
+              this.form = {}
+            }
+            console.log('okffff');
+          }
+          // this.showMsg('成功','success')
+          // if (res.data[0] === null) {
+          //   this.form = {}
+          //   this.form.mouldtype = '1'
+          // } else if (res.data[1] === null) {
+          //   this.form = {}
+          //   this.form =res.data[0]
+          //   this.form.mouldtype = '2'
+          //   // res.data.applydepts.map(item => {
+          //   //   this.form.applydepts.push(item.deptname)
+          //   // })
+          //   console.log('okok11',res.data[0]);
+          // }  else {
+          //   this.showMsg('您选择的模板类型已存在申请单列表中，请重新选择','warning')
+          // }
           // const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
           // console.log('res',res);
         } else {
@@ -366,7 +416,7 @@ export default {
     },
     handleSelChange(row) {
       console.log(row);
-      this.getListDetailTypes(row)
+      this.getListDetailTypes(row.MAIN_CODE)
       this.maincode = row.DETAIL_CODE
       this.form.detailname = ''
       this.form.detailcode = ''
@@ -375,18 +425,19 @@ export default {
     },
     // copiedmouldcode
     async handleSelChange1(row) {
-      console.log('row',row);
+      console.log('row',row,this.form.maincode);
       if (row) {
         this.form.itemcode = row.DETAIL_CODE
         this.form.itemname = row.DETAIL_NAME
         this.form = {...this.form}
       }
-      if (this.form.maincode === '') {
+      if (this.form.maincode.MAIN_CODE === '' ) {
         const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
         const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
         console.log(find,'res',res,this.form);
-        this.form.maincode = find.MAIN_NAME
-        this.form.mainname = find.MAIN_NAME
+        this.form.maincode.MAIN_CODE= find.MAIN_CODE
+        this.form.maincode.MAIN_NAME = find.MAIN_NAME
+        this.form.maincode = {...this.form.maincode}
         // this.getListMainTypes()
         // // this.getListDetailTypes(res.data.MAIN_CODE)
       }
@@ -417,20 +468,25 @@ export default {
                   mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
                   itemcode: this.form.itemcode, // 项目代码
                   itemname: this.form.itemname, // 项目名称
-                  maincode: this.form.maincode, // 成分大类代码
-                  mainname: this.form.mainname, // 成分大类名称
-                  detailcode: this.form.detailcode.value, // 成分小类代码
+                  maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
+                  mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
+                  detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
                   detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
                   amount: this.form.amount, // 默认数量
-                  hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-                  addfactor:  this.form.addfactor, // 增减因子
+                  // hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+                  addfactor:this.form.addfactor, // 增减因子
                   remark: this.form.remark // 备注
                 }
                 console.log('list',list,this.form.addfactor);
                 const res = await dataApi.getModifyMouldItem({...list})
                 	if (res.type === 'SUCCESS') {
                     this.showMsg(res.message,'success')
-                    this.MouldItems()
+                    if (this.mouldItemsRow.ID === undefined) {
+                      this.MouldItems(this.listMoulds[0])
+                    } else {
+                      this.MouldItems(this.mouldItemsRow)
+                    }
+                    // this.MouldItems()
                     this.visible = false
                   } else {
                     this.showMsg(res.message,'error')
@@ -530,21 +586,15 @@ export default {
     },
     // 点击模态框取消按钮事件
     reset () {
+      // this.form = {}
+      // if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
+      //   this.modalTitle = MODAL_TITLE.ITEM
+      // } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
+      //   this.modalTitle = MODAL_TITLE.ITEM
+      // }
+      this.visible = false
       this.$refs.form.resetFields()
-      if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
-        this.modalTitle = MODAL_TITLE.ITEM
-      } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
-        this.modalTitle = MODAL_TITLE.ITEM
-      } else {
-        this.form.maincode = ''
-        this.form.mainname = ''
-        this.form.remark = ''
-        this.form.amount = "1"
-        // this.form.addfactor = ''
-        this.$refs.form.resetFields()
-        this.visible = false
-      }
-      // this.visible = false
+
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
@@ -652,11 +702,26 @@ export default {
           const res = await dataApi.getFindMouldItem({
             mouldcode:row.MOULD_CODE,
             itemcode:row.MOULD_ITEM_CODE})
-            console.log('res',res,this.form,row);
-          this.form = res.data
-          this.form.maincode =  res.data.mainname
-          this.form.detailcode =  res.data.detailname
-          this.getListMainTypes()
+          // this.form = res.data
+          console.log('res',res.data,this.form);
+          this.form.maincode.MAIN_CODE =  res.data.maincode || ''
+          this.form.maincode.MAIN_NAME =  res.data.mainname || ''
+          this.form.detailcode.DETAIL_CODE =  res.data.detailcode || ''
+          this.form.detailcode.DETAIL_NAME =  res.data.detailname || ''
+          this.form.detailname = res.data.detailname
+          this.form.mainname = res.data.mainname
+          this.form.itemcode = res.data.itemcode
+          this.form.itemname = res.data.itemname
+          this.form.addfactor = res.data.addfactor
+          this.form.amount = res.data.amount
+          this.form.mouldcode = res.data.mouldcode
+          this.form.remark = res.data.remark
+          // this.form.detailcode =  res.data.detailname
+          // this.getListMainTypes()
+          this.form.maincode = {...this.form.maincode}
+          this.form.detailcode = {...this.form.detailcode}
+          // this.form = {...this.form}
+          console.log('this.form',this.form);
         } else {
           this.modalTitle = this.MODAL_TITLE.ITEM
         }

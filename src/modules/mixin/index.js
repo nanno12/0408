@@ -31,11 +31,17 @@ export default {
           label: '警告',
           type: 'warning',
         })
-      } else {
-        this.$message({
+      } else if (type === 'error') {
+         this.$message({
           message,
           label: '错误',
           type: 'error',
+        })
+      } else  {
+        this.$message({
+          message,
+          label: '消息',
+          type: 'info',
         })
       }
     }

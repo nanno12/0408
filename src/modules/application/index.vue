@@ -167,7 +167,6 @@
                 label="项目价格"
                 prop="item.itemPrice">
                 <w-input
-                   
                   placeholder="请输入项目价格"
                   showCounter
                   :readonly=true
