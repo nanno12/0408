@@ -236,7 +236,7 @@
             >确 定</w-button>
           </div> -->
           <w-table
-            :data="costList.slice((QUERY_PAGE.pageIndex-1)*QUERY_PAGE.pageSize,QUERY_PAGE.pageIndex*QUERY_PAGE.pageSize) || []"
+            :data="costList"
             v-loading="loading"
             stripe
             ref="costList"
@@ -249,14 +249,14 @@
             <w-table-column prop="CHARGE_NAME"  key="3" label="收费项目"></w-table-column>
             <w-table-column prop="CHARGE_PRICE"  key="4" width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
           </w-table>
-          <w-pagination 
+          <!-- <w-pagination 
             class="fr pd-top_20"
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange1"
             :total="costList.length"
             :show="['prev', 'total', 'jump']">
-          </w-pagination>
+          </w-pagination> -->
         </div>
         <span slot="footer" class="dialog-footer ">
          <w-button @click="reset('inner')">取 消</w-button>

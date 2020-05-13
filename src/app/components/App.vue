@@ -197,3 +197,22 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+.w-modal__header__title {
+  font-size:16px;
+  font-weight: 600;
+}
+.w-modal__body {
+    border-bottom: 1px solid #DFE7F5;
+    margin-bottom: 10px;
+}
+.w-button--primary,
+.w-button--default{
+  min-width: 88px;
+  margin-left: 15px !important;
+  .w-button--medium, .w-button--medium.is-round {
+    padding: 8px 16px;
+  }
+}
+
+</style>

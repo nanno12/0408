@@ -28,23 +28,28 @@ export default {
 .win-card-header_wrapper {
   display: flex;
   align-items: center;
+  // line-height:20px;
 }
 .card-icon {
   display: inline-block;
-  margin-right: 8px;
+  margin-right: 5px;
   width: 3px;
-  height: 16px;
-  background: #5a7bef;
-  // border-radius: 3px;
+
+  height: 14px;
+  line-height:20px;
+  background: #0F49ED;// border-radius: 3px;
 }
 .card-header {
-  flex: 1;
+  // flex: 1;
   width: 100%;
   > h2 {
     margin: 0;
-    font-size: 16px;
-    line-height: 16px;
-    font-weight: 700;
+    padding-top: 2px;
+    font-size:14px;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(0,6,34,1);
+    line-height:20px;
   }
 }
 </style>

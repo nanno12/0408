@@ -396,10 +396,25 @@ export default {
     async handleSearch(search) {
       await this.getCostList(search)
     },
+    loadMore () {
+      if (this.loadSign) {
+       this.loadSign = false
+       this.page++
+       if (this.page > 10) {
+       return
+       }
+       setTimeout(() => {
+       this.loadSign = true
+       }, 1000)
+       console.log('到底了', this.page)
+      }
+      },
     //  获取收费项目列表
     async getCostList (search) {
       this.selectionVal = []
-      const res = await apiData.getQuery({search})
+      const res = await apiData.getQuery({CHARGE_NAME:search})
+      console.log(res);
+      
       if (res.data === null) return
       this.loading = true
       this.costList = res.data

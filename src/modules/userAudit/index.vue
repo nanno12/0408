@@ -1,10 +1,11 @@
 <template>
   <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
-      <w-col :span="12" >
-        <div class="mb-15 title">角色列表（5）</div>
-        <w-button @click="handleAdd('left')" class="fr mb-15" type="primary" plain>新增</w-button>
-        <w-table class="mt-15" :data="tableData" :border="true" style="width: 100%">
+      <w-col :span="12" class="pd-right_16">
+        <title-style class=" po_re pd-bottom_24 pd-top_5"><span slot="header">角色列表</span>
+          <w-button class="po_ab top_0 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
+        </title-style>
+        <w-table class="mg-right_16" :data="tableData" :border="true" style="width: 100%">
           <w-table-column type="index" width="70" align="center" label="序号">
           </w-table-column>
           <w-table-column prop="time" label="角色代码">
@@ -26,13 +27,20 @@
       </w-col>
       <w-col :span="12">
         <div class="pl-15 pd-right">
-          <div class="mb-15 title">医生列表（13）</div>
-           <w-input v-model="value2" sufAppendIsButton>
+          <!-- <div class="mb-15 title">医生列表（13）</div> -->
+           <!-- <w-input v-model="value2" sufAppendIsButton>
             <template slot="suf-append">
               <i class="w-icon-search"></i>
             </template>
-          </w-input>
-          <w-button class="fr mb-15" type="primary" @click="handleAdd('right')" plain>新增</w-button>
+          </w-input> -->
+          <title-style class=" po_re pd-bottom_18"><span slot="header">
+            <w-tabs v-model="activeName2" @tab-click="handleClick" type="dark">
+            <w-tab-pane label="对应职称" name="first"></w-tab-pane>
+            <w-tab-pane label="非对应职称医生" name="second"></w-tab-pane>
+          </w-tabs>
+          </span>
+            <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
+          </title-style>
           <w-table :data="tableData" class="mt-15 " :border="true" style="width: 100%">
             <w-table-column type="index" width="70" align="center" label="序号">
             </w-table-column>
@@ -72,7 +80,7 @@
             :value="item.value">
           </w-option>
         </w-select>
-        <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
+        <w-input v-model="value2" placeholder="医生姓名/工号" sufAppendIsButton>
           <template slot="suf-append">
             <i class="w-icon-search"></i>
           </template>
@@ -83,11 +91,11 @@
           @selection-change="handleSelectionChange">
           <w-table-column type="selection" width="50">
           </w-table-column>
-          <w-table-column prop="time" label="姓名">
+          <w-table-column prop="time" label="姓名" width="100">
           </w-table-column>
-          <w-table-column sortable prop="name" label="职称" width="150">
+          <w-table-column  prop="name" label="职称" >
           </w-table-column>
-          <w-table-column sortable prop="status" label="工号" width="150">
+          <w-table-column  prop="status" label="工号" width="100">
           </w-table-column>
           <w-table-column prop="type" label="科室">
           </w-table-column>
@@ -127,6 +135,7 @@ export default {
       title: '', // 模态框标题
       value2: '', // 模态框表格搜索
       region: '', // 请选择科室值
+      activeName2: 'first',
       selection: [],
       options: [
         {
@@ -184,7 +193,14 @@ export default {
   mounted() {
   },
   methods: {
-    // 模态框表格多选值
+    handleClick(tab) {
+      if (tab.name === 'first') {
+        console.log(tab.name)
+      } else {
+        console.log(tab.name)
+      }
+    },
+       // 模态框表格多选值
     handleSelectionChange (val) {
       this.selection = val
     },
@@ -229,35 +245,33 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.home-page-wrap-ba
-  height 100%
-  padding 12px 15px
-  background rgba(234,237,244,1)
-  overflow-x auto
-  overflow-y hidden
-  .title
-    font-weight 500;
-    font-size 14px;
-    color #000622;
-  .home-page-body
-    padding 16px
-    background rgba(255,255,255,1)
-    border-radius 2px
-    .left-body
-      height 100%
-      width calc(100% - 415px)
-      float left
-    .right-body
-      width 400px
-      margin-left 15px
-      height 100%
-      float right
-      background #fff
+.home-page-wrap-ba {
+  .home-page-body {
+    padding: 16px;
+    background: rgba(255,255,255,1);
+    border-radius: 2px;
+  }
+}
+
+    
 </style>
-<style lang="stylus">
-.pd-right
-  .w-input
-    width 200px!important
-.w-row
-  padding-bottom 16px
+<style lang="scss">
+ .pd-right {
+  .card-icon{
+    display: inline-block!important;
+    margin-right: 0px!important;
+    width: 0px!important;
+    height: 0px!important;
+    background: #5a7bef;
+  }
+  .w-tabs--border-card>.w-tabs__content, .w-tabs--dark>.w-tabs__content {
+    padding: 0!important;
+  }
+}
+
+// .pd-right
+//   .w-input
+//     width 200px!important
+// .w-row
+//   padding-bottom 16px
 </style>

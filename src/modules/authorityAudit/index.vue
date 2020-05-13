@@ -88,12 +88,12 @@
         <w-row v-else>
           <w-col :span="12">
             <w-form-item label="最小量" prop="name" required>
-              <w-input-number v-model="numVal"></w-input-number>
+              <w-input v-model="numVal"></w-input>
             </w-form-item>
           </w-col>
           <w-col :span="12">
             <w-form-item label="最大量" prop="name" required>
-              <w-input-number v-model="operationVal"></w-input-number>
+              <w-input v-model="operationVal"></w-input>
             </w-form-item>
           </w-col>
         </w-row>

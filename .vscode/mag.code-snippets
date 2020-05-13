@@ -13,7 +13,7 @@
 		"if (res.type === 'SUCCESS') {",
 		"  this.showMsg('成功','success')",
 		"} else {",
-		"	 this.showMsg('失败','error')",
+		"	 this.showMsg(res.message,'error')",
 		"}",
 		],
 		"description": "Log output to console"

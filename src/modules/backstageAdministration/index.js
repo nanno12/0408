@@ -594,7 +594,6 @@ export default {
       // }
       this.visible = false
       this.$refs.form.resetFields()
-
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
