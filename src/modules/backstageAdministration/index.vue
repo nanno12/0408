@@ -283,7 +283,7 @@
           </w-table>
           <w-pagination :total="10" :page-size="4"
             @page-size-change="handlePageSizeChange"
-            :show="['prev', 'next', 'total', 'jump']">
+            :show="['prev', 'next', 'total']">
           </w-pagination>
         </div>
         <!-- 新增成分类 -->

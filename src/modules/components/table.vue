@@ -31,7 +31,7 @@
       v-if="isShow.pagination"
       @size-change='sizeChange'
       @current-change="currentChange"
-      :show="['prev', 'next', 'total', 'jump']">
+      :show="['prev', 'next', 'total']">
     </w-pagination>
   </div>
 </template>

@@ -14,6 +14,7 @@ export default {
       clickIndex:0,
       search:'',
       loading:false,
+      loading1:false,
       innerVisible:false,
       paginationBoxReflow:true,
       s:0,
@@ -205,9 +206,9 @@ export default {
         })
       
     },
-    'form.chargeItems' (oldVal, newVal) {
-      console.log('oldVal',oldVal,newVal);
-    }
+    // 'form.chargeItems' (oldVal, newVal) {
+    //   console.log('oldVal',oldVal,newVal);
+    // }
   },
   created() {
     this.list()
@@ -218,7 +219,9 @@ export default {
     },
     async list (id) {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
+      this.loading1 = true
       this.leftData = res.data
+      this.loading1 = false
       if (res.data === null)return
       this.rowLi = res.data[0]
       res.data.map(item=>{
@@ -246,6 +249,7 @@ export default {
     },
     // 点击申请单列表单行
     async handleLeftRow (row,index) {
+      console.log('row',row);
       this.QUERY_PAGE.pageIndex = 1
       this.QUERY_PAGE.currentPager = 1 
       this.rowLeftList = row
@@ -270,14 +274,10 @@ export default {
         this.list(id)
           //在vue中操作dom尽量用ref, 但它不是响应式的
           this.clickIndex = this.leftData.length 
-          this.loading = true
           setTimeout(() => {
             this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
             this.hoverIndex = -1
           }, 200)
-          this.loading = false
-
-        // this.$refs.box.scrollToLower = 0
       } else {
          this.showMsg('复制申请单失败','error')
       }
@@ -504,9 +504,15 @@ export default {
                 } else {
                   const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
                   this.leftData = res.data
+                  this.clickIndex = this.leftData.length -1
+                  // console.log(this.clickIndex , this.leftData.length);
+                  setTimeout(() => {
+                    this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
+                    this.hoverIndex = -1
+                  }, 200)
+                  this.rigthData = []
                 }
                 this.visible = false
-                document.documentElement.scrollTop=600
                 this.init()
               } else {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
@@ -529,23 +535,30 @@ export default {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''
                 if (this.rowLeftList.ID !== undefined) {
-                  id = this.rowLeftList.ID
-                } else {
-                  id = this.leftData[0].ID
+                  // console.log('this.',this.clickIndex, this.leftData.length);
+                  if (this.clickIndex === this.leftData.length - 1) {
+                    id = this.leftData[this.leftData.length-1].ID
+                  } else {
+                    id = this.rowLeftList.ID
+                  }
+                } else { 
+                  if (this.clickIndex === this.leftData.length - 1) {
+                    id = this.leftData[this.leftData.length-1].ID
+                  } else {
+                    id = this.leftData[0].ID
+                  }
                 }
-                this.init()
-                // this.form.chargeItems = []
-                // this.$refs.form.resetFields()
-                // this.form.item.itemExplain  = ''
+                console.log(this.leftData[this.leftData.length-1],id);
                 this.getPafTemplateitems(id)
                 this.visible = false
+                 this.$refs.costList.clearSelection()
+                this.init()
               } else {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单项目失败':'新增申请单项目失败','error')
               }
             } else {
               this.modalTitle = MODAL_TITLE.ITEM
             }
-            this.$refs.costList.clearSelection()
         } else {
             // 未通过
             console.log('invalid form !')

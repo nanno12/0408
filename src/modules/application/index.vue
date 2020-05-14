@@ -5,8 +5,8 @@
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+</span> 新增</w-button>
         </title-style>
-        <ul   ref='box' class="mg-right_16 list-style">
-          <li v-loading="loading" class="application" v-for="(item, index) in leftData"
+        <ul   v-loading="loading1" ref='box' class="mg-right_16 list-style">
+          <li  class="application" v-for="(item, index) in leftData"
             :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
             @mouseover="hoverIndex = index"
             @mouseout="hoverIndex = - 1"
@@ -65,7 +65,7 @@
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange"
-            :show="['prev', 'next', 'total', 'jump']">
+            :show="['prev', 'next', 'total']">
           </w-pagination>
           </div>
       </w-col>
