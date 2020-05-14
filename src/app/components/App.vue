@@ -204,7 +204,12 @@ export default {
 }
 .w-modal__body {
     border-bottom: 1px solid #DFE7F5;
+    padding: 16px 20px;
     margin-bottom: 10px;
+}
+.w-form-item__label {
+  margin-left: 0px;
+  padding-right: 8px;
 }
 .w-button--primary,
 .w-button--default{

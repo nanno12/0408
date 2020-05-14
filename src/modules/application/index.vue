@@ -12,26 +12,30 @@
             @mouseout="hoverIndex = - 1"
             @click="handleLeftRow(item, index)" :key="index" > 
             <div class="po_re">
-              <h4 class="inline-block ">{{item.TEMPLATE_NAME}}</h4>
-              <div class="inline-block po_ab top_-9 right_0" v-if="hoverIndex === index || clickIndex === index">
+              <div class="inline-block mg-bottom_8" style="font-size: 14px; font-weight: 600;">{{item.TEMPLATE_NAME}}</div>
+              <div class="inline-block po_ab top_-8 right_0" v-if="hoverIndex === index || clickIndex === index">
                 <w-button type="text" @click="handleRowL(item,index,'copy')">复制</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'edit')">修改</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'delete')">删除</w-button>
               </div>
             </div>
             <!-- <p class="mg-bottom_5">申请单号：12345678910</p> -->
-            <p class="po_re"><span class="inline-block po_ab top_0">元素：</span>
-              <span class=" inline-block mg-left_40">
+            <p class="po_re" style="font-size: 12px">
+              <span class="inline-block po_ab top_0">元素：</span>
+              <span class=" inline-block mg-left_40 mg-bottom_5">
                   <span>临床信息、</span>
                   <span>标本信息、</span>
                   <span>医嘱信息、</span>
-                  <span>既往病理检查结果、</span>
-                {{item.IS_SHOW_GYNECOLOGICAL===1 ?'妇科信息、':''}}
-                {{item.IS_SHOW_OPERATION===1 ?'手术信息、':''}}
+                  <span>既往病理检查结果</span>
+              </span>
+                <span class=" inline-block mg-left_40">
+                <span>{{item.IS_SHOW_GYNECOLOGICAL===1 ?'妇科信息、':''}}</span>
+                <span>{{item.IS_SHOW_OPERATION===1 ?'手术信息、':''}}</span>
+                <span>{{item.IS_SHOW_TUMOUR ===1 ?'肿瘤信息、':''}}</span>
+                <span>{{item.IS_SHOW_HPV=== 1 ?'细胞学活HPV检查结果、': ''}}</span>
                 <!-- {{item.IS_SHOW_SPECIMEN!==0?'标本信息、':''}} -->
-                {{item.IS_SHOW_TUMOUR ===1 ?'肿瘤信息、':''}}
-                {{item.IS_SHOW_HPV=== 1 ?'细胞学活HPV检查结果、': ''}}
-              </span></p>
+              </span>
+            </p>
           </li>
         </ul>
       </w-col>
@@ -219,6 +223,7 @@
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
+          :lowerThreshold=10
           append-to-body>
           <div class="search-style clearfix">
           <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
@@ -240,6 +245,7 @@
             v-loading="loading"
             stripe
             ref="costList"
+            :empty-text="tableconten"
             border
             style="height: calc(100vh - 500px); overflow-y: auto;"
             :row-key="getRowKeys"
@@ -300,9 +306,9 @@
 </style>
 
 <style lang ='scss'>
-  .w-modal__body {
+  /* .w-modal__body {
     padding: 16px 20px!important;
-  }
+  } */
 </style>
 <style lang='stylus' scoped>
 
@@ -320,8 +326,8 @@
   background: rgba(255, 255, 255, 1);
   padding: 16px;
   .application {
-    margin-bottom: 10px;
-    padding: 15px 10px;
+    margin-bottom: 8px;
+    padding: 16px;
     background:rgba(243,245,249,1);
     // background:rgba(207,224,255,1);
     h4 {

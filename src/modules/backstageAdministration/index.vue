@@ -455,9 +455,9 @@
   .w-modal__body {
     margin-right: 30px!important;
   }
-  .w-modal__body {
-    padding: 20px 20px 0px 0px;
-  }
+  // .w-modal__body {
+  //   padding: 20px 20px 0px 0px;
+  // }
 }
 .flex.justify {
   justify-content: space-between;

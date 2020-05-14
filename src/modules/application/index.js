@@ -12,10 +12,11 @@ export default {
       QUERY_PAGE,
       clickIndex:0,
       search:'',
-      loading:true,
+      loading:false,
       innerVisible:false,
       paginationBoxReflow:true,
       hoverIndex: -1,
+      tableconten:'请输入关键字查询数据',
       h : '',
       formTitle:'',
       value2: [], // 搜索值
@@ -391,7 +392,7 @@ export default {
       // this.form.chargeItems = []
       // this.form.value2 = []
       // this.costList = JSON.parse(JSON.stringify(this.costList))
-      await this.getCostList()
+      // await this.getCostList()
     },
     async handleSearch(search) {
       await this.getCostList(search)
@@ -412,13 +413,24 @@ export default {
     //  获取收费项目列表
     async getCostList (search) {
       this.selectionVal = []
-      const res = await apiData.getQuery({CHARGE_NAME:search})
+      const res = await apiData.getQuery({CHARGE_SEARCH:search})
       console.log(res);
       
       if (res.data === null) return
       this.loading = true
-      this.costList = res.data
+      this.costList = res.data.slice(0,20)
+      console.log('slice(1)',res.data.slice(0,20));
       this.loading = false
+      this.tableconten = '暂无数据'
+    },
+    // loadMore(e) {
+    //   console.log('123',e);
+    // },
+    // scrollToUpper () {
+
+    // },
+    scrollToLower (e) {
+      console.log('e',e);
     },
     // 界面新增按钮
     async handleAdd(w) {

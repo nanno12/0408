@@ -247,9 +247,9 @@ export default {
     width: 200px !important;
   }
 
-  .w-modal__body {
-    margin-bottom: -30px!important;
-  }
+  // .w-modal__body {
+  //   margin-bottom: -30px!important;
+  // }
 
 }
 .ul-style {
