@@ -1,3 +1,4 @@
+import { debounce } from 'throttle-debounce'
 import apiData from './api/api'
 
 import { MODAL_TITLE, QUERY_PAGE} from '../constant'
@@ -15,6 +16,10 @@ export default {
       loading:false,
       innerVisible:false,
       paginationBoxReflow:true,
+      s:0,
+      e:20,
+      scrollToLower: () => {},
+      listData:[],
       hoverIndex: -1,
       tableconten:'请输入关键字查询数据',
       h : '',
@@ -140,9 +145,6 @@ export default {
       ],
       costList: [],
       selectionVal: [],
-      getRowKeys(row) {
-        return row.CHARGE_CODE;
-      },
       rules: {
         'item.itemCode': [
           {
@@ -194,7 +196,7 @@ export default {
       })
       this.$nextTick(() => {
           list.map((v,i) => {
-            this.costList.find(it =>{
+            this.listData.find(it =>{
               if (v.CHARGE_CODE === it.CHARGE_CODE) {
                   this.$refs.costList.toggleRowSelection(it,true)
               }
@@ -203,13 +205,6 @@ export default {
         })
       
     },
-    // selectionVal (oldVal, newVal) {
-    //   console.log('oldVal',oldVal,newVal);
-    //   if (oldVal) {
-    //     this.isDisabled = false
-    //     console.log('this.isDisabled',this.isDisabled);
-    //   }
-    // },
     'form.chargeItems' (oldVal, newVal) {
       console.log('oldVal',oldVal,newVal);
     }
@@ -273,6 +268,16 @@ export default {
       if (res.type === 'SUCCESS') {
         this.showMsg('复制申请单成功','success')
         this.list(id)
+          //在vue中操作dom尽量用ref, 但它不是响应式的
+          this.clickIndex = this.leftData.length 
+          this.loading = true
+          setTimeout(() => {
+            this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
+            this.hoverIndex = -1
+          }, 200)
+          this.loading = false
+
+        // this.$refs.box.scrollToLower = 0
       } else {
          this.showMsg('复制申请单失败','error')
       }
@@ -397,40 +402,28 @@ export default {
     async handleSearch(search) {
       await this.getCostList(search)
     },
-    loadMore () {
-      if (this.loadSign) {
-       this.loadSign = false
-       this.page++
-       if (this.page > 10) {
-       return
-       }
-       setTimeout(() => {
-       this.loadSign = true
-       }, 1000)
-       console.log('到底了', this.page)
-      }
-      },
     //  获取收费项目列表
     async getCostList (search) {
       this.selectionVal = []
       const res = await apiData.getQuery({CHARGE_SEARCH:search})
-      console.log(res);
-      
       if (res.data === null) return
       this.loading = true
       this.costList = res.data.slice(0,20)
-      console.log('slice(1)',res.data.slice(0,20));
+      this.listData = res.data
       this.loading = false
       this.tableconten = '暂无数据'
     },
-    // loadMore(e) {
-    //   console.log('123',e);
-    // },
-    // scrollToUpper () {
-
-    // },
-    scrollToLower (e) {
-      console.log('e',e);
+    fetchData () {
+      this.loading = true
+      const list = this.listData.slice(this.s,this.e)
+      list.map(item=>{
+        setTimeout(() => {
+        this.costList.push(item)
+        this.loading = false
+      }, 600)
+      })
+      this.s= this.s+20
+      this.e= this.e+20
     },
     // 界面新增按钮
     async handleAdd(w) {
@@ -444,7 +437,6 @@ export default {
           break;
         default:
       } 
-      console.log("新增");
       this.visible = true
     },
      // 当选择项发生变化时会触发该事件
@@ -463,6 +455,7 @@ export default {
     async submit(t) {
       if (t !== 'out') {
         let sum = ''
+        this.costList = []
         this.innerVisible = false
         this.visible = true
         this.h = MODAL_TITLE.ADD
@@ -483,7 +476,7 @@ export default {
           }
         })
         this.form.item.itemPrice = sum
-        
+        this.search = ''
       }else {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {
@@ -513,9 +506,7 @@ export default {
                   this.leftData = res.data
                 }
                 this.visible = false
-
-                // this.form.templateName = ''
-                // this.form.value = []
+                document.documentElement.scrollTop=600
                 this.init()
               } else {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
@@ -577,21 +568,15 @@ export default {
     },
     reset(t) {
       if (t !== 'out') {
+        this.search = ''
+        this.costList = []
         this.innerVisible = false
         this.visible = true
-        console.log('this.form.chargeItems',this.form.chargeItems);
         this.$refs.costList.clearSelection()
-        // this.h = MODAL_TITLE.ADD
-        // this.modalTitle = MODAL_TITLE.ITEM
-        //  = []
-        // this.selectionVal = []
-        // this.$nextTick(() => {
-        //   this.$refs.costList.clearSelection(); 
-        // });
       } else {
         this.visible = false
         this.init()
-        this.$refs.costList.clearSelection()
+        // this.$refs.costList.clearSelection()
       }
     },
     // 包含元素多选框
@@ -632,9 +617,7 @@ export default {
     },
     // 当前页
     currentChange(val) {
-      console.log(val,this.rowLi, '当前页',QUERY_PAGE.currentPager+1);
       this.QUERY_PAGE.pageIndex = val // 当前页
-      
       this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     },
     handleCurrentChange () {
@@ -645,9 +628,11 @@ export default {
     },
     // 当前页
     currentChange1(val) {
-      console.log(val,this.rowLi, '当前页');
       this.QUERY_PAGE.pageIndex = val // 当前页
       // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
+  },
+  mounted () {
+    this.scrollToLower = debounce(200, this.fetchData)
   }
 };

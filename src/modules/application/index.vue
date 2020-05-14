@@ -5,8 +5,8 @@
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+</span> 新增</w-button>
         </title-style>
-        <ul class="mg-right_16 list-style">
-          <li class="application" v-for="(item, index) in leftData"
+        <ul   ref='box' class="mg-right_16 list-style">
+          <li v-loading="loading" class="application" v-for="(item, index) in leftData"
             :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
             @mouseover="hoverIndex = index"
             @mouseout="hoverIndex = - 1"
@@ -223,7 +223,6 @@
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
-          :lowerThreshold=10
           append-to-body>
           <div class="search-style clearfix">
           <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
@@ -241,47 +240,41 @@
             >确 定</w-button>
           </div> -->
           <w-table
-            :data="costList"
             v-loading="loading"
-            stripe
+            :data="costList"
+            :lower-threshold="10"
+            @scrollToLower="scrollToLower"
+            win-loading-text="正在获取数据..."
+            height="300"
+            style="width: 100%"
             ref="costList"
+            stripe
             :empty-text="tableconten"
-            border
-            style="height: calc(100vh - 500px); overflow-y: auto;"
-            :row-key="getRowKeys"
             @selection-change="handleSelectionChange">
-            <w-table-column type="selection" :reserve-selection="true" key="1" width="55"></w-table-column>
-            <w-table-column prop="CHARGE_CODE"  key="2" width= '120px' label="收费编码"></w-table-column>
-            <w-table-column prop="CHARGE_NAME"  key="3" label="收费项目"></w-table-column>
-            <w-table-column prop="CHARGE_PRICE"  key="4" width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+            <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
+            <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
+            <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
+            <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
           </w-table>
-          <!-- <w-pagination 
-            class="fr pd-top_20"
-            :current-page="QUERY_PAGE.pageIndex"
-            :page-size="QUERY_PAGE.pageSize"
-            @actived-change="currentChange1"
-            :total="costList.length"
-            :show="['prev', 'total', 'jump']">
-          </w-pagination> -->
         </div>
         <span slot="footer" class="dialog-footer ">
-         <w-button @click="reset('inner')">取 消</w-button>
+         <w-button @click="reset('inner')">取消</w-button>
           <w-button
             :disabled="isDisabled"
             @click="submit('inner')"
             type="primary"
-          >确 定</w-button>
+          >确定</w-button>
       </span>
         </w-modal>
         
       </w-form>
       <span slot="footer" class="dialog-footer ">
         
-         <w-button @click="reset('out')">取 消</w-button>
+         <w-button @click="reset('out')">取消</w-button>
           <w-button
             @click="submit('out')"
             type="primary"
-          >保 存</w-button>
+          >保存</w-button>
       </span>
     </w-modal>
   </div>

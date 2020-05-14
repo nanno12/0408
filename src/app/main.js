@@ -22,9 +22,10 @@ import 'xe-utils'
 import VXETable from 'vxe-table' 
 import sortTable from '@techCommon/components/sortTable'
 import WinDesign from 'win-design'
+import 'babel-polyfill' // 解决IE10+兼容问题
 import 'win-design/lib/themes/default.css' // 默认主题样式文件
 import 'win-design/lib/themes/fonts/iconx.js' // 如果你需要使用行业图标
-import './assets/layout/uiIndex.scss' // 解决IE10+兼容问题
+import './assets/layout/uiIndex.scss'
 import '../modules/components'
 import mixin  from '../modules/mixin'
 
