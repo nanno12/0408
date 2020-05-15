@@ -69,7 +69,7 @@
       class="modal"
       :close-on-click-modal="false"
       width="60%">
-      <w-form label-align="right"  :model="form" ref="form" label-width="130px" :rules="rules">
+      <w-form label-align="right" :model="form" ref="form" label-width="130px" :rules="rules">
         <!-- 新增申请单 -->
         <w-row v-if="modalTitle === MODAL_TITLE.FORM || modalTitle=== MODAL_TITLE.CLONE">
           <w-row>
@@ -343,8 +343,8 @@
       </w-form>
 
       <span slot="footer" class="dialog-footer">
-        <w-button @click="reset">取 消</w-button>
-        <w-button type="primary" @click="submit">确 定</w-button>
+        <w-button @click="reset('form')">取 消</w-button>
+        <w-button type="primary" @click="submit('form')">确 定</w-button>
       </span>
     </w-modal>
   </div>

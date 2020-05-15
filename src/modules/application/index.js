@@ -441,6 +441,10 @@ export default {
         default:
       } 
       this.visible = true
+      this.$nextTick(()=>{
+        this.$refs.form.resetFields();//等弹窗里的form表单的dom渲染完在执行this.$refs.staffForm.resetFields()，去除验证
+      });
+
     },
      // 当选择项发生变化时会触发该事件
      handleSelectionChange (rows) {
@@ -662,5 +666,6 @@ export default {
   },
   mounted () {
     this.scrollToLower = debounce(200, this.fetchData)
+    // this.clearValidate('form') // 清除整个表单的校验
   }
 };

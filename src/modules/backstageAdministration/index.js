@@ -11,6 +11,7 @@ export default {
       visible: false,
       loading:false,
       MODAL_TITLE,
+      oldItemcode:'',
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
       modalTitle: '', // 模态框标题
@@ -228,7 +229,11 @@ export default {
   created() {
     this.Moulds()
   },
-  mounted() {
+  mounted(){
+    // this.$nextTick(() => {
+    //   // this.$refs.form.clearValidate();
+    //   this.$refs.form.resetFields();
+    // })
   },
   methods: {
     checkAll(val) {
@@ -464,8 +469,10 @@ export default {
                   this.showMsg(res.message,'error')
                 }
               } else {
+                console.log('list',this.form,this.oldItemcode);
                 const list = {
                   mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+                  olditemcode:this.oldItemcode,// 原来的项目代码
                   itemcode: this.form.itemcode, // 项目代码
                   itemname: this.form.itemname, // 项目名称
                   maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
@@ -592,8 +599,13 @@ export default {
       // } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
       //   this.modalTitle = MODAL_TITLE.ITEM
       // }
+      this.$refs.form.clearValidate();
+      this.$refs.form.resetFields();
+      // this.$nextTick(() => {
+      //   this.$refs[formName].resetFields()
+      // })
+      // this.$refs.form.resetFields()
       this.visible = false
-      this.$refs.form.resetFields()
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
@@ -720,6 +732,7 @@ export default {
           this.form.maincode = {...this.form.maincode}
           this.form.detailcode = {...this.form.detailcode}
           // this.form = {...this.form}
+          this.oldItemcode = res.data.itemcode
           console.log('this.form',this.form);
         } else {
           this.modalTitle = this.MODAL_TITLE.ITEM

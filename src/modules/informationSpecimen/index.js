@@ -170,12 +170,6 @@ export default {
       if (this.title === '标本部位' ) {
         this.type = '2'
         if (this.isHandleOrgRow === false) {
-          // if (this.clickIndex1 === this.positionList.length -1 ) {
-          //   ids = this.organList[this.positionList.length-1].ID
-          // } else {
-          //   ids = this.positionList[0].ID
-          // }
-          
           if (this.hah !== '') {
             ids = this.hah
           } else {
@@ -186,18 +180,8 @@ export default {
               ids = this.organList[0].ID
             }
           }
-          console.log('ods',ids);
         } else {
           ids = this.rowOrgList.ID 
-          console.log('ods',ids);
-          // if (this.clickIndex1 === this.positionList.length -1 ) {
-          //   ids = this.positionList[this.positionList.length-1].ID
-          // } else {
-          //   ids = this.positionList[0].ID
-          // }
-          // if (this.positionList.length===0) {
-          //   this.nameList = []
-          // }
         }
       } else if (this.title === '标本名称' ) {
         this.type = '3'
@@ -434,8 +418,8 @@ export default {
       })
     },300),
     reset () {
-      this.$refs.form.resetFields()
       this.int()
+      this.$refs.form.resetFields()
       this.visible = false
     },
     isTitle (title) {

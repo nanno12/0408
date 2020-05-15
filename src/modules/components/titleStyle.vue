@@ -5,9 +5,9 @@
       <template v-if="title">{{title}}</template>
       <template v-else>
         <div class="card-header">
-          <h2>
+          <div class="title">
             <slot name="header"></slot>
-          </h2>
+          </div>
         </div>
       </template>
     </div>
@@ -42,14 +42,21 @@ export default {
 .card-header {
   // flex: 1;
   width: 100%;
-  > h2 {
-    margin: 0;
-    padding-top: 2px;
-    font-size:14px;
-    font-family:PingFangSC-Regular,PingFang SC;
-    font-weight:400;
-    color:rgba(0,6,34,1);
-    line-height:20px;
+  .title {
+    > span {
+      display: inline-block;
+      height: 20px;
+      line-height: 20px;
+      font-size:14px;
+      font-weight:400;
+      color:rgba(0,6,34,1);
+    }
+    // padding-top: 2px;
+    // margin: 0;
+    // font-size:14px;
+    // font-weight:400;
+    // color:rgba(0,6,34,1);
+    // line-height:20px;
   }
 }
 </style>

@@ -20,7 +20,7 @@
       </w-col>
       <w-col :span="8"  class="center">
         <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本部位</span>
-          <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
+          <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_10 right_16" @click="handleAdd('标本部位')">+新增</w-button>
         </title-style>
         <div class="list-style" ref='boxs'>
           <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
@@ -37,7 +37,7 @@
       </w-col>
       <w-col :span="8" >
         <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本名称</span>
-          <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本名称')">+新增</w-button>
+          <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_10 right_16" @click="handleAdd('标本名称')">+新增</w-button>
         </title-style>
         <!--   -->
         <div v-show="show">
@@ -63,7 +63,7 @@
       class="home-page-body"
       width="50%">
       <w-form :model="form" ref="form" class="inputs-height">
-        <w-form-item v-if="editVal" prop="editVal" placeholder="请输入器官/系统名称" :rules="rules.test">
+        <w-form-item v-if="editVal" prop="editVal" :placeholder="'请输入'+title" :rules="rules.test">
           <w-input v-model="form.editVal"></w-input>
         </w-form-item>
         <template v-else v-for="(item, index) of form.dynamicArr">
@@ -72,7 +72,7 @@
             :prop="`dynamicArr.${index}.specimenName`"
             :rules="rules.test"
             >
-            <w-input placeholder="请输入器官/系统名称" v-model="form.dynamicArr[index].specimenName"
+            <w-input :placeholder="'请输入'+title" v-model="form.dynamicArr[index].specimenName"
               @input="handleChangeInput" @keyup.enter.native="handleChangeInput"></w-input>
           </w-form-item>
         </template>

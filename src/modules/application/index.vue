@@ -4,7 +4,7 @@
       <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
         <!-- <i class="icon iconfont iconweibiaoti--"> -->
-          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+</span> </i> 新增</w-button>
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+ 新增</span></w-button>
         </title-style>
         <ul   v-loading="loading1" ref='box' class="mg-right_16 list-style">
           <li  class="application" v-for="(item, index) in leftData"
@@ -14,7 +14,7 @@
             @click="handleLeftRow(item, index)" :key="index" > 
             <div class="po_re">
               <div class="inline-block mg-bottom_8" style="font-size: 14px; font-weight: 600;">{{item.TEMPLATE_NAME}}</div>
-              <div class="inline-block po_ab top_-8 right_0" v-if="hoverIndex === index || clickIndex === index">
+              <div class="inline-block po_ab top_-5 right_0" v-if="hoverIndex === index || clickIndex === index">
                 <w-button type="text" @click="handleRowL(item,index,'copy')">复制</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'edit')">修改</w-button>
                 <w-button type="text" @click="handleRowL(item,index,'delete')">删除</w-button>
@@ -84,8 +84,8 @@
         label-align="right"
         label-width="100px"
         ref="form">
-        <w-row  v-if=" modalTitle === MODAL_TITLE.FORM">
-          <w-row >
+        <w-row v-if=" modalTitle === MODAL_TITLE.FORM">
+          <w-row class="mg-bottom_18">
             <w-col :span="24">
               <w-form-item
                 label="申请单名称"
@@ -99,7 +99,7 @@
               </w-form-item>
             </w-col>
           </w-row>
-          <w-row>
+          <w-row class="mg-bottom_5">
             <w-col :span="24">
               <w-form-item label="包含元素" prop="name">
                 <template>
@@ -141,7 +141,7 @@
             </w-col>
           </w-row>
         </w-row>
-        <w-row v-else-if=" modalTitle === MODAL_TITLE.ITEM">
+        <w-row class="row-style" v-else-if=" modalTitle === MODAL_TITLE.ITEM">
           <w-row>
             <w-col :span="12">
               <w-form-item
@@ -209,7 +209,6 @@
                 label="描述"
                 prop="itemExplain">
                 <w-input
-                   
                   type="textarea"
                   placeholder="请输入描述内容"
                   showCounter
@@ -221,43 +220,44 @@
         </w-row>
         <w-modal
           width="50%"
+          class="modal-style"
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
           append-to-body>
           <div class="search-style clearfix">
-          <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
-            @keyup.enter.native="handleSearch(search)">
-            <template slot="suf-append">
-              <i @click="handleSearch(search)" class="w-icon-search"></i>
-            </template>
-          </w-input>
-           <!-- <div
-            class="fr" >
-            <w-button @click="reset">取 消</w-button>
-            <w-button
-              @click="submit"
-              type="primary"
-            >确 定</w-button>
-          </div> -->
-          <w-table
-            v-loading="loading"
-            :data="costList"
-            :lower-threshold="10"
-            @scrollToLower="scrollToLower"
-            win-loading-text="正在获取数据..."
-            height="300"
-            style="width: 100%"
-            ref="costList"
-            stripe
-            :empty-text="tableconten"
-            @selection-change="handleSelectionChange">
-            <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
-            <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
-            <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
-            <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
-          </w-table>
-        </div>
+            <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
+              @keyup.enter.native="handleSearch(search)">
+              <template slot="suf-append">
+                <i @click="handleSearch(search)" class="w-icon-search"></i>
+              </template>
+            </w-input>
+            <!-- <div
+              class="fr" >
+              <w-button @click="reset">取 消</w-button>
+              <w-button
+                @click="submit"
+                type="primary"
+              >确 定</w-button>
+            </div> -->
+            <w-table
+              v-loading="loading"
+              :data="costList"
+              :lower-threshold="10"
+              @scrollToLower="scrollToLower"
+              win-loading-text="正在获取数据..."
+              height="300"
+              style="width: 100%"
+              ref="costList"
+              stripe
+              :empty-text="tableconten"
+              @selection-change="handleSelectionChange">
+              <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
+              <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
+              <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
+              <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+            </w-table>
+          </div>
         <span slot="footer" class="dialog-footer ">
          <w-button @click="reset('inner')">取消</w-button>
           <w-button
@@ -287,10 +287,16 @@
   height: calc(100vh - 120px);
   overflow-y: auto;
 }
-.w-row {
-  margin-bottom: 15px;
+// .w-row {
+//   margin-bottom: 15px;
+// }
+.w-modal__body {
+  .row-style {
+    .w-row {
+      margin-bottom: 16px;
+    }
+  }
 }
-
 .search-style {
   .w-input,
   .w-input.is-expansion {
