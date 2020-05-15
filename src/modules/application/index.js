@@ -212,6 +212,7 @@ export default {
   },
   created() {
     this.list()
+    
   },
   methods: {
     handlePreview(file) {
@@ -258,6 +259,7 @@ export default {
     },
     // 获取申请单项目列表接口
     async getPafTemplateitems (id) {
+      console.log('ididiid',id);
       const res = await apiData.getPafTemplateitems({
         pafTemplateId:id,
         ...QUERY_PAGE
@@ -434,6 +436,7 @@ export default {
           break;
         case 'rigth':
           this.modalTitle = MODAL_TITLE.ITEM
+          console.log('this.leftData[this.leftData.length - 1]',this.leftData[this.leftData.length - 1]);
           break;
         default:
       } 
@@ -454,7 +457,7 @@ export default {
     },
     async submit(t) {
       if (t !== 'out') {
-        let sum = ''
+        let arr = []
         this.costList = []
         this.innerVisible = false
         this.visible = true
@@ -472,9 +475,15 @@ export default {
               chargeItemType:item.CHARGE_TYPE //  --收费项目类型
             })
             this.form.value2.push(item.CHARGE_NAME)
-            sum += parseInt(item.CHARGE_PRICE)
+            arr.push(item.CHARGE_PRICE)
           }
         })
+        let sumArr = arr.map(Number)
+        // for方法
+        let sum = 0;
+        for (let i = 0, len = sumArr.length; i < len; i++) {
+            sum += sumArr[i]
+        }
         this.form.item.itemPrice = sum
         this.search = ''
       }else {
@@ -519,6 +528,11 @@ export default {
               }
               // this.showMsg1(res,'新增申请单')
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
+              let pafTemplateId = ''
+              if (this.clickIndex === this.leftData.length - 1) {
+                this.rowLeftList = this.leftData[this.leftData.length-1]
+              }
+              console.log('pafTemplateId',pafTemplateId,this.rowLeftList);
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -526,11 +540,12 @@ export default {
               delete this.form.isShowTumour
               delete this.form.isShowHpv
               delete this.form.value2
-              this.form.item['pafTemplateId'] = this.rowLeftList.ID || this.leftData[0].ID
+              this.form.item['pafTemplateId'] = this.rowLeftList.ID ||this.leftData[0].ID
               this.form.item['seqNo'] = this.rigthData.length+1
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
+              console.log('pafTemplateId',pafTemplateId);
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''

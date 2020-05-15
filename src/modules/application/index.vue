@@ -3,7 +3,8 @@
     <w-row class="home-page-body">
       <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
-          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+</span> 新增</w-button>
+        <!-- <i class="icon iconfont iconweibiaoti--"> -->
+          <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+</span> </i> 新增</w-button>
         </title-style>
         <ul   v-loading="loading1" ref='box' class="mg-right_16 list-style">
           <li  class="application" v-for="(item, index) in leftData"

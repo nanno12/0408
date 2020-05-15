@@ -5,7 +5,7 @@
         <title-style class="pd-x_16 pd-top_16 po_re  pd-bottom_14" > <span slot="header">人体器官/系统</span>
           <w-button class="po_ab top_10 right_18" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
         </title-style>
-        <div class="list-style">
+        <div class="list-style" ref='box'>
           <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
             :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
             @mouseover="hoverIndex = index"
@@ -22,7 +22,7 @@
         <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本部位</span>
           <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_8 right_16" @click="handleAdd('标本部位')">+新增</w-button>
         </title-style>
-        <div class="list-style">
+        <div class="list-style" ref='boxs'>
           <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
             @click="handle(item,'标本部位',index)" class="tab-style"
             @mouseover="hoverIndex1 = index"
@@ -41,7 +41,7 @@
         </title-style>
         <!--   -->
         <div v-show="show">
-          <div class="list-style">
+          <div class="list-style" ref='box2'>
             <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
               :class="{'clickBg':index==clickIndex2,'hoverBg':index==hoverIndex2}"
               @mouseover="hoverIndex2 = index"
@@ -73,7 +73,7 @@
             :rules="rules.test"
             >
             <w-input placeholder="请输入器官/系统名称" v-model="form.dynamicArr[index].specimenName"
-              @input="handleChangeInput"></w-input>
+              @input="handleChangeInput" @keyup.enter.native="handleChangeInput"></w-input>
           </w-form-item>
         </template>
         <!-- <w-form-item style="text-align: right;">

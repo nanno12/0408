@@ -87,7 +87,6 @@ export default {
   },
   watch: {
     'form.editVal'(o,n) {
-      console.log('o,n',o,n,this.idVal.SPECIMEN_NAME);
       if ( o === this.idVal.SPECIMEN_NAME)  {
         this.isDisabled = true
       }else {
@@ -98,7 +97,7 @@ export default {
   methods:{
     async handle (item, title, index) {
       this.isTitle(title)
-      console.log('item, title, index',item, title, index);
+      console.log('点击row的数据',item, title);
       // debugger
       if (title === "器官/系统") {
         this.isHandlePosRow = false
@@ -167,54 +166,83 @@ export default {
     //获取id
     idData() {
       // 如果点击单独某一条 false没有
-      console.log('this.title',this.title);
       let ids = ''
       if (this.title === '标本部位' ) {
         this.type = '2'
         if (this.isHandleOrgRow === false) {
+          // if (this.clickIndex1 === this.positionList.length -1 ) {
+          //   ids = this.organList[this.positionList.length-1].ID
+          // } else {
+          //   ids = this.positionList[0].ID
+          // }
+          
           if (this.hah !== '') {
-            console.log('hah',this.hah);
             ids = this.hah
           } else {
             ids = this.organList[0].ID
+            if (this.clickIndex === this.organList.length -1 ) {
+              ids = this.organList[this.organList.length-1].ID
+            } else {
+              ids = this.organList[0].ID
+            }
           }
-          console.log('123',this.hah,this.idValue);
+          console.log('ods',ids);
         } else {
-          console.log('123321');
           ids = this.rowOrgList.ID 
-          if (this.positionList.length===0) {
-            this.nameList = []
-          }
+          console.log('ods',ids);
+          // if (this.clickIndex1 === this.positionList.length -1 ) {
+          //   ids = this.positionList[this.positionList.length-1].ID
+          // } else {
+          //   ids = this.positionList[0].ID
+          // }
+          // if (this.positionList.length===0) {
+          //   this.nameList = []
+          // }
         }
       } else if (this.title === '标本名称' ) {
         this.type = '3'
         if (this.isHandlePosRow === false) {
-          ids = this.positionList[0].ID
+          console.log(this.clickIndex1, this.positionList.length -1);
+          if (this.clickIndex1 === this.positionList.length -1 ) {
+            ids = this.positionList[this.positionList.length-1].ID
+          } else {
+            ids = this.positionList[0].ID
+          }
         } else {
-          ids = this.rowPosList.ID 
+          console.log(this.clickIndex1, this.positionList.length -1);
+          if (this.clickIndex1 === this.positionList.length -1 ) {
+            ids = this.positionList[this.positionList.length-1].ID
+          } else {
+            ids = this.rowPosList.ID 
+          }
+          
         }
       } else {
         this.type = '1'
         ids = ''
       }
-      console.log('this.idValue',this.idValue);
       this.idValue = ids
-      console.log('this.idValue',this.idValue,ids);
-
       // this.hah = ''
     },
     async succData(item,v){
       this.idData()
-      console.log('this.title',this.title);
       if (this.title === '标本部位') {
         // if (this.hah !== '') {
-        //   console.log('hah',this.hah);
         //   this.idValue = this.hah
         // }
-        console.log('this.title',this.idValue);
         const res = await apiData.getQuery({id:this.idValue})
         this.positionList = res.data
+        
+        if (this.h ==='新增') {
+          this.clickIndex1 = this.positionList.length -1
+          setTimeout(() => {
+            this.$refs.boxs.scrollTop = this.$refs.boxs.scrollHeight;
+            this.hoverIndex1 = -1
+          }, 200)
+        }
+        this.nameList = []
       } else if (this.title === '标本名称' ) {
+
         const res = await apiData.getQuery({id:this.idValue})
         this.nameList = res.data
       } else {
@@ -223,10 +251,13 @@ export default {
         this.organList = res.data
         if ( this.h === '新增') {
           this.clickIndex = this.organList.length - 1
+          setTimeout(() => {
+            this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
+            this.hoverIndex = -1
+          }, 200)
           this.positionList = []
           this.nameList = []
           this.hah = this.organList[this.organList.length -1].ID
-          console.log(this.organList.length - 1, this.h,this.organList[this.organList.length -1]);
         } else {
           if (this.positionList.length>0 ) {
             const res1 = await apiData.getQuery({id:this.positionList[0].ID})
@@ -290,20 +321,21 @@ export default {
       list.map((item,index) => {
         item['index']=index
       })
+      console.log('item.SPECIMEN_TYPE',item.SPECIMEN_TYPE);
       if (item.SPECIMEN_TYPE === 3) {
-        console.log('this.idValue',this.idValue,this.title,this.positionList[0].ID);
       } else if (item.SPECIMEN_TYPE === 2) {
-
         if(list.length !==1) {
           if (list[list.length-1].ID === item.ID){
             ids = list[list.length-2].ID
             this.clickIndex1 = index-1
+            console.log('ods',ids);
           } else {
             const find = list.find(item => item.index === index+1) 
             if (find) {
               ids = find.ID
             }
             this.clickIndex1 = index
+            console.log('ods',ids);
           }
         }else {
           ids = ''
@@ -324,7 +356,6 @@ export default {
         }
       }
       this.h = ''
-      console.log('this.title',this.idValue,this.hah);
      this.getQueryList(ids)
      this.succData()
     }).catch(() => {
@@ -338,15 +369,11 @@ export default {
       this.inputValue = val
         // if (this.form.dynamicArr.length>1) {
         // const list = this.form.dynamicArr.slice(0,this.form.dynamicArr.length-2)
-        // console.log('list',list);
         // // this.form.dynamicArr.map(it=> {
         // //   if (it.specimenName === val) {
-        // //     console.log('itit',it,this.form.dynamicArr.specimenName);
         // //     this.showMsg('该名称已存在当前新增数据中！','error')
-
         // //     // return callback(new Error('该名称已存在当前新增数据中！'))
         // //   }
-        // //   // console.log('it',it.specimenName,value);
         // // })
         // }
       if (this.form.dynamicArr[this.form.dynamicArr.length - 1].specimenName !== '' ) {
@@ -378,11 +405,6 @@ export default {
                 dynamicArr.push(item)
               }
             })
-            // console.log('res',dynamicArr);
-            // const find = dynamicArr.find(it => it.specimenName !== '')
-            // if (!find) {
-            //   this.isDisabled = true
-            // }
             const res = await apiData.getAdd(dynamicArr)
             if (res.type === 'SUCCESS') {
               this.showMsg('新增成功','success')
