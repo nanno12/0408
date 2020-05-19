@@ -37,7 +37,7 @@
             </w-table-column>
             <w-table-column prop="ITEM_AMOUNT" label="默认数量" width="100">
             </w-table-column>
-            <w-table-column prop="time" label="单位" width="70">
+            <w-table-column prop="HIS_ITEMUNIT" label="单位" width="70">
             </w-table-column>
             <w-table-column prop="MAIN_NAME" label="成分大类">
             </w-table-column>
@@ -127,14 +127,6 @@
             </w-col>
             <w-col :span="12">
               <w-form-item label="开单科室">
-                <!-- <w-select v-model="form.applydeptcode" placeholder="请选择开单科室">
-                  <w-option
-                    v-for="item in openings"
-                    :key="item.DEPTCODE"
-                    :label="item.DEPTNAME"
-                    :value="item.DEPTCODE">
-                  </w-option>
-                </w-select> -->
               <w-select
                 style="width:100%"
                 v-model="form.applydepts"
@@ -142,6 +134,7 @@
                 filterable
                 remote
                 reserve-keyword
+                :collapse-tags=true
                 :loading="loading"
                 @focus="handleFocusInput"
                 placeholder="请输入编码/名称搜索"
@@ -458,6 +451,9 @@
   // .w-modal__body {
   //   padding: 20px 20px 0px 0px;
   // }
+  .w-select__input {
+    width: 100px!important;
+  }
 }
 .flex.justify {
   justify-content: space-between;

@@ -2,7 +2,7 @@
   <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
       <w-col :span="12" class="pd-right_16">
-        <title-style class=" po_re pd-bottom_24 pd-top_5"><span slot="header">角色列表</span>
+        <title-style class=" po_re pd-bottom_18 pd-top_5"><span slot="header">角色列表</span>
           <w-button class="po_ab top_0 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
         </title-style>
         <w-table class="mg-right_16" :data="tableData" :border="true" style="width: 100%">

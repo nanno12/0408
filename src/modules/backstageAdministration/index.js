@@ -3,10 +3,7 @@ import {MODAL_TITLE} from '../constant';
 export default {
   data() {
     return {
-      noData: [{id:1,name:'测试1'},{id:2,name:'测试2'},{id:3,name:'测试3'}],
-      yesData: [1,3],
       // 注意:key 的字符类型要一致!!!
-
       value: '', // 搜索框
       visible: false,
       loading:false,
@@ -128,7 +125,6 @@ export default {
         execdeptcode: '', // 执行科室代码
         applydepts: [], // 申请科室代码
         usearea: '', // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
-
         itemcode: '', // 项目代码
         itemname:'', // 项目名称
         maincode: {
@@ -146,7 +142,6 @@ export default {
         // hisitemcode:'', // 对应费用明细项编号
         addfactor: '', // 增减因子
         remark: '', // 备注
-
         code:'',
         name:''
       },
@@ -203,12 +198,12 @@ export default {
   computed: {
   },
   watch: {
-    "form.maincode"(o , n) {
-      console.log(o , n);
-    },
-    'form.detailcode'(o, n) {
-      console.log(o, n);
-    },
+    // "form.maincode"(o , n) {
+    //   console.log(o , n);
+    // },
+    // 'form.detailcode'(o, n) {
+    //   console.log(o, n);
+    // },
     listMoulds (o, n) {
       if(this.mouldItemsRow.MOULD_CODE ) {
         this.$nextTick(function() {
@@ -230,10 +225,6 @@ export default {
     this.Moulds()
   },
   mounted(){
-    // this.$nextTick(() => {
-    //   // this.$refs.form.clearValidate();
-    //   this.$refs.form.resetFields();
-    // })
   },
   methods: {
     checkAll(val) {
@@ -258,7 +249,6 @@ export default {
       let arr = [];
       arr = arr.concat(selectArr, nowSelectData);   
       console.log(arr,'selectArr, nowSelectData',selectArr, nowSelectData);
-
       return arr;
     },
     handleRemoveTabList(isNeedArr,  originalArr) {
@@ -299,8 +289,8 @@ export default {
           if (e === '1')  {
             if (res.data[0] === null) {
               this.form = {}
-              this.form =res.data[1]
-              this.form.mouldtype = '1'
+              // this.form =res.data[1]
+              // this.form.mouldtype = '1'
               this.showMsg('已帮您同步已存在的【常规用血】的数据')
             } else {
               this.showMsg('您选择的模板类型【常规备血】已存在不能重复新增，请重新选择','warning')
@@ -311,8 +301,8 @@ export default {
           } else {
             if (res.data[1] === null) {
               this.form = {}
-              this.form =res.data[0]
-              this.form.mouldtype = '2'
+              // this.form =res.data[0]
+              // this.form.mouldtype = '2'
               // res.data.applydepts.map(item => {
               //   this.form.applydepts.push(item.deptname)
               // })
@@ -325,23 +315,6 @@ export default {
             }
             console.log('okffff');
           }
-          // this.showMsg('成功','success')
-          // if (res.data[0] === null) {
-          //   this.form = {}
-          //   this.form.mouldtype = '1'
-          // } else if (res.data[1] === null) {
-          //   this.form = {}
-          //   this.form =res.data[0]
-          //   this.form.mouldtype = '2'
-          //   // res.data.applydepts.map(item => {
-          //   //   this.form.applydepts.push(item.deptname)
-          //   // })
-          //   console.log('okok11',res.data[0]);
-          // }  else {
-          //   this.showMsg('您选择的模板类型已存在申请单列表中，请重新选择','warning')
-          // }
-          // const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
-          // console.log('res',res);
         } else {
            this.showMsg('失败','error')
         }
@@ -358,18 +331,8 @@ export default {
       this.loading = false;
       this.openings = openings.data
     },
-    // filterMethod (query) {
-    //   console.log('query',query);
-    // },
     async remoteMethod1(query) {
       console.log('eee',query,t);
-      // this.loading = true;
-      // // const openings = await dataApi.getDeptInfos({
-      // //   depttype:'1',
-      // //   search:e
-      // // })
-      // this.loading = false;
-      // this.openings = openings.data
     },
     async handleFocusInput() {
    
@@ -387,9 +350,6 @@ export default {
       const openings = await dataApi.getDeptInfos({depttype:'1',pagesize:100,pageno:1})
       this.loading = false;
       this.openings = openings.data.DEPTS
-    },
-    handleClone(row) {
-      this.visible = true
     },
     // 模态框表格多选值
     handleSelectionChange (val) {
@@ -415,7 +375,6 @@ export default {
      },
     // 点击申请单列表某一行触发
     handleRow (row) {
-      console.log(row)
       this.mouldItemsRow = row
       this.MouldItems(row)
     },
@@ -635,7 +594,7 @@ export default {
     },
     handleClone (row, t) {
       this.visible=true
-      this.modalType = ''
+      this.modalType = '复制'
       this.isShowRow(t,'clone',row)
     },
     // handleClose (tag) {
@@ -685,10 +644,10 @@ export default {
           } else {
             this.form = res.data
             res.data.applydepts.map(item => {
-              this.form.applydepts.push(item.deptname)
+              this.form.applydepts.push(item.deptcode)
             })
           }
-
+          console.log('this.form.applydepts',this.form.applydepts);
         } else {
           this.modalTitle = this.MODAL_TITLE.FORM
         }
