@@ -99,7 +99,7 @@
             </w-col>
           </w-row>
           </w-row>
-        <div v-else class=" pd-right mg-buttom_16" >
+        <div v-else class=" pd-right" >
           <div v-if="title !== '新增职称'">
             <span>科室</span>
             <w-select v-model="region" placeholder="请选择科室">
