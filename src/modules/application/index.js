@@ -93,7 +93,8 @@ export default {
           seqNo:"",			// 	--序号
           defaultCheck:"",		// --默认为空
           createdBy:"",			//--操作人编号
-          createdName:""		//--操作人名称
+          createdName:"",		//--操作人名称
+          id:""
         },
         chargeItems:[
         //   {              // --勾选弹框的数据集合
@@ -317,7 +318,7 @@ export default {
         id:row.pafTemplateitemId
       })
       this.form = res.data
-      console.log(row,'项目修改');
+      console.log( this.form,'项目修改');
       let list = []
       res.data.chargeItems.map(item=>{
         list.push(item.chargeItemName)
@@ -434,7 +435,6 @@ export default {
           break;
         case 'rigth':
           this.modalTitle = MODAL_TITLE.ITEM
-          console.log('this.leftData[this.leftData.length - 1]',this.leftData[this.leftData.length - 1]);
           break;
         default:
       } 
@@ -449,21 +449,12 @@ export default {
        console.log('rows',rows);
       //  rows = []
        this.selectionVal = rows
-      // this.selectionVal = []
-      // this.form.chargeItems = []
-      // if (rows) {
-      //   rows.forEach(row => {
-      //     if (row) {
-      //       this.selectionVal.push(row);
-      //     }
-      //   });
-      // }
     },
     async submit(t) {
       if (t !== 'out') {
         this.innerVisible = false
         this.visible = true
-        this.h = MODAL_TITLE.ADD
+        // this.h = MODAL_TITLE.ADD
         this.modalTitle = MODAL_TITLE.ITEM
         let arr = []
         this.costList = []
@@ -471,7 +462,6 @@ export default {
         this.form.value2 = []
         this.form.chargeItems = []
         this.form.item.itemPrice = ''
-        console.log('this.selectionVal',this.selectionVal,this.form.value2);
         this.selectionVal.map(item => {
           if (item) {
             this.form.chargeItems.push({
@@ -484,7 +474,6 @@ export default {
             arr.push(item.CHARGE_PRICE)
           }
         })
-        console.log('this.selectionVal',this.form.chargeItems,this.form.value2);
         let sumArr = arr.map(Number)
         // for方法
         let sum = 0;
@@ -493,11 +482,14 @@ export default {
         }
         this.form.item.itemPrice = sum
         this.search = ''
-        this.$refs.costList.clearSelection();  //清除回显
+        // this.$refs.costList.clearSelection();  //清除回显
+        this.$refs.costList.clearSelection()
+
 
       }else {
+        console.log('this.h',this.h);
         this.$refs.form.validateForm(async (valid) => {
-          if (valid) {
+          if (valid) {          
             if (this.modalTitle === MODAL_TITLE.FORM) {
               this.form = {... this.form}
               const list = {
@@ -514,7 +506,6 @@ export default {
               const res = await apiData.getAddUpdateTemplate({
                 ...list, 
                 id:this.formTitle ==='edit'?this.rowLeftList.ID:''})
-                console.log('list',list);
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
                 if (this.formTitle ==='edit') {
@@ -524,7 +515,6 @@ export default {
                   const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
                   this.leftData = res.data
                   this.clickIndex = this.leftData.length -1
-                  // console.log(this.clickIndex , this.leftData.length);
                   setTimeout(() => {
                     this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
                     this.hoverIndex = -1
@@ -532,19 +522,36 @@ export default {
                   this.rigthData = []
                 }
                 this.visible = false
-                console.log('this.value',this.value);
                 this.init()
-
               } else {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
               }
               // this.showMsg1(res,'新增申请单')
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
-              let pafTemplateId = ''
-              if (this.clickIndex === this.leftData.length - 1) {
-                this.rowLeftList = this.leftData[this.leftData.length-1]
+              let pafTemplateId = ''  
+              let seqNo =''
+              this.form.chargeItemName=[]
+              console.log('rigthData.length',this.rigthData.length);
+              if(this.h !=='修改') {
+                if (this.clickIndex === 0) {
+                  pafTemplateId = this.leftData[0].ID
+                } else if (this.clickIndex === this.leftData.length - 1) {
+                  pafTemplateId = this.leftData[this.leftData.length-1]
+                } else {
+                  pafTemplateId = this.rowLeftList.ID
+                }
+                seqNo = this.rigthData.length+1
+              } else {
+                if (this.clickIndex === 0) {
+                  pafTemplateId = this.leftData[0].ID
+                } else if (this.clickIndex === this.leftData.length - 1) {
+                  pafTemplateId = this.leftData[this.leftData.length-1]
+                } else {
+                  pafTemplateId = this.rowLeftList.ID
+                }
               }
               console.log('pafTemplateId',pafTemplateId,this.rowLeftList);
+              delete this.form.item.id
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -552,14 +559,14 @@ export default {
               delete this.form.isShowTumour
               delete this.form.isShowHpv
               delete this.form.value2
-              this.form.item['pafTemplateId'] = this.rowLeftList.ID ||this.leftData[0].ID
-              this.form.item['seqNo'] = this.rigthData.length+1
+              this.form.item['pafTemplateId'] = pafTemplateId
+              this.form.item['seqNo'] = seqNo
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
               console.log('pafTemplateId',pafTemplateId);
               if (res.type === 'SUCCESS') {
-                this.showMsg(this.formTitle ==='edit'?'修改申请单项目成功':'新增申请单项目成功','success')
+                this.showMsg(this.h ==='修改'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''
                 if (this.rowLeftList.ID !== undefined) {
                   // console.log('this.',this.clickIndex, this.leftData.length);
@@ -578,10 +585,11 @@ export default {
                 console.log(this.leftData[this.leftData.length-1],id);
                 this.getPafTemplateitems(id)
                 this.visible = false
-                 this.$refs.costList.clearSelection()
+                //  this.$refs.costList.clearSelection()
+                 this.$refs.form.resetFields()
                 this.init()
               } else {
-                this.showMsg(this.formTitle ==='edit'?'修改申请单项目失败':'新增申请单项目失败','error')
+                this.showMsg(this.h ==='修改'?'修改申请单项目失败':'新增申请单项目失败','error')
               }
             } else {
               this.modalTitle = MODAL_TITLE.ITEM
@@ -603,9 +611,11 @@ export default {
         this.value = [1,2,3,4]
       } else {
         this.form.item.itemExplain  = ''
-        // this.$refs.form.resetFields()
+        this.$refs.form.resetFields()
         this.form.item.itemName = ''
         this.form.item.itemPrice = ''
+        this.form.chargeItems=[]
+        this.$refs.costList.clearSelection()
         // this.form.item.itemCode = ''
         // this.form.value2 = []
       }
@@ -619,6 +629,8 @@ export default {
         // this.$refs.costList.clearSelection()
       } else {
         this.visible = false
+        this.form.chargeItemName=[]
+        console.log('this.form.chargeItems = []',this.form);
         this.init()
         // this.$refs.costList.clearSelection()
       }
@@ -678,6 +690,5 @@ export default {
   },
   mounted () {
     this.scrollToLower = debounce(200, this.fetchData)
-    // this.clearValidate('form') // 清除整个表单的校验
   }
 };

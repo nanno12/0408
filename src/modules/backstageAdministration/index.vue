@@ -215,37 +215,7 @@
                   sufAppendIsButton
                   placeholder="请输入关键字搜索收费项目"
                   v-model="form.chargeList">
-                  <!-- <template slot="suf-append">
-                    <i class="w-icon-search"></i>
-                  </template> -->
                 </w-input>
-                <!-- <w-select
-                  style="width:100%"
-                  v-model="form.applydeptcode"
-                  multiple
-                  filterable
-                  remote
-                  reserve-keyword
-                  :loading="loading"
-                  @focus="handleFocusInput"
-                  placeholder="请输入关键字搜索收费项目"
-                  :remote-method="remoteMethod1"
-                >
-                <w-option
-                  v-for="(item,index) in tableData"
-                  :key="index"
-                  :label="item.name"
-                  :value="{
-                    value: item.value,
-                    DEPTNAME: item.name
-                  }"
-                >
-                  <span class="flex justify">
-                    <span>{{item.name}}</span>
-                    <span>{{item.value}}</span>
-                  </span>
-                </w-option>
-              </w-select> -->
               </w-form-item>
             </w-col>
           </w-row>

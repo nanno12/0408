@@ -202,22 +202,45 @@ export default {
   font-size:16px;
   font-weight: 600;
 }
+
+
 .w-modal__body {
     border-bottom: 1px solid #DFE7F5;
     padding: 16px 20px;
     margin-bottom: 10px;
 }
+.w-modal {
+  .w-button--primary,
+  .w-button--default{
+    min-width: 88px;
+    margin-left: 15px !important;
+    .w-button--medium, .w-button--medium.is-round {
+      padding: 8px 16px;
+    }
+  }
+}
 .w-form-item__label {
   margin-left: 0px;
   padding-right: 8px;
-}
-.w-button--primary,
-.w-button--default{
-  min-width: 88px;
-  margin-left: 15px !important;
-  .w-button--medium, .w-button--medium.is-round {
-    padding: 8px 16px;
-  }
+  
 }
 
+.w-pagination .w-button--primary, .w-pagination .w-button--default{
+  width: 28px!important;
+  height: 28px!important;
+  padding: 7px!important;
+}
+.w-pagination {
+  .w-button--primary,
+  .w-button--default{
+    width: 28px!important;
+    height: 28px!important;
+  }
+  .w-pager__item {
+    font-size: 13px;
+  }
+  .w-pager__item.is-actived {
+    font-weight: normal;
+  }
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class=" pd_16">
     <w-row class="home-page-body">
-      <w-col :span="7" >
+      <w-col :span="8" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
         <!-- <i class="icon iconfont iconweibiaoti--"> -->
           <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+ 新增</span></w-button>
@@ -40,7 +40,7 @@
           </li>
         </ul>
       </w-col>
-      <w-col :span="17">
+      <w-col :span="16">
         <title-style class="pd-bottom_22 po_re"><span slot="header">申请单项目列表</span>
           <w-button class="po_ab top_-4 right_0" @click="handleAdd('rigth')"  type="text" plain> <span>+</span> 新增</w-button>
         </title-style>

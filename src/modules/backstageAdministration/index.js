@@ -190,7 +190,7 @@ export default {
         //   required: true, message: '请选择费用对应', trigger: 'change'
         // }]
       },
-      selection: [],
+      selectionVal: [],
       listMouldItems: [],
       listMoulds: [],
       isShow: {
@@ -213,6 +213,17 @@ export default {
     // 'form.detailcode'(o, n) {
     //   console.log(o, n);
     // },
+    'costList' (oldVal, newVal) {
+      this.$nextTick(() => {
+        this.form.chargeItems.map((v) => {
+            this.costList.find(it =>{
+              if (v.chargeItemCode === it.CHARGE_CODE) {
+                this.$refs.costList.toggleRowSelection(it,true)
+              }
+            })
+          })
+        })
+    },
     listMoulds (o, n) {
       if(this.mouldItemsRow.MOULD_CODE ) {
         this.$nextTick(function() {
@@ -369,8 +380,8 @@ export default {
     },
     // 模态框表格多选值
     handleSelectionChange (val) {
-      this.selection = val
-      console.log(this.selection)
+      console.log('rows',val);
+      this.selectionVal = val
     },
     hadleInputFocus () {
       this.visible = true
@@ -428,7 +439,19 @@ export default {
     async submit () {
     //  if {
       if (this.modalTitle === this.MODAL_TITLE.SELECT_ITEM) {
-        console.log(this.selection);
+        console.log(this.selectionVal);
+        this.selectionVal.map(item => {
+          if (item) {
+            // this.form.chargeItems.push({
+            //   chargeItemCode:item.CHARGE_CODE,	// --收费编码
+            //   chargeItemName:item.CHARGE_NAME,	// --收费项目名称
+            //   chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
+            //   chargeItemType:item.CHARGE_TYPE //  --收费项目类型
+            // })
+            this.form.chargeList.push(item.CHARGE_NAME)
+            // arr.push(item.CHARGE_PRICE)
+          }
+        })
         this.modalTitle = '项目'
       } else {
         this.$refs.form.validateForm(async (valid) => {
