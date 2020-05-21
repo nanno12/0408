@@ -196,9 +196,9 @@
                   sufAppendIsButton
                   placeholder="请输入关键字搜索收费项目"
                   v-model="form.value2">
-                  <template slot="suf-append">
+                  <!-- <template slot="suf-append">
                     <i class="w-icon-search"></i>
-                  </template>
+                  </template> -->
                 </w-input>
               </w-form-item>
             </w-col>

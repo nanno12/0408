@@ -15,10 +15,13 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "axios": "^0.18.0",
     "babel-eslint": "^10.0.3",
     "cssnano": "^4.1.10",
     "echarts": "^4.6.0",
+    "el-table-infinite-scroll": "^1.0.10",
     "element-ui": "^2.13.1",
     "html2canvas": "^1.0.0-rc.3",
     "i": "^0.3.5",
@@ -35,6 +38,7 @@
     "tls": "0.0.1",
     "vue": "^2.5.2",
     "vue-clipboard2": "^0.2.1",
+    "vue-infinite-loading": "^2.4.5",
     "vue-router": "^2.2.0",
     "vue-table": "^0.2.2",
     "vue-virtual-scroll-list": "^1.2.8",

@@ -2,6 +2,7 @@ import { debounce } from 'throttle-debounce'
 import apiData from './api/api'
 
 import { MODAL_TITLE, QUERY_PAGE} from '../constant'
+// import { ClipEffect } from 'html2canvas/dist/types/render/effects';
 export default {
   data() {
     return {
@@ -94,12 +95,14 @@ export default {
           createdBy:"",			//--操作人编号
           createdName:""		//--操作人名称
         },
-        chargeItems:[{              // --勾选弹框的数据集合
-          chargeItemCode:"",	// --收费编码
-          chargeItemName:"",	// --收费项目名称
-          chargeItemPrice:"",	// --收费项目价格
-          chargeItemType:""  // --收费项目类型
-        }],
+        chargeItems:[
+        //   {              // --勾选弹框的数据集合
+        //   chargeItemCode:"",	// --收费编码
+        //   chargeItemName:"",	// --收费项目名称
+        //   chargeItemPrice:"",	// --收费项目价格
+        //   chargeItemType:""  // --收费项目类型
+        // }
+      ],
       },
       checkboxList: [
         {
@@ -187,28 +190,24 @@ export default {
   },
   watch: {
     'costList' (oldVal, newVal) {
-      let list = []
-      this.form.chargeItems.forEach((vv,ii) => {
-        list.push({
-          CHARGE_CODE:vv.chargeItemCode,
-          CHARGE_NAME:vv.chargeItemName,
-          CHARGE_PRICE:vv.chargeItemPrice
-        })
-      })
+      // let list = []
+      // this.selectionVal.forEach((vv,ii) => {
+      //   list.push({
+      //     CHARGE_CODE:vv.chargeItemCode,
+      //     CHARGE_NAME:vv.chargeItemName,
+      //     CHARGE_PRICE:vv.chargeItemPrice
+      //   })
+      // })
       this.$nextTick(() => {
-          list.map((v,i) => {
-            this.listData.find(it =>{
-              if (v.CHARGE_CODE === it.CHARGE_CODE) {
-                  this.$refs.costList.toggleRowSelection(it,true)
+        this.form.chargeItems.map((v) => {
+            this.costList.find(it =>{
+              if (v.chargeItemCode === it.CHARGE_CODE) {
+                this.$refs.costList.toggleRowSelection(it,true)
               }
             })
           })
         })
-      
-    },
-    // 'form.chargeItems' (oldVal, newVal) {
-    //   console.log('oldVal',oldVal,newVal);
-    // }
+    }
   },
   created() {
     this.list()
@@ -356,7 +355,11 @@ export default {
       if (res.data.isShowHpv === '1') {
         this.value.push(8)
       }
-      this.form = res.data
+      this.form.templateName = res.data.templateName
+      this.form.isShowGynecological=res.data.isShowGynecological//	--是否显示妇科
+      this.form.isShowOperation=res.data.isShowOperation	//--是否显示手术
+      this.form.isShowTumour=res.data.isShowTumour//	--是否显示肿瘤
+      this.form.isShowHpv=res.data.isShowHpv // --是否显示HPV信息
     },
     // 删除申请列表数据
     async getDeletePafTemplate (id,index) {
@@ -394,12 +397,7 @@ export default {
     // 点击收费项目
     async handleIputVal () {
       this.innerVisible  = true
-      // this.isDisabled = true
-      // this.costList = []
-      // this.form.chargeItems = []
-      // this.form.value2 = []
-      // this.costList = JSON.parse(JSON.stringify(this.costList))
-      // await this.getCostList()
+      this.tableconten='请输入关键字查询数据'
     },
     async handleSearch(search) {
       await this.getCostList(search)
@@ -448,28 +446,32 @@ export default {
     },
      // 当选择项发生变化时会触发该事件
      handleSelectionChange (rows) {
-      this.selectionVal = []
+       console.log('rows',rows);
+      //  rows = []
+       this.selectionVal = rows
+      // this.selectionVal = []
       // this.form.chargeItems = []
-      if (rows) {
-        rows.forEach(row => {
-          if (row) {
-            this.selectionVal.push(row);
-          }
-        });
-        
-      }
+      // if (rows) {
+      //   rows.forEach(row => {
+      //     if (row) {
+      //       this.selectionVal.push(row);
+      //     }
+      //   });
+      // }
     },
     async submit(t) {
       if (t !== 'out') {
-        let arr = []
-        this.costList = []
         this.innerVisible = false
         this.visible = true
         this.h = MODAL_TITLE.ADD
         this.modalTitle = MODAL_TITLE.ITEM
+        let arr = []
+        this.costList = []
+        // selectionVal
         this.form.value2 = []
         this.form.chargeItems = []
         this.form.item.itemPrice = ''
+        console.log('this.selectionVal',this.selectionVal,this.form.value2);
         this.selectionVal.map(item => {
           if (item) {
             this.form.chargeItems.push({
@@ -482,6 +484,7 @@ export default {
             arr.push(item.CHARGE_PRICE)
           }
         })
+        console.log('this.selectionVal',this.form.chargeItems,this.form.value2);
         let sumArr = arr.map(Number)
         // for方法
         let sum = 0;
@@ -490,10 +493,13 @@ export default {
         }
         this.form.item.itemPrice = sum
         this.search = ''
+        this.$refs.costList.clearSelection();  //清除回显
+
       }else {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {
             if (this.modalTitle === MODAL_TITLE.FORM) {
+              this.form = {... this.form}
               const list = {
                 templateName: this.form.templateName,
                 printTemplate: this.form.printTemplate,
@@ -508,7 +514,7 @@ export default {
               const res = await apiData.getAddUpdateTemplate({
                 ...list, 
                 id:this.formTitle ==='edit'?this.rowLeftList.ID:''})
-
+                console.log('list',list);
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
                 if (this.formTitle ==='edit') {
@@ -526,7 +532,9 @@ export default {
                   this.rigthData = []
                 }
                 this.visible = false
+                console.log('this.value',this.value);
                 this.init()
+
               } else {
                 this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
               }
@@ -588,23 +596,27 @@ export default {
     init () {
       if (this.modalTitle === MODAL_TITLE.FORM) {
         this.form.templateName = ''
+        this.form.isShowGynecological='0'//	--是否显示妇科
+        this.form.isShowOperation='0'	//--是否显示手术
+        this.form.isShowTumour='0'//	--是否显示肿瘤
+        this.form.isShowHpv='0' // --是否显示HPV信息
         this.value = [1,2,3,4]
       } else {
         this.form.item.itemExplain  = ''
-        this.$refs.form.resetFields()
+        // this.$refs.form.resetFields()
         this.form.item.itemName = ''
         this.form.item.itemPrice = ''
-        this.form.item.itemCode = ''
+        // this.form.item.itemCode = ''
         // this.form.value2 = []
       }
     },
     reset(t) {
       if (t !== 'out') {
         this.search = ''
-        this.costList = []
+        // this.costList = []
         this.innerVisible = false
         this.visible = true
-        this.$refs.costList.clearSelection()
+        // this.$refs.costList.clearSelection()
       } else {
         this.visible = false
         this.init()

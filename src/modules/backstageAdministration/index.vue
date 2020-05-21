@@ -41,9 +41,9 @@
             </w-table-column>
             <w-table-column prop="MAIN_NAME" label="成分大类">
             </w-table-column>
-            <w-table-column prop="ITEM_USEAREA" label="对应费用明细" width="130">
+            <w-table-column prop="HIS_ITEMNAME" label="对应费用明细" width="130">
             </w-table-column>
-            <w-table-column prop="ITEM_ADDFACTOR" label="费用价格" width="100">
+            <w-table-column prop="HIS_ITEMPRICE" label="费用价格" width="100">
             </w-table-column>
             <w-table-column prop="ITEM_REMARK" label="备注"> </w-table-column>
             <w-table-column fixed="right" label="操作" reference-cell align="center" width="120">
@@ -126,7 +126,7 @@
               </w-form-item>
             </w-col>
             <w-col :span="12">
-              <w-form-item label="开单科室">
+              <w-form-item label="开单科室" class="select-input">
               <w-select
                 style="width:100%"
                 v-model="form.applydepts"
@@ -135,6 +135,7 @@
                 remote
                 reserve-keyword
                 :collapse-tags=true
+                value-key="deptcode"
                 :loading="loading"
                 @focus="handleFocusInput"
                 placeholder="请输入编码/名称搜索"
@@ -149,8 +150,8 @@
                   <span>{{item.DEPTNAME}}</span>
                   <span>{{item.DEPTCODE}}</span>
                 </span>
-              </w-option>
-            </w-select>
+                </w-option>
+              </w-select>
               </w-form-item>
             </w-col>
           </w-row>
@@ -168,7 +169,7 @@
                     :value="item">
                   </w-option>
                 </w-select>
-                <span class="inline-block po_ab top_0 right_-20 " style="z-index:999"><i class=" iconfont iconweibiaoti--" @click="handlePlus('big')"></i></span>
+                <span class="inline-block po_ab top_0 right_-20 " style="z-index:999"><i class=" iconfont icondaoru" @click="handlePlus('big')"></i></span>
               </w-form-item>
             </w-col>
             <w-col :span="12" class="po_re">
@@ -185,7 +186,7 @@
                   </w-option>
                 </w-select>
                 <span v-if="form.maincode !==''" class="inline-block po_ab top_0 right_-35">
-                  <i  @click="handlePlus('sma')" class="iconfont iconweibiaoti--"></i>
+                  <i  @click="handlePlus('sma')" class="iconfont icondaoru"></i>
                 </span>
               </w-form-item>
             </w-col>
@@ -208,33 +209,43 @@
           <w-row>
             <w-col>
               <w-form-item class=" pd-right" label="费用对应" prop="">
-                <w-select
-                style="width:100%"
-                v-model="form.applydeptcode"
-                 multiple
-                filterable
-                remote
-                reserve-keyword
-                :loading="loading"
-                @focus="handleFocusInput"
-                placeholder="请输入关键字搜索收费项目"
-                :remote-method="remoteMethod1"
-              >
-              <w-option
-                v-for="(item,index) in tableData"
-                :key="index"
-                :label="item.name"
-                :value="{
-                  value: item.value,
-                  DEPTNAME: item.name
-                }"
-              >
-                <span class="flex justify">
-                  <span>{{item.name}}</span>
-                  <span>{{item.value}}</span>
-                </span>
-              </w-option>
-            </w-select>
+                <w-input
+                  @focus="handlePlus('charge')"
+                  readonly
+                  sufAppendIsButton
+                  placeholder="请输入关键字搜索收费项目"
+                  v-model="form.chargeList">
+                  <!-- <template slot="suf-append">
+                    <i class="w-icon-search"></i>
+                  </template> -->
+                </w-input>
+                <!-- <w-select
+                  style="width:100%"
+                  v-model="form.applydeptcode"
+                  multiple
+                  filterable
+                  remote
+                  reserve-keyword
+                  :loading="loading"
+                  @focus="handleFocusInput"
+                  placeholder="请输入关键字搜索收费项目"
+                  :remote-method="remoteMethod1"
+                >
+                <w-option
+                  v-for="(item,index) in tableData"
+                  :key="index"
+                  :label="item.name"
+                  :value="{
+                    value: item.value,
+                    DEPTNAME: item.name
+                  }"
+                >
+                  <span class="flex justify">
+                    <span>{{item.name}}</span>
+                    <span>{{item.value}}</span>
+                  </span>
+                </w-option>
+              </w-select> -->
               </w-form-item>
             </w-col>
           </w-row>
@@ -260,12 +271,35 @@
           </w-row>
         </w-row>
         <div v-else-if="modalTitle=== MODAL_TITLE.SELECT_ITEM">
-          <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
+          <!-- <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
             <template slot="suf-append">
               <i class="w-icon-search"></i>
             </template>
+          </w-input> -->
+          <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
+            @keyup.enter.native="handleSearch(search)">
+            <template slot="suf-append">
+              <i @click="handleSearch(search)" class="w-icon-search"></i>
+            </template>
           </w-input>
-          <w-table ref="multiTable" :data="tableData" :border="true" class="mt-15" style="width: 100%"
+          <w-table
+              v-loading="loading"
+              :data="costList"
+              :lower-threshold="10"
+              @scrollToLower="scrollToLower"
+              win-loading-text="正在获取数据..."
+              height="300"
+              style="width: 100%"
+              ref="costList"
+              stripe
+              :empty-text="tableconten"
+              @selection-change="handleSelectionChange">
+              <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
+              <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
+              <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
+              <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+            </w-table>
+          <!-- <w-table ref="multiTable" :data="tableData" :border="true" class="mt-15" style="width: 100%"
             @selection-change="handleSelectionChange">
             <w-table-column type="selection" width="50">
             </w-table-column>
@@ -273,11 +307,9 @@
             </w-table-column>
             <w-table-column prop="name" label="名称" >
             </w-table-column>
-          </w-table>
-          <w-pagination :total="10" :page-size="4"
-            @page-size-change="handlePageSizeChange"
-            :show="['prev', 'next', 'total']">
-          </w-pagination>
+            <w-table-column prop="name" label="价格" >
+            </w-table-column>
+          </w-table> -->
         </div>
         <!-- 新增成分类 -->
         <w-row v-else>
@@ -388,6 +420,12 @@
 .list-style {
   height: calc(100vh - 120px);
   overflow-y: auto;
+}
+.select-input {
+  .w-select__input {
+    width: 50px!important;
+    z-index: 999;
+  }
 }
 // .pd-right {
 //   .w-input {

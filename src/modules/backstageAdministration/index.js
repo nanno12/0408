@@ -1,3 +1,4 @@
+import { debounce } from 'throttle-debounce'
 import dataApi from './api/api.js';
 import {MODAL_TITLE} from '../constant';
 export default {
@@ -8,6 +9,9 @@ export default {
       visible: false,
       loading:false,
       MODAL_TITLE,
+      search:'',
+      e:40,
+      s:20,
       oldItemcode:'',
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
@@ -19,8 +23,12 @@ export default {
       value2: '', // 模态框表格搜索
       implement:[], // 行政科室数据下拉列表
       openings:[],// 开单科室下拉列表
+      listData:[],
       mainTypesList:[], // 成分大类拉列表
       detailTypesList:[], // 成分小类拉列表
+      tableconten:'请输入关键字查询数据',
+      scrollToLower: () => {},
+      costList: [],
       tableTitle:[
         {
           prop:'name',
@@ -137,6 +145,7 @@ export default {
           DETAIL_NAME: '',
           MAIN_CODE: ''
         }, // 成分小类代码
+        chargeList: [],
         detailname:'', // 成分小类名称
         amount:"1", // 默认数量
         // hisitemcode:'', // 对应费用明细项编号
@@ -224,9 +233,16 @@ export default {
   created() {
     this.Moulds()
   },
-  mounted(){
+  mounted () {
+    
+    this.scrollToLower = debounce(200, this.fetchData)
+  // this.clearValidate('form') // 清除整个表单的校验
   },
   methods: {
+     // 点击收费项目
+    handleIputVal () {
+      this.innerVisible  = true
+    },
     checkAll(val) {
       this.nowSelectData = val;
       console.log('row',val);
@@ -263,17 +279,17 @@ export default {
          }
       }
     },
-    handleChange(value, direction, movedKeys) {
-      console.log(value, direction, movedKeys);
-       //可以通过direction回调right/left 来进行操作，right：把数字移到右边，left把数据移到左边
-       if(direction === "right") {
+  //   handleChange(value, direction, movedKeys) {
+  //     console.log(value, direction, movedKeys);
+  //      //可以通过direction回调right/left 来进行操作，right：把数字移到右边，left把数据移到左边
+  //      if(direction === "right") {
           
-       }
-       if(direction === "left") {
+  //      }
+  //      if(direction === "left") {
           
-       }
+  //      }
           
-  },
+  // },
     async handleChange (e) {
       if (e === '1' || e ==='2') {
         let id = ''
@@ -290,8 +306,8 @@ export default {
             if (res.data[0] === null) {
               this.form = {}
               // this.form =res.data[1]
-              // this.form.mouldtype = '1'
-              this.showMsg('已帮您同步已存在的【常规用血】的数据')
+              this.form.mouldtype = '1'
+              // this.showMsg('已帮您同步已存在的【常规用血】的数据')
             } else {
               this.showMsg('您选择的模板类型【常规备血】已存在不能重复新增，请重新选择','warning')
               this.form = {}
@@ -302,12 +318,12 @@ export default {
             if (res.data[1] === null) {
               this.form = {}
               // this.form =res.data[0]
-              // this.form.mouldtype = '2'
+              this.form.mouldtype = '2'
               // res.data.applydepts.map(item => {
               //   this.form.applydepts.push(item.deptname)
               // })
-              console.log('okok11',res.data[0]);
-              this.showMsg('已帮您同步已存在的【常规备血】的数据')
+              // console.log('okok11',res.data[0]);
+              // this.showMsg('已帮您同步已存在的【常规备血】的数据')
             }  else {
               this.showMsg('您选择的模板类型【常规用血】已存在，不能重复新增，请重新选择','warning')
               this.form.mouldtype = ''
@@ -364,9 +380,11 @@ export default {
     // 模态框➕按钮事件
     handlePlus (title) {
       if (title === 'big') {
-        this.modalTitle = this.MODAL_TITLE.LARGE_CLASS
+        this.modalTitle = MODAL_TITLE.LARGE_CLASS
+      } else if (title === 'sma') {
+        this.modalTitle = MODAL_TITLE.SUB_CLASS
       } else {
-        this.modalTitle = this.MODAL_TITLE.SUB_CLASS
+        this.modalTitle = MODAL_TITLE.SELECT_ITEM
       }
       console.log('模态框➕按钮事件')
     },
@@ -635,7 +653,7 @@ export default {
         } else if (isHandle === 'edit' || isHandle === 'clone') {
           this.modalTitle = this.MODAL_TITLE.FORM
           const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
-          console.log('res',res);
+          console.log('res',res.applydepts);
           if (isHandle === 'clone') {
             this.form = res.data
             this.$set(this.form, this.form.execdeptcode, 12345)
@@ -643,9 +661,9 @@ export default {
             this.form.mouldname = ''
           } else {
             this.form = res.data
-            res.data.applydepts.map(item => {
-              this.form.applydepts.push(item.deptcode)
-            })
+            // res.data.applydepts.map(item => {
+            //   this.form.applydepts.push(item.deptcode)
+            // })
           }
           console.log('this.form.applydepts',this.form.applydepts);
         } else {
@@ -705,8 +723,43 @@ export default {
       }
       console.log(t)
     },
-    handlePageSizeChange(val) {
-      console.log(val, '条/页');
+    async handleSearch(search) {
+      console.log('search',search);
+      await this.getCostList(search)
+      // this.s= 0
+      // this.e= 20
+    },
+    async getCostList (search) {
+      // this.selectionVal = []
+      const res = await dataApi.getQuery({CHARGE_SEARCH:search})
+      console.log('res.data',res.data);
+      if (res.data === null) return
+      this.loading = true
+      this.costList = res.data.slice(0,20)
+      this.listData = res.data
+      this.loading = false
+      this.tableconten = '暂无数据'
+    },
+    fetchData () {
+      console.log(this.$refs.costList.scrollTop , this.$refs.costList.scrollHeight);
+      this.loading = true
+      const list = this.listData.slice(this.s,this.e)
+      const temp = []
+      for (let i = list; i <= list.length + 20; i++) {
+        console.log('iiii',i);
+        temp.push(i);
+      }
+      console.log('temp',temp);
+      list.map((item,index)=>{
+        console.log('index',index);
+        setTimeout(() => {
+        this.costList.push(item)
+        this.loading = false
+      }, 600)
+      })
+      this.s= this.s+20
+      this.e= this.e+20
+      console.log('this.s,this.e',this.s,this.e);
     },
     // 成分大类接口
     async getListMainTypes () {
@@ -724,5 +777,6 @@ export default {
       const listDetailTypes = await dataApi.getListDetailTypes({maincode:n})
       this.detailTypesList = listDetailTypes.data 
     }
-  }
+  },
+  
 };

@@ -1,86 +1,113 @@
 <template>
 <div>
+  <el-table
+    :data="list"
+    height="324"
+    border>
+    <el-table-column
+      prop="title"
+      label="Hacker News Title">
+    </el-table-column>
+    <el-table-column
+      prop="author"
+      label="Author"
+      width="125">
+    </el-table-column>
+
+    <infinite-loading
+      slot="append"
+      @infinite="infiniteHandler"
+      force-use-infinite-wrapper=".el-table__body-wrapper">
+    </infinite-loading>
+  </el-table>
   <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
     <template slot="suf-append">
       <i class="w-icon-search"></i>
     </template>
   </w-input>
-  <!-- <w-table
-        :data="costList"
-        v-loading="loading"
-        win-loading-text="正在获取数据..."
-        stripe
-        ref="costList"
-        :lower-threshold="10"
-        @scrollToLower="scrollToLower"
-        :empty-text="tableconten"
-        border
-        style="height: calc(100vh - 500px); overflow-y: auto;"
-        @selection-change="handleSelectionChange">
-        <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
-        <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
-        <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
-        <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
-      </w-table> -->
-  <w-table
-    v-loading="loading"
-    :data="tableData"
-    win-loading-text="正在获取数据..."
-    height="200"
-    ref="tableData"
-    :lower-threshold="10"
-    @scrollToLower="scrollToLower">
-    <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
-    <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
-    <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
-    <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
-  </w-table>
 </div>
  
 </template>
 <script>
   import { debounce } from 'throttle-debounce'
   import apiData from '../application/api/api'
+  import InfiniteLoading from 'vue-infinite-loading';
+
+  import axios from 'axios';
+  // const api = '//hn.algolia.com/api/v1/search_by_date?tags=story';
 
   export default {
+    components: {
+      InfiniteLoading
+    },
     data () {
       return {
-        loading: false,
+        // loading: false,
         value2: '',
-        list:[],
-        s:0,
-        e:20,
-        scrollToLower: () => {},
-        tableData: []
+        page: 0,
+        page1:20,
+        list: [],
+        // s:0,
+        // e:20,
+        // tableData: []
       }
     },
     async created () {
-      const res = await apiData.getQuery({CHARGE_SEARCH:'药'})
-      console.log(res);
-      this.tableData = res.data.slice(0,20)
-      this.list = res.data
+      // this.currentPage = 1
+      // const res = await apiData.getQuery({CHARGE_SEARCH:''})
+      // console.log(res);
+      // // this.list = res.data
+      // this.list = res.data.slice(0,20)
+      // this.totalPage = res.data.length
+      // this.tableData = res.data
+    },
+    watch: {
+    
     },
     methods: {
-      ceshi () {
-        console.log('123');
+      	async infiniteHandler($state) {
+          console.log('$state',$state);
+           const res = await apiData.getQuery({CHARGE_SEARCH:''})
+            console.log(res);
+            
+            this.list = res.data.slice(this.page,this.page1)
+            // this.list = this.list.concat(res.data);
+            console.log('list',this.list);
+            this.page += 20
+            this.page1 += 20
+      // this.list = res.data.slice(0,20)
+      // this.totalPage = res.data.length
+      // this.tableData = res.data
+        // const api = '//hn.algolia.com/api/v1/search_by_date?tags=story';
+        // axios.get(api, {
+        //   // params: {
+        //   //   page: this.page,
+        //   // },
+        // }).then(({ data }) => {
+        //   if (data.hits.length) {
+        //     this.page += 1;
+        //     this.list = this.list.concat(data.hits);
+        //     $state.loaded();
+        //   } else {
+        //     $state.complete();
+        //   }
+        //   });
       },
-      async fetchData () {
-        this.loading = true
-        const list = this.list.slice(this.s,this.e)
-        //删除起始下标为1，长度为2的一个值(len设置2) 
-        list.map(item=>{
+      onInfinite() {
           setTimeout(() => {
-          this.tableData.push(item)
-          this.loading = false
-        }, 600)
-        })
-        this.s= this.s+20
-        this.e= this.e+20
-        console.log(this.s,this.e);
-      }
-    },
-    mounted () {
-      this.scrollToLower = debounce(200, this.fetchData)
+            console.log('8098590');
+            const temp = [];
+            for (let i = this.list.length + 1; i <= this.list.length + 20; i++) {
+              console.log('iiii',i);
+              temp.push(i);
+            }
+            console.log(temp,'8098590');
+            this.list = this.list.concat(temp);
+            console.log('temp','8098590',this.list);
+            this.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
+          }, 100);
+        }
+      },
     }
-  }
+  // }
 </script>

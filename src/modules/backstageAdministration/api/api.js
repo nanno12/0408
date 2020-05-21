@@ -13,6 +13,7 @@ const DEBUGAPI = 'http://172.17.1.211:20031'
 const WDEBUGAPI = 'http://172.17.1.211:20034'
 const url = {
   // 获取接口
+  query: WDEBUGAPI + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
   getMouldItems: WDEBUGAPI +'/clf/trfbase/listMouldItems', //查询项目列表
   getMoulds: WDEBUGAPI + '/clf/trfbase/listMoulds', // 查询申请单列表
   getListDetailTypes: WDEBUGAPI + '/clf/trfbase/listDetailTypes', //获取成分小类数据
@@ -39,6 +40,9 @@ const url = {
 
 };
 export default {
+  getQuery(params) {
+    return httpUtils.postJsonRequest(url.query,params);
+  },
   getMouldItems(params) {
     return httpUtils.postJsonRequest(url.getMouldItems,params);
   },
