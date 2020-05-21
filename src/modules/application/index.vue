@@ -232,14 +232,6 @@
                 <i @click="handleSearch(search)" class="w-icon-search"></i>
               </template>
             </w-input>
-            <!-- <div
-              class="fr" >
-              <w-button @click="reset">取 消</w-button>
-              <w-button
-                @click="submit"
-                type="primary"
-              >确 定</w-button>
-            </div> -->
             <w-table
               v-loading="loading"
               :data="costList"
@@ -258,16 +250,11 @@
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
             </w-table>
           </div>
-        <span slot="footer" class="dialog-footer ">
-         <w-button @click="reset('inner')">取消</w-button>
-          <w-button
-            :disabled="isDisabled"
-            @click="submit('inner')"
-            type="primary"
-          >确定</w-button>
-      </span>
+          <span slot="footer" class="dialog-footer ">
+            <w-button @click="reset('inner')">取消</w-button>
+            <w-button :disabled="isDisabled" @click="submit('inner')" type="primary" >确定</w-button>
+          </span>
         </w-modal>
-        
       </w-form>
       <span slot="footer" class="dialog-footer ">
         

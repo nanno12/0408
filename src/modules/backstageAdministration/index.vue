@@ -240,19 +240,21 @@
             </w-col>
           </w-row>
         </w-row>
-        <div v-else-if="modalTitle=== MODAL_TITLE.SELECT_ITEM">
-          <!-- <w-input v-model="value2" placeholder="请输入项目代码/名称搜索" sufAppendIsButton>
-            <template slot="suf-append">
-              <i class="w-icon-search"></i>
-            </template>
-          </w-input> -->
-          <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
-            @keyup.enter.native="handleSearch(search)">
-            <template slot="suf-append">
-              <i @click="handleSearch(search)" class="w-icon-search"></i>
-            </template>
-          </w-input>
-          <w-table
+        <w-modal
+          width="50%"
+          class="modal-style"
+          :close-on-click-modal="false"
+          :title=" MODAL_TITLE.SELECT_ITEM"
+          :visible.sync="innerVisible"
+          append-to-body>
+          <div class="search-style clearfix" v-if="modalTitle=== MODAL_TITLE.SELECT_ITEM">
+            <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
+              @keyup.enter.native="handleSearch(search)">
+              <template slot="suf-append">
+                <i @click="handleSearch(search)" class="w-icon-search"></i>
+              </template>
+            </w-input>
+            <w-table
               v-loading="loading"
               :data="costList"
               :lower-threshold="10"
@@ -269,74 +271,47 @@
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
             </w-table>
-          <!-- <w-table ref="multiTable" :data="tableData" :border="true" class="mt-15" style="width: 100%"
-            @selection-change="handleSelectionChange">
-            <w-table-column type="selection" width="50">
-            </w-table-column>
-            <w-table-column prop="value" label="代码" width="150">
-            </w-table-column>
-            <w-table-column prop="name" label="名称" >
-            </w-table-column>
-            <w-table-column prop="name" label="价格" >
-            </w-table-column>
-          </w-table> -->
-        </div>
-        <!-- 新增成分类 -->
-        <w-row v-else>
-          <!-- <w-col :span="11">
-            <p>已选择大类列表</p>
-            <win-table :listTable=tableTitle
-              :tableData=tableData
-              @handleSelectionChange="checkAll"
-              
-              :isShow=isShow>
-            </win-table>
-          </w-col>
-          <w-col :span="2">
-            <div class="opSetting">
-              <div @click="handelSelect">
-                <w-button :disabled="nowSelectData.length?false:true" :size="buttonSize" type="primary" > 
-                  >
-                </w-button>
-              </div>
-              <div class="spacing" @click="handleRemoveSelect">
-                <w-button  :disabled="nowSelectRightData.length?false:true" :size="buttonSize" type="primary">
-                  <
-                </w-button>
-              </div>
-            </div>
-          </w-col>
-          <p>未选择大类列表</p>
-          <w-col :span="11">
-            <win-table :listTable=tableTitle
-              :tableData=selectArr
-              @handleSelectionChange="checkRightAll"
-              :isShow=isShow>
-            </win-table>
-          </w-col> -->
-          <!-- <w-row>
-            <w-col :span="24">
-              <w-form-item :label="modalTitle+'代码'" prop="code"
-              :rules="[
-                { required: true, message: '年龄不能为空'},
-              ]">
-                <w-input v-model="form.code"  showCounter
-                  placeholder="请填写成分代码"></w-input>
-              </w-form-item>
-            </w-col>
-          </w-row>
-          <w-row>
-            <w-col :span="24">
-              <w-form-item :label="modalTitle+'名称'" prop="name">
-                <w-input v-model="codeLIst.name"  showCounter
-                  placeholder="请填写成分名称"></w-input>
-              </w-form-item>
-            </w-col>
-          </w-row> -->
-        </w-row>
-      
+          </div>
+          <div v-else>
+            <w-row>
+              <w-col :span="11">
+                <p>已选择大类列表</p>
+                <win-table :listTable=tableTitle
+                  :tableData=tableData
+                  @handleSelectionChange="checkAll"
+                  :isShow=isShow>
+                </win-table>
+              </w-col>
+              <w-col :span="2">
+                <div class="opSetting">
+                  <div @click="handelSelect">
+                    <w-button :disabled="nowSelectData.length?false:true"  type="primary" > 
+                      >
+                    </w-button>
+                  </div>
+                  <div class="spacing" @click="handleRemoveSelect">
+                    <w-button  :disabled="nowSelectRightData.length?false:true"  type="primary">
+                      <
+                    </w-button>
+                  </div>
+                </div>
+              </w-col>
+              <w-col :span="11">
+                <p>未选择大类列表</p>
+                <win-table :listTable=tableTitle
+                  :tableData=selectArr
+                  @handleSelectionChange="checkRightAll"
+                  :isShow=isShow>
+                </win-table>
+              </w-col>
+            </w-row>
+          </div>
+          <span slot="footer" class="dialog-footer ">
+            <w-button @click="reset('inner')">取消</w-button>
+            <w-button :disabled="isDisabled" @click="submit('inner')" type="primary" >确定</w-button>
+          </span>
+        </w-modal>
       </w-form>
-
       <span slot="footer" class="dialog-footer">
         <w-button @click="reset('form')">取 消</w-button>
         <w-button type="primary" @click="submit('form')">确 定</w-button>

@@ -7,6 +7,7 @@ export default {
       // 注意:key 的字符类型要一致!!!
       value: '', // 搜索框
       visible: false,
+      innerVisible:false,
       loading:false,
       MODAL_TITLE,
       search:'',
@@ -390,8 +391,10 @@ export default {
     },
     // 模态框➕按钮事件
     handlePlus (title) {
+      this.visible = false
+      this.innerVisible = true
       if (title === 'big') {
-        this.modalTitle = MODAL_TITLE.LARGE_CLASS
+        // this.modalTitle = MODAL_TITLE.LARGE_CLASS
       } else if (title === 'sma') {
         this.modalTitle = MODAL_TITLE.SUB_CLASS
       } else {
