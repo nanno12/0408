@@ -91,9 +91,9 @@
                 label="申请单名称"
                 prop="templateName">
                 <w-input
-                   
                   placeholder="请输入申请单名称"
                   showCounter
+                  @focus="handleFocus('pafTemplate')"
                   v-model="form.templateName"
                 ></w-input>
               </w-form-item>
@@ -148,7 +148,7 @@
                 label="项目编码"
                 prop="item.itemCode">
                 <w-input
-                   
+                  @focus="handleFocus('itemCode')"
                   placeholder="请输入项目编码"
                   showCounter
                   v-model="form.item.itemCode"
@@ -160,6 +160,7 @@
                 label="项目名称"
                 prop="item.itemName">
                 <w-input
+                  @focus="handleFocus('itemName')"
                   placeholder="请输入项目名称"
                   v-model="form.item.itemName"
                 ></w-input>

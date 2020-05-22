@@ -12,6 +12,7 @@ const MAIN_API_PREFIX = systemParam.SYS_BASE_API.APPLYFORM.url;
 const DEBUGAPI = 'http://172.17.1.211:20034'
 // const DEBUGAP = 'http://172.17.17.126:20008'
 const url = {
+  isHaveReName:DEBUGAPI + '/clf/pafbase/isHaveReName',
   query: DEBUGAPI + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
   addUpdateItem:DEBUGAPI + '/clf/pafbase/addOrUpdateItem', // 添加或修改申请单项目信息
   findItemInfo:DEBUGAPI + '/clf/pafbase/findItemInfo', // 申请单项目详情查看，项目点击申请单编辑时候查询项目相关的数据
@@ -27,6 +28,9 @@ const url = {
 };
 export default {
   // 申请单列表
+  getIsHaveReName(params) {
+    return httpUtils.postJsonRequest(url.isHaveReName, params)
+  },
   getFindPafTemplate(params) {
     return httpUtils.postJsonRequest(url.findPafTemplate, params)
   },

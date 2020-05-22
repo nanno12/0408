@@ -5,8 +5,29 @@ import { MODAL_TITLE, QUERY_PAGE} from '../constant'
 // import { ClipEffect } from 'html2canvas/dist/types/render/effects';
 export default {
   data() {
+    let checkOrgTypeCode = async (rule, value, callback) => {
+      if (value) {
+         const params = {
+          type:this.type,
+          name:value
+        }
+        const res = await apiData.getIsHaveReName(params)
+        if (res.type !== 'SUCCESS') {
+          let title =''
+          if (this.type === 'pafTemplate' ||this.type === 'itemName' ) {
+            title = '该名称已存在！'
+          } else {
+            title = '该编码已存在！'
+          }
+          return callback(new Error(title))
+        } else {
+          callback()
+        }
+      }
+    }
     return {
       modalTitle:'',
+      type:'',
       fileList: [],
       height:'200px',
       isDisabled: false,
@@ -152,34 +173,19 @@ export default {
       selectionVal: [],
       rules: {
         'item.itemCode': [
-          {
-            required: true,
-            message: "请输入项目编码",
-            trigger: "change"
-          }
+          {required: true, validator: checkOrgTypeCode,  trigger: 'blur' }
         ],
         'item.itemName': [
-          {
-            required: true,
-            message: "请输入项目名称",
-            trigger: "change"
-          }
+          {required: true, validator: checkOrgTypeCode,  trigger: 'blur' }
+
         ],
         'item.itemPrice': [
           { required: true, message: '项目价格不能为空'},
         ],
         
-        templateName: [{
-          required: true, message: '请输入申请单名称', trigger: 'blur'
-        }],
-        'item.chargeItems': [
-          {
-            required: true,
-            type: 'array',
-            message: "请选择区域",
-            trigger: "change"
-          }
-        ]
+        'templateName': [
+        {required: true, validator: checkOrgTypeCode,  trigger: 'blur' }
+      ]
       },
       rigthData: [],
       rowLi:{},
@@ -208,6 +214,36 @@ export default {
             })
           })
         })
+    },
+    'value' (oldVal, newVal) {
+      let find = oldVal.find(it => it === 5)
+      let find1 = oldVal.find(it => it === 6)
+      if (find) {
+        this.checkboxList.map(it => {
+          if (it.label === 6) {
+            it.disabled = true
+          }
+        })
+      } else {
+        this.checkboxList.map(it => {
+          if (it.label === 6) {
+            it.disabled = false
+          }
+        })
+      }
+      if (find1) {
+        this.checkboxList.map(it => {
+          if (it.label === 5) {
+            it.disabled = true
+          }
+        })
+      } else {
+        this.checkboxList.map(it => {
+          if (it.label === 5) {
+            it.disabled = false
+          }
+        })
+      }
     }
   },
   created() {
@@ -248,6 +284,10 @@ export default {
       this.getPafTemplateitems(id)
     }
     },
+    handleFocus (t) {
+      this.type = t
+      console.log('tttt',t);
+    },
     // 点击申请单列表单行
     async handleLeftRow (row,index) {
       console.log('row',row);
@@ -286,9 +326,10 @@ export default {
     },
     // 点击申请单某一行
     async handleRowL (item,index,t) {
+      console.log('tttttt',t);
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
-      this.formTitle = t
+      // this.formTitle = t
        switch(t) {
         case 'edit':
           this.visible = true
@@ -330,7 +371,11 @@ export default {
       const res = await apiData.getDeleteTempItem({
         id:row.pafTemplateitemId
       })
-      this.showMsg1(res,'删除申请单项目')
+      if (res.type === 'SUCCESS') {
+        this.showMsg('删除申请单项目成功','success')
+      } else {
+         this.showMsg(res.message,'error')
+      }
       let id = ''
       if (this.rowLeftList.ID) {
         id = this.rowLeftList.ID
@@ -454,11 +499,9 @@ export default {
       if (t !== 'out') {
         this.innerVisible = false
         this.visible = true
-        // this.h = MODAL_TITLE.ADD
         this.modalTitle = MODAL_TITLE.ITEM
         let arr = []
         this.costList = []
-        // selectionVal
         this.form.value2 = []
         this.form.chargeItems = []
         this.form.item.itemPrice = ''
@@ -482,12 +525,8 @@ export default {
         }
         this.form.item.itemPrice = sum
         this.search = ''
-        // this.$refs.costList.clearSelection();  //清除回显
         this.$refs.costList.clearSelection()
-
-
       }else {
-        console.log('this.h',this.h);
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {          
             if (this.modalTitle === MODAL_TITLE.FORM) {
@@ -531,7 +570,6 @@ export default {
               let pafTemplateId = ''  
               let seqNo =''
               this.form.chargeItemName=[]
-              console.log('rigthData.length',this.rigthData.length);
               if(this.h !=='修改') {
                 if (this.clickIndex === 0) {
                   pafTemplateId = this.leftData[0].ID
@@ -541,6 +579,7 @@ export default {
                   pafTemplateId = this.rowLeftList.ID
                 }
                 seqNo = this.rigthData.length+1
+                delete this.form.item.id
               } else {
                 if (this.clickIndex === 0) {
                   pafTemplateId = this.leftData[0].ID
@@ -550,8 +589,6 @@ export default {
                   pafTemplateId = this.rowLeftList.ID
                 }
               }
-              console.log('pafTemplateId',pafTemplateId,this.rowLeftList);
-              delete this.form.item.id
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -564,12 +601,10 @@ export default {
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
-              console.log('pafTemplateId',pafTemplateId);
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.h ==='修改'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''
                 if (this.rowLeftList.ID !== undefined) {
-                  // console.log('this.',this.clickIndex, this.leftData.length);
                   if (this.clickIndex === this.leftData.length - 1) {
                     id = this.leftData[this.leftData.length-1].ID
                   } else {
@@ -585,7 +620,6 @@ export default {
                 console.log(this.leftData[this.leftData.length-1],id);
                 this.getPafTemplateitems(id)
                 this.visible = false
-                //  this.$refs.costList.clearSelection()
                  this.$refs.form.resetFields()
                 this.init()
               } else {
@@ -615,7 +649,7 @@ export default {
         this.form.item.itemName = ''
         this.form.item.itemPrice = ''
         this.form.chargeItems=[]
-        this.$refs.costList.clearSelection()
+        // this.$refs.costList.clearSelection()
         // this.form.item.itemCode = ''
         // this.form.value2 = []
       }
@@ -626,17 +660,16 @@ export default {
         // this.costList = []
         this.innerVisible = false
         this.visible = true
-        // this.$refs.costList.clearSelection()
       } else {
         this.visible = false
         this.form.chargeItemName=[]
         console.log('this.form.chargeItems = []',this.form);
         this.init()
-        // this.$refs.costList.clearSelection()
       }
     },
     // 包含元素多选框
     handleChangeCheckbox (row,index) {
+      console.log('row',row,this.value);
       const val = this.value.includes(row.label)
       if (val === true) {
         switch(row.label) {

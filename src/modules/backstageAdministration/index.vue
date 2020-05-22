@@ -222,12 +222,17 @@
           <w-row>
             <w-col :span="12">
               <w-form-item label="默认数量">
-                <w-input v-model.number="form.amount"></w-input>
+                <w-input v-model.number="form.amount">
+                  <template slot="suf-append"><span style="padding: 0 5px;">{{amount}}</span></template>
+                </w-input>
+                <!-- <w-input v-model.number="form.amount"></w-input> -->
               </w-form-item>
             </w-col>
             <w-col :span="12">
               <w-form-item label="加减量"  prop="addfactor">
-                <w-input v-model.number="form.addfactor"></w-input>
+                <w-input v-model.number="form.addfactor">
+                  <template slot="suf-append"><span style="padding: 0 5px;">{{addfactor}}</span></template>
+                </w-input>
               </w-form-item>
             </w-col>
           </w-row>

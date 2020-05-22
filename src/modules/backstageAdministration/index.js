@@ -10,6 +10,8 @@ export default {
       innerVisible:false,
       loading:false,
       MODAL_TITLE,
+      amount:'',
+      addfactor:'',
       search:'',
       e:40,
       s:20,
@@ -425,6 +427,8 @@ export default {
       if (row) {
         this.form.itemcode = row.DETAIL_CODE
         this.form.itemname = row.DETAIL_NAME
+        this.amount = row.DETAIL_UNIT
+        this.addfactor = row.DETAIL_UNIT
         this.form = {...this.form}
       }
       if (this.form.maincode.MAIN_CODE === '' ) {
