@@ -1,7 +1,7 @@
 <template>
   <div class=" pd_16">
     <w-row class="home-page-body">
-      <w-col :span="8" >
+      <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
         <!-- <i class="icon iconfont iconweibiaoti--"> -->
           <w-button class="po_ab top_-4 right_0" @click="handleAdd('left')"  type="text"><span class="fnot">+ 新增</span></w-button>
@@ -25,22 +25,22 @@
               <span class="inline-block po_ab top_0">元素：</span>
               <span class=" inline-block mg-left_40 mg-bottom_5">
                   <span>临床信息、</span>
-                  <span>标本信息、</span>
                   <span>医嘱信息、</span>
                   <span>既往病理检查结果</span>
               </span>
                 <span class=" inline-block mg-left_40">
+                  <span>{{item.IS_SHOW_SPECIMEN===1?'标本信息、':''}}</span>
                 <span>{{item.IS_SHOW_GYNECOLOGICAL===1 ?'妇科信息、':''}}</span>
                 <span>{{item.IS_SHOW_OPERATION===1 ?'手术信息、':''}}</span>
+                <span>{{item.IS_SHOW_ENDPSCOPIC=== 1 ?'内镜信息、': ''}}</span>
                 <span>{{item.IS_SHOW_TUMOUR ===1 ?'肿瘤信息、':''}}</span>
                 <span>{{item.IS_SHOW_HPV=== 1 ?'细胞学活HPV检查结果、': ''}}</span>
-                <!-- {{item.IS_SHOW_SPECIMEN!==0?'标本信息、':''}} -->
               </span>
             </p>
           </li>
         </ul>
       </w-col>
-      <w-col :span="16">
+      <w-col :span="17">
         <title-style class="pd-bottom_22 po_re"><span slot="header">申请单项目列表</span>
           <w-button class="po_ab top_-4 right_0" @click="handleAdd('rigth')"  type="text" plain> <span>+</span> 新增</w-button>
         </title-style>
@@ -49,7 +49,7 @@
           :tableData=rigthData
           @handleRow="handleRowR"
           @handleDelete="handleDelete"
-          style="height: calc(100vh - 150px); overflow-y: auto;"
+          style="height: calc(100vh - 160px); overflow-y: auto;"
           :isShow=isShow></win-table>
         <!-- <win-page
           :total="100"
@@ -191,16 +191,17 @@
                   required: true,type: 'array', message: '请选择收费项目', trigger: 'change'
                 }]"
                >
-                <w-input
-                  @focus="handleIputVal"
-                  readonly
-                  sufAppendIsButton
-                  placeholder="请输入关键字搜索收费项目"
-                  v-model="form.value2">
-                  <!-- <template slot="suf-append">
-                    <i class="w-icon-search"></i>
-                  </template> -->
-                </w-input>
+                <template>
+                  <div class="tab-style" @click="handleIputVal">
+                    <!-- 点击选择收费项目 -->
+                    <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                    :closable="true"
+                      @close="handleTagClose(index)"
+                      :key="item.chargeItemCode">
+                      {{item.chargeItemName}}
+                    </w-tag>
+                  </div>
+                </template>
               </w-form-item>
             </w-col>
           </w-row>
@@ -244,16 +245,18 @@
               ref="costList"
               stripe
               :empty-text="tableconten"
-              @selection-change="handleSelectionChange">
+              @select-all="handleSelectionChange"
+              @select="handleSelectionChange">
               <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
             </w-table>
           </div>
+          <!-- :disabled="isDisabled" -->
           <span slot="footer" class="dialog-footer ">
             <w-button @click="reset('inner')">取消</w-button>
-            <w-button :disabled="isDisabled" @click="submit('inner')" type="primary" >确定</w-button>
+            <w-button  @click="submit('inner')" type="primary" >确定</w-button>
           </span>
         </w-modal>
       </w-form>
@@ -298,8 +301,18 @@
     padding: 16px 20px!important;
   } */
 </style>
-<style lang='stylus' scoped>
+<style lang='scss' scoped>
 
+.tab-style {
+  min-height: 32px;
+  // height:32px;
+  // width: 300px;
+  background:#f3f6fe;
+  border-radius:2px;
+}
+.tab-style:hover {
+  background-color: #e7edfd;
+}
 .addclass {
   color: red;
 }
@@ -325,7 +338,7 @@
   }
   .clickBg,
   .hoverBg {
-    background rgba(207,224,255,1)!important;
+    background:rgba(207,224,255,1)!important;
     // color #0F49ED;
   }
    

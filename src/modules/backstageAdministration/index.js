@@ -7,6 +7,7 @@ export default {
       // 注意:key 的字符类型要一致!!!
       value: '', // 搜索框
       visible: false,
+      modalShow:true,
       innerVisible:false,
       loading:false,
       MODAL_TITLE,
@@ -23,7 +24,7 @@ export default {
       showInput: false,
       mouldcode: '',
       maincode: '',
-      value2: '', // 模态框表格搜索
+      value2: [], // 模态框表格搜索
       implement:[], // 行政科室数据下拉列表
       openings:[],// 开单科室下拉列表
       listData:[],
@@ -34,15 +35,16 @@ export default {
       costList: [],
       tableTitle:[
         {
-          prop:'name',
+          prop:'MAIN_CODE',
           label:'编码',
           width:'100px'
         },
         {
-          prop:'name',
+          prop:'MAIN_NAME',
           label:'名称',
         }
       ],
+      mainTypeData:[],
       tableData:[
         {
           value:'1',
@@ -149,6 +151,7 @@ export default {
           MAIN_CODE: ''
         }, // 成分小类代码
         chargeList: [],
+        chargeitems:[],
         detailname:'', // 成分小类名称
         amount:"1", // 默认数量
         // hisitemcode:'', // 对应费用明细项编号
@@ -177,21 +180,12 @@ export default {
         "execdeptcode": [{
           required: true, message: '请选择执行科室', trigger: 'change'
         }],
-        // applydepts: [{
-        //   required: true, message: '请选择开单科室', trigger: 'change'
-        // }],
         usearea: [{
           required: true, message: '请选择开单类别', trigger: 'change'
         }],
         addfactor: [
           { required: true, message: '加减量不能为空'}
         ],
-        // detailname: [{
-        //   required: true, message: '请选择成分小类', trigger: 'change'
-        // }],
-        // hisitemcode: [{
-        //   required: true, message: '请选择费用对应', trigger: 'change'
-        // }]
       },
       selectionVal: [],
       listMouldItems: [],
@@ -210,12 +204,6 @@ export default {
   computed: {
   },
   watch: {
-    // "form.maincode"(o , n) {
-    //   console.log(o , n);
-    // },
-    // 'form.detailcode'(o, n) {
-    //   console.log(o, n);
-    // },
     'costList' (oldVal, newVal) {
       this.$nextTick(() => {
         this.form.chargeItems.map((v) => {
@@ -253,10 +241,6 @@ export default {
   // this.clearValidate('form') // 清除整个表单的校验
   },
   methods: {
-     // 点击收费项目
-    handleIputVal () {
-      this.innerVisible  = true
-    },
     checkAll(val) {
       this.nowSelectData = val;
       console.log('row',val);
@@ -266,12 +250,12 @@ export default {
     },
     handelSelect(){   
       this.selectArr = this.handleConcatArr(this.selectArr, this.nowSelectData) 
-      this.handleRemoveTabList(this.nowSelectData,  this.tableData);
+      this.handleRemoveTabList(this.nowSelectData,  this.mainTypeData);
       this.nowSelectData = [];
    },
     // 取消
     handleRemoveSelect() {
-      this.tableData = this.handleConcatArr(this.tableData, this.nowSelectRightData) 
+      this.mainTypeData = this.handleConcatArr(this.mainTypeData, this.nowSelectRightData) 
       this.handleRemoveTabList(this.nowSelectRightData,  this.selectArr);
       this.nowSelectRightData = [];
     },
@@ -293,17 +277,6 @@ export default {
          }
       }
     },
-  //   handleChange(value, direction, movedKeys) {
-  //     console.log(value, direction, movedKeys);
-  //      //可以通过direction回调right/left 来进行操作，right：把数字移到右边，left把数据移到左边
-  //      if(direction === "right") {
-          
-  //      }
-  //      if(direction === "left") {
-          
-  //      }
-          
-  // },
     async handleChange (e) {
       if (e === '1' || e ==='2') {
         let id = ''
@@ -318,32 +291,19 @@ export default {
         if (res.type === 'SUCCESS') {
           if (e === '1')  {
             if (res.data[0] === null) {
-              this.form = {}
-              // this.form =res.data[1]
               this.form.mouldtype = '1'
-              // this.showMsg('已帮您同步已存在的【常规用血】的数据')
             } else {
               this.showMsg('您选择的模板类型【常规备血】已存在不能重复新增，请重新选择','warning')
-              this.form = {}
               this.form.mouldtype = ''
             }
             console.log('okffffok');
           } else {
             if (res.data[1] === null) {
-              this.form = {}
-              // this.form =res.data[0]
               this.form.mouldtype = '2'
-              // res.data.applydepts.map(item => {
-              //   this.form.applydepts.push(item.deptname)
-              // })
-              // console.log('okok11',res.data[0]);
-              // this.showMsg('已帮您同步已存在的【常规备血】的数据')
             }  else {
               this.showMsg('您选择的模板类型【常规用血】已存在，不能重复新增，请重新选择','warning')
               this.form.mouldtype = ''
-              this.form = {}
             }
-            console.log('okffff');
           }
         } else {
            this.showMsg('失败','error')
@@ -373,18 +333,21 @@ export default {
       })
       this.listMouldItems = res.data
     },
+    // async Moulds () {
     async Moulds () {
+      // 查询申请单列表
       const res = await dataApi.getMoulds()
       this.listMoulds = res.data
       this.loading = true;
+      // 获取科室列表
       const openings = await dataApi.getDeptInfos({depttype:'1',pagesize:100,pageno:1})
       this.loading = false;
       this.openings = openings.data.DEPTS
     },
     // 模态框表格多选值
-    handleSelectionChange (val) {
-      console.log('rows',val);
-      this.selectionVal = val
+    handleSelectionChange (rows,row) {
+      console.log('rows',rows);
+      this.selectionVal = rows
     },
     hadleInputFocus () {
       this.visible = true
@@ -392,16 +355,10 @@ export default {
       this.modalTitle = this.MODAL_TITLE.SELECT_ITEM
     },
     // 模态框➕按钮事件
-    handlePlus (title) {
-      this.visible = false
+    async handlePlus (title) {
       this.innerVisible = true
-      if (title === 'big') {
-        // this.modalTitle = MODAL_TITLE.LARGE_CLASS
-      } else if (title === 'sma') {
-        this.modalTitle = MODAL_TITLE.SUB_CLASS
-      } else {
-        this.modalTitle = MODAL_TITLE.SELECT_ITEM
-      }
+      const res = await dataApi.getListMainTypes()
+      this.mainTypeData = res.data
       console.log('模态框➕按钮事件')
     },
     tableRowClassName({row,rowIndex}) {
@@ -438,186 +395,266 @@ export default {
         this.form.maincode.MAIN_CODE= find.MAIN_CODE
         this.form.maincode.MAIN_NAME = find.MAIN_NAME
         this.form.maincode = {...this.form.maincode}
-        // this.getListMainTypes()
-        // // this.getListDetailTypes(res.data.MAIN_CODE)
+        this.getListMainTypes()
+        this.getListDetailTypes(res.data.MAIN_CODE)
       }
     },
     // 点击模态框新增按钮事件
-    async submit () {
-    //  if {
-      if (this.modalTitle === this.MODAL_TITLE.SELECT_ITEM) {
-        console.log(this.selectionVal);
+    async submit (t) {
+      console.log('subtt',t,this.modalTitle);
+      if (t === 'out') {
+        this.$refs.form.validateForm(async (valid) => {
+          if (valid) {
+            if (this.modalTitle === MODAL_TITLE.FORM) {
+              console.log(this.modalTitle);
+              this.submitFormData()
+            } else {
+              this.submitItemDate()
+              console.log(this.modalTitle);
+            }
+            this.$refs.form.clearValidate();
+            this.$refs.form.resetFields();
+          }else {
+            console.log('invalid form !')
+          }
+        })
+      } else {
+        this.innerVisible = false
+        this.visible = true
+        this.modalTitle = MODAL_TITLE.ITEM
+        // let arr = []
+        this.costList = []
+        this.form.value2 = []
+        this.form.chargeItems = []
+        // this.form.item.itemPrice = ''
+        var obj = {};
+        this.selectionVal = this.selectionVal.reduce((item, next) => {
+            obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
+            return item;
+        }, []);
         this.selectionVal.map(item => {
           if (item) {
-            // this.form.chargeItems.push({
-            //   chargeItemCode:item.CHARGE_CODE,	// --收费编码
-            //   chargeItemName:item.CHARGE_NAME,	// --收费项目名称
-            //   chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
-            //   chargeItemType:item.CHARGE_TYPE //  --收费项目类型
-            // })
-            this.form.chargeList.push(item.CHARGE_NAME)
+            this.form.chargeItems.push({
+              chargeItemCode:item.CHARGE_CODE,	// --收费编码
+              chargeItemName:item.CHARGE_NAME,	// --收费项目名称
+              chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
+              chargeItemType:item.CHARGE_TYPE //  --收费项目类型
+            })
+            this.form.value2.push(item.CHARGE_NAME)
             // arr.push(item.CHARGE_PRICE)
           }
         })
-        this.modalTitle = '项目'
-      } else {
-        this.$refs.form.validateForm(async (valid) => {
-          console.log('valid',valid);
-          if (valid) {
-            if (this.modalType === this.MODAL_TITLE.EADIT) {
-              if (this.modalTitle === '申请单'){
-                const res = await dataApi.getModifyMould({...this.form})
-                console.log(res.type);
-                if (res.type === 'SUCCESS') {
-                  this.showMsg(res.message,'success')
-                  this.Moulds()
-                  this.visible = false
-                } else {
-                  this.showMsg(res.message,'error')
-                }
-              } else {
-                console.log('list',this.form,this.oldItemcode);
-                const list = {
-                  mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
-                  olditemcode:this.oldItemcode,// 原来的项目代码
-                  itemcode: this.form.itemcode, // 项目代码
-                  itemname: this.form.itemname, // 项目名称
-                  maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
-                  mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
-                  detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
-                  detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
-                  amount: this.form.amount, // 默认数量
-                  // hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-                  addfactor:this.form.addfactor, // 增减因子
-                  remark: this.form.remark // 备注
-                }
-                console.log('list',list,this.form.addfactor);
-                const res = await dataApi.getModifyMouldItem({...list})
-                	if (res.type === 'SUCCESS') {
-                    this.showMsg(res.message,'success')
-                    if (this.mouldItemsRow.ID === undefined) {
-                      this.MouldItems(this.listMoulds[0])
-                    } else {
-                      this.MouldItems(this.mouldItemsRow)
-                    }
-                    // this.MouldItems()
-                    this.visible = false
-                  } else {
-                    this.showMsg(res.message,'error')
-                  }
-              }
-            } else {
-              // const res = await dataApi.getModifyMouldItem({})
-              if (this.modalTitle === '项目') {
-                console.log(this.form,'wocao');
-                const list = {
-                  mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
-                  itemcode: this.form.itemcode, // 项目代码
-                  itemname: this.form.itemname, // 项目名称
-                  maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
-                  mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
-                  detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
-                  detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
-                  amount: this.form.amount, // 默认数量
-                  hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-                  addfactor:this.form.addfactor, // 增减因子
-                  remark: this.form.remark // 备注
-                }
-                console.log(list, this.form.maincode);
-                const res = await dataApi.getAddMouldItem({...list})
-                	if (res.type === 'SUCCESS') {
-                    this.showMsg(res.message,'success')
-                    console.log('this.mouldItemsRow',this.mouldItemsRow.ID,this.listMoulds);
-                    if (this.mouldItemsRow.ID === undefined) {
-                      this.MouldItems(this.listMoulds[0])
-                    } else {
-                      this.MouldItems(this.mouldItemsRow)
-                    }
-                    this.visible = false
-                  } else {
-                    this.showMsg(res.message,'error')
-                  }
-              } else if (this.modalTitle === '成分大类'){
-                const res = await dataApi.gitAddMainComponentType({
-                  maincode:this.form.code,
-                  mainname:this.form.name,
-                })
-                console.log(res,'成分大类');
-
-                if (res.type === 'SUCCESS') {
-                  this.showMsg(res.message,'success')
-                  this.getListMainTypes()
-                  this.modalTitle = '项目'
-                } else {
-                  this.showMsg(res.message,'error')
-                }
-              } else if (this.modalTitle === '成分小类') {
-                const res = await dataApi.getAddDetailComponentType({
-                  detailcode:this.form.code,
-                  detailname:this.form.name,
-                  maincode:this.maincode
-                })
-                console.log(res);
-                if (res.type === 'SUCCESS') {
-                  this.showMsg(res.message,'success')
-                  this.modalTitle = '项目'
-                  this.getListMainTypes()
-                } else {
-                  this.showMsg(res.success,'error')
-                }
-              } else {
-                console.log('this.form.applydepts.',this.form.applydepts);
-                const applydepts = []
-                this.form.applydepts.map(item => {
-                  applydepts.push({deptcode:item.deptcode})
-                })
-                console.log('applydepts,applydepts',applydepts);
-                const list = {
-                  mouldcode:this.form.mouldcode, // 模板代码
-                  mouldname: this.form.mouldname, // 模板名称
-                  mouldtype: this.form.mouldtype, 
-                  execdeptcode: this.form.execdeptcode, // 执行科室代码
-                  applydepts, // 申请科室代码
-                  usearea: this.form.usearea, // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
-                  copiedmouldcode: this.mouldItemsRow.MOULD_CODE
-                }
-                const res = await dataApi.getAddMould({...list})
-                	if (res.type === 'SUCCESS') {
-                    this.showMsg(res.message,'success')
-                    this.Moulds()
-                    this.visible = false
-                  } else {
-                    this.showMsg(res.message,'error')
-                  }
-              }
-            }
-          } else {
-            // 未通过
-            console.log('invalid form !',this.form.addfactor)
-          }
-        })
+        // let sumArr = arr.map(Number)
+        // // for方法
+        // let sum = 0;
+        // for (let i = 0, len = sumArr.length; i < len; i++) {
+        //     sum += sumArr[i]
+        // }
+        // this.form.item.itemPrice = sum
+        this.search = ''
+        this.$refs.costList.clearSelection()
+        console.log('inner');
       }
     },
-    // 点击模态框取消按钮事件
-    reset () {
-      // this.form = {}
-      // if (this.modalTitle === '成分大类' || this.modalTitle === '成分小类') {
-      //   this.modalTitle = MODAL_TITLE.ITEM
-      // } else if (this.modalTitle===this.MODAL_TITLE.SELECT_ITEM) {
-      //   this.modalTitle = MODAL_TITLE.ITEM
-      // }
-      this.$refs.form.clearValidate();
-      this.$refs.form.resetFields();
-      // this.$nextTick(() => {
-      //   this.$refs[formName].resetFields()
+    // 点击收费项目
+    async handleIputVal () {
+      this.innerVisible  = true
+      this.modalTitle = MODAL_TITLE.SELECT_ITEM
+      this.tableconten='请输入关键字查询数据'
+      let list = []
+      const res = await dataApi.getQuery({CHARGE_SEARCH:''})
+      this.form.chargeItems.map(it => {
+        res.data.find(id => {
+          if (it.chargeItemCode === id.CHARGE_CODE) {
+            list.push(id)
+          }
+        })
+        this.costList = list
+      })
+    },
+    async submitFormData() {
+      if(this.modalType === MODAL_TITLE.ADD ||  this.modalType === MODAL_TITLE.CLONE) {
+         // 新增申请单
+        const applydepts = []
+        this.form.applydepts.map(item => {
+          applydepts.push({deptcode:item.deptcode})
+        })
+        const list = {
+          mouldcode:this.form.mouldcode, // 模板代码
+          mouldname: this.form.mouldname, // 模板名称
+          mouldtype: this.form.mouldtype, 
+          execdeptcode: this.form.execdeptcode, // 执行科室代码
+          applydepts, // 申请科室代码
+          usearea: this.form.usearea, // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+          copiedmouldcode: this.mouldItemsRow.MOULD_CODE
+        }
+        const res = await dataApi.getAddMould({...list})
+        if (res.type === 'SUCCESS') {
+          this.showMsg(res.message,'success')
+          // 更新列表
+          const res1 = await dataApi.getMoulds()
+          this.listMoulds = res1.data
+          this.visible = false
+        } else {
+          this.showMsg(res.message,'error')
+        }
+      } else {
+        // 修改申请单
+        const res = await dataApi.getModifyMould({...this.form})
+        console.log(res.type);
+        if (res.type === 'SUCCESS') {
+          this.showMsg(res.message,'success')
+          // 更新列表
+          const res1 = await dataApi.getMoulds()
+          this.listMoulds = res1.data
+          this.visible = false
+        } else {
+          this.showMsg(res.message,'error')
+        }
+      }
+    },
+    async submitItemDate() {
+      if(this.modalType === MODAL_TITLE.ADD) {
+        console.log('this.form.chargeItems',this.form.chargeItems);
+        const list = {
+          mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+          itemcode: this.form.itemcode, // 项目代码
+          itemname: this.form.itemname, // 项目名称
+          chargeitems: this.form.chargeItems,
+          maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
+          mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
+          detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
+          detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
+          amount: this.form.amount, // 默认数量
+          hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+          addfactor:this.form.addfactor, // 增减因子
+          remark: this.form.remark // 备注
+        }
+        const res = await dataApi.getAddMouldItem({...list})
+        if (res.type === 'SUCCESS') {
+          this.showMsg(res.message,'success')
+          console.log('this.mouldItemsRow',this.mouldItemsRow.ID,this.listMoulds);
+          if (this.mouldItemsRow.ID === undefined) {
+            this.MouldItems(this.listMoulds[0])
+          } else {
+            this.MouldItems(this.mouldItemsRow)
+          }
+          this.visible = false
+        } else {
+          this.showMsg(res.message,'error')
+        }
+      }
+    },
+    //  if {
+      // this.$refs.form.validateForm(async (valid) => {
+      //   if (valid) {
+      //     } else if (this.modalTitle === '项目') {
+      //       const list = {
+      //         mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+      //         olditemcode:this.oldItemcode,// 原来的项目代码
+      //         itemcode: this.form.itemcode, // 项目代码
+      //         itemname: this.form.itemname, // 项目名称
+      //         maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
+      //         mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
+      //         detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
+      //         detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
+      //         amount: this.form.amount, // 默认数量
+      //         // hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+      //         addfactor:this.form.addfactor, // 增减因子
+      //         remark: this.form.remark // 备注
+      //       }
+      //       console.log('list',list,this.form.addfactor);
+      //       const res = await dataApi.getModifyMouldItem({...list})
+      //       if (res.type === 'SUCCESS') {
+      //         this.showMsg(res.message,'success')
+      //         if (this.mouldItemsRow.ID === undefined) {
+      //           this.MouldItems(this.listMoulds[0])
+      //         } else {
+      //           this.MouldItems(this.mouldItemsRow)
+      //         }
+      //         this.$refs.form.clearValidate();
+      //         this.$refs.form.resetFields();
+      //         this.visible = false
+      //       } else {
+      //         this.showMsg(res.message,'error')
+      //       }
+      //       const list = {
+      //         mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+      //         itemcode: this.form.itemcode, // 项目代码
+      //         itemname: this.form.itemname, // 项目名称
+      //         maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
+      //         mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
+      //         detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
+      //         detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
+      //         amount: this.form.amount, // 默认数量
+      //         hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+      //         addfactor:this.form.addfactor, // 增减因子
+      //         remark: this.form.remark // 备注
+      //       }
+      //       console.log(list, this.form.maincode);
+      //       const res = await dataApi.getAddMouldItem({...list})
+      //       if (res.type === 'SUCCESS') {
+      //         this.showMsg(res.message,'success')
+      //         console.log('this.mouldItemsRow',this.mouldItemsRow.ID,this.listMoulds);
+      //         if (this.mouldItemsRow.ID === undefined) {
+      //           this.MouldItems(this.listMoulds[0])
+      //         } else {
+      //           this.MouldItems(this.mouldItemsRow)
+      //         }
+      //         this.visible = false
+      //       } else {
+      //         this.showMsg(res.message,'error')
+      //       }
+      //     } else if (this.modalTitle === '成分大类'){
+      //       const res = await dataApi.gitAddMainComponentType({
+      //         maincode:this.form.code,
+      //         mainname:this.form.name,
+      //       })
+      //       console.log(res,'成分大类');
+
+      //       if (res.type === 'SUCCESS') {
+      //         this.showMsg(res.message,'success')
+      //         this.getListMainTypes()
+      //         this.modalTitle = '项目'
+      //       } else {
+      //         this.showMsg(res.message,'error')
+      //       }
+      //     } else if (this.modalTitle === '成分小类') {
+      //       const res = await dataApi.getAddDetailComponentType({
+      //         detailcode:this.form.code,
+      //         detailname:this.form.name,
+      //         maincode:this.maincode
+      //       })
+      //       console.log(res);
+      //       if (res.type === 'SUCCESS') {
+      //         this.showMsg(res.message,'success')
+      //         this.modalTitle = '项目'
+      //         this.getListMainTypes()
+      //       } else {
+      //         this.showMsg(res.success,'error')
+      //       }
+      //     } 
+      //   } else {
+      //     console.log('invalid form !')
+      //   }
       // })
-      // this.$refs.form.resetFields()
-      this.visible = false
+    // },
+    // 点击模态框取消按钮事件
+    reset (t) {
+      console.log('tt',t);
+      if (t === 'inner') {
+        this.innerVisible = false
+        this.visible = true
+      } else {
+        this.$refs.form.clearValidate();
+        this.$refs.form.resetFields();
+        this.visible = false
+      }
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
       this.isShowRow(t,'delete',row,index)
-      this.tableData.splice(index, 1)
+      // this.tableData.splice(index, 1)
     },
     // 列表提示框取消按钮
      handleCancel (index) {
@@ -628,32 +665,78 @@ export default {
       }, 200) // 等关闭气泡后修改状态， 避免出现数据状态过度，影响体验
     },
     // 新增按钮
-    handleAdd (t) {
+    async handleAdd (t) {
       this.visible=true
       this.modalType = this.MODAL_TITLE.ADD
-      this.isShowRow(t)
+      if (t === 'left') {
+        this.modalShow = true
+        this.modalTitle = MODAL_TITLE.FORM
+        // 执行科室接口
+        const res = await dataApi.getDeptInfos({depttype:'3'})
+        this.implement = res.data
+      } else {
+        this.modalTitle = MODAL_TITLE.ITEM
+        this.modalShow = false
+         // 成分大类接口
+        this.getListMainTypes () 
+        this.getListDetailTypes()
+      }
+      console.log('ttt', t,this.modalTitle);
+      // this.isShowRow(t)
     },
-    // 项目列表修改按钮
-    onEditing (row,t) {
+    // 修改按钮
+    async onEditing (row,t) {
+      if (t === 'left' || t === 'clone') {
+        this.modalShow = true
+        this.modalTitle = MODAL_TITLE.FORM
+        const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
+        if (t === 'clone') {
+          this.form = res.data
+          this.form.mouldcode = ''
+          this.form.mouldname = ''
+          this.modalType = this.MODAL_TITLE.CLONE
+        } else {
+          this.form = res.data
+          this.modalType = this.MODAL_TITLE.EADIT
+        }
+        // 执行科室接口
+        const res1 = await dataApi.getDeptInfos({depttype:'3'})
+        this.implement = res1.data
+      } else {
+        const res = await dataApi.getFindMouldItem({
+          mouldcode:row.MOULD_CODE,
+          itemcode:row.MOULD_ITEM_CODE})
+        this.form.maincode.MAIN_CODE =  res.data.maincode || ''
+        this.form.maincode.MAIN_NAME =  res.data.mainname || ''
+        this.form.detailcode.DETAIL_CODE =  res.data.detailcode || ''
+        this.form.detailcode.DETAIL_NAME =  res.data.detailname || ''
+        this.form.detailcode.chargeitems= res.data.chargeItems,
+        this.form.detailname = res.data.detailname
+        this.form.mainname = res.data.mainname
+        this.form.itemcode = res.data.itemcode
+        this.form.itemname = res.data.itemname
+        this.form.addfactor = res.data.addfactor
+        this.form.amount = res.data.amount
+        this.form.mouldcode = res.data.mouldcode
+        this.form.remark = res.data.remark
+        this.form.detailcode =  res.data.detailname
+        this.form.maincode = {...this.form.maincode}
+        this.form.detailcode = {...this.form.detailcode}
+        this.oldItemcode = res.data.itemcode
+        console.log('hfkjdsk');
+        this.modalTitle = MODAL_TITLE.ITEM
+        this.modalType = this.MODAL_TITLE.EADIT
+        this.modalShow = false
+         // 成分大类接口
+         this.getListMainTypes () 
+         // 成分小类接口
+         this.getListDetailTypes()
+      }
       this.visible=true
-      this.modalType = this.MODAL_TITLE.EADIT
-      this.isShowRow(t,'edit',row)
       console.log(row);
     },
-    handleClone (row, t) {
-      this.visible=true
-      this.modalType = '复制'
-      this.isShowRow(t,'clone',row)
-    },
-    // handleClose (tag) {
-    //   this.selection.splice(this.selection.indexOf(tag), 1)
-    // },
-    add (showInput) {
-      if (showInput === true ) {
-        this.showInput = false
-      } else {
-        this.showInput = true
-      }
+    handleTagClose (index) {
+      this.form.chargeItems.splice(index, 1)
     },
     // 判断显示modal内容
     async isShowRow (t,isHandle,row,index) {
@@ -691,17 +774,13 @@ export default {
             this.form.mouldname = ''
           } else {
             this.form = res.data
-            // res.data.applydepts.map(item => {
-            //   this.form.applydepts.push(item.deptcode)
-            // })
           }
           console.log('this.form.applydepts',this.form.applydepts);
         } else {
           this.modalTitle = this.MODAL_TITLE.FORM
         }
-        const res = await dataApi.getDeptInfos({depttype:'3'})
-        this.implement = res.data
-      
+        // const res = await dataApi.getDeptInfos({depttype:'3'})
+        // this.implement = res.data
       } else if (t === 'right') {
         if (isHandle === 'delete') {
           const res = await dataApi.getRemoveMouldItem({
@@ -741,26 +820,15 @@ export default {
           // this.form = {...this.form}
           this.oldItemcode = res.data.itemcode
           console.log('this.form',this.form);
-        } else {
-          this.modalTitle = this.MODAL_TITLE.ITEM
         }
-          // 成分小类接口
-          this.getListDetailTypes()
-          // 成分大类接口
-          this.getListMainTypes()
-      } else {
-        this.modalTitle = this.MODAL_TITLE.CLONE
       }
       console.log(t)
     },
     async handleSearch(search) {
       console.log('search',search);
       await this.getCostList(search)
-      // this.s= 0
-      // this.e= 20
     },
     async getCostList (search) {
-      // this.selectionVal = []
       const res = await dataApi.getQuery({CHARGE_SEARCH:search})
       console.log('res.data',res.data);
       if (res.data === null) return
@@ -769,6 +837,16 @@ export default {
       this.listData = res.data
       this.loading = false
       this.tableconten = '暂无数据'
+    },
+     // 成分小类接口
+     async getListDetailTypes (n) {
+      const listDetailTypes = await dataApi.getListDetailTypes({maincode:n})
+      this.detailTypesList = listDetailTypes.data 
+    },
+    // 成分大类接口
+    async getListMainTypes () {
+      const listMainTypes = await dataApi.getListMainTypes()
+      this.mainTypesList = listMainTypes.data
     },
     fetchData () {
       console.log(this.$refs.costList.scrollTop , this.$refs.costList.scrollHeight);
@@ -791,22 +869,5 @@ export default {
       this.e= this.e+20
       console.log('this.s,this.e',this.s,this.e);
     },
-    // 成分大类接口
-    async getListMainTypes () {
-      const listMainTypes = await dataApi.getListMainTypes()
-      this.mainTypesList = listMainTypes.data
-      console.log(listMainTypes);
-    },
-    // 成分小类接口
-    async getListDetailTypes (n) {
-      // if (this.form.maincode) {
-      //    n = this.form.maincode
-      // }
-      console.log(n,this.form.maincode);
-
-      const listDetailTypes = await dataApi.getListDetailTypes({maincode:n})
-      this.detailTypesList = listDetailTypes.data 
-    }
   },
-  
 };

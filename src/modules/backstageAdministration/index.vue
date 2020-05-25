@@ -17,7 +17,7 @@
             <w-table-column fixed="right" label="操作" align="center" width="170" reference-cell>
               <template slot-scope="scope">
                   <w-button type="text" @click="onEditing(scope.row,'left')">修改</w-button>
-                  <w-button type="text" @click="handleClone(scope.row, 'left')">复制</w-button>
+                  <w-button type="text" @click="onEditing(scope.row, 'clone')">复制</w-button>
                   <w-button @click="handleConfirm(scope.row, 'left', scope.$index)" type="text">删除</w-button>
               </template>
             </w-table-column>
@@ -71,7 +71,7 @@
       width="60%">
       <w-form label-align="right" :model="form" ref="form" label-width="130px" :rules="rules">
         <!-- 新增申请单 -->
-        <w-row v-if="modalTitle === MODAL_TITLE.FORM || modalTitle=== MODAL_TITLE.CLONE">
+        <w-row v-if="modalShow === true">
           <w-row>
             <w-col :span="12">
               <w-form-item label="模版代码" prop="mouldcode">
@@ -157,7 +157,7 @@
           </w-row>
         </w-row>
         <!-- 新增项目 -->
-        <w-row v-else-if="modalTitle===MODAL_TITLE.ITEM">
+        <w-row v-else>
           <w-row>
             <w-col :span="12" class="po_re">
               <w-form-item label="成分大类" required >
@@ -195,20 +195,20 @@
           <w-row>
             <w-col :span="12">
               <w-form-item label="项目代码" prop="itemcode">
-                <w-input v-model="form.itemcode" :maxlength="20" showCounter
+                <w-input v-model="form.itemcode"  showCounter
                   placeholder="请输入代码"></w-input>
               </w-form-item>
             </w-col>
             <w-col :span="12">
               <w-form-item label="项目名称" prop="itemname">
-                <w-input v-model="form.itemname" :maxlength="20" showCounter
+                <w-input v-model="form.itemname" showCounter
                   placeholder="请输入名称"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
           <w-row>
             <w-col>
-              <w-form-item class=" pd-right" label="费用对应" prop="">
+              <!-- <w-form-item class=" pd-right" label="费用对应" prop="">
                 <w-input
                   @focus="handlePlus('charge')"
                   readonly
@@ -216,6 +216,25 @@
                   placeholder="请输入关键字搜索收费项目"
                   v-model="form.chargeList">
                 </w-input>
+              </w-form-item> -->
+              <w-form-item
+                label="费用对应"
+                prop="value2"
+                :rules="[{
+                  required: true,type: 'array', message: '请选择费用对应', trigger: 'change'
+                }]"
+               >
+                <template>
+                  <div class="tab-style" @click="handleIputVal">
+                    <!-- 点击选择收费项目 -->
+                    <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                    :closable="true"
+                      @close="handleTagClose(index)"
+                      :key="item.chargeItemCode">
+                      {{item.chargeItemName}}
+                    </w-tag>
+                  </div>
+                </template>
               </w-form-item>
             </w-col>
           </w-row>
@@ -246,7 +265,7 @@
           </w-row>
         </w-row>
         <w-modal
-          width="50%"
+          width="60%"
           class="modal-style"
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
@@ -270,7 +289,8 @@
               ref="costList"
               stripe
               :empty-text="tableconten"
-              @selection-change="handleSelectionChange">
+              @select-all="handleSelectionChange"
+              @select="handleSelectionChange">
               <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
@@ -280,9 +300,9 @@
           <div v-else>
             <w-row>
               <w-col :span="11">
-                <p>已选择大类列表</p>
+                <p class="mg-bottom_10">已选择大类列表</p>
                 <win-table :listTable=tableTitle
-                  :tableData=tableData
+                  :tableData=mainTypeData
                   @handleSelectionChange="checkAll"
                   :isShow=isShow>
                 </win-table>
@@ -290,19 +310,19 @@
               <w-col :span="2">
                 <div class="opSetting">
                   <div @click="handelSelect">
-                    <w-button :disabled="nowSelectData.length?false:true"  type="primary" > 
-                      >
+                    <w-button :disabled="nowSelectData.length?false:true"
+                      class="w-icon-arrow-left"> 
                     </w-button>
                   </div>
                   <div class="spacing" @click="handleRemoveSelect">
-                    <w-button  :disabled="nowSelectRightData.length?false:true"  type="primary">
-                      <
+                    <w-button  :disabled="nowSelectRightData.length?false:true"
+                      class="w-icon-arrow-right">
                     </w-button>
                   </div>
                 </div>
               </w-col>
               <w-col :span="11">
-                <p>未选择大类列表</p>
+                <p class="mg-bottom_10">未选择大类列表</p>
                 <win-table :listTable=tableTitle
                   :tableData=selectArr
                   @handleSelectionChange="checkRightAll"
@@ -313,13 +333,13 @@
           </div>
           <span slot="footer" class="dialog-footer ">
             <w-button @click="reset('inner')">取消</w-button>
-            <w-button :disabled="isDisabled" @click="submit('inner')" type="primary" >确定</w-button>
+            <w-button  @click="submit('inner')" type="primary" >确定</w-button>
           </span>
         </w-modal>
       </w-form>
       <span slot="footer" class="dialog-footer">
-        <w-button @click="reset('form')">取 消</w-button>
-        <w-button type="primary" @click="submit('form')">确 定</w-button>
+        <w-button @click="reset('out')">取 消</w-button>
+        <w-button type="primary" @click="submit('out')">确 定</w-button>
       </span>
     </w-modal>
   </div>
@@ -356,17 +376,40 @@
       background #fff
 </style>
 <style lang="scss" scoped>
+.tab-style {
+  min-height: 32px;
+  // height:32px;
+  // width: 300px;
+  background:#f3f6fe;
+  border-radius:2px;
+}
+.tab-style:hover {
+  background-color: #e7edfd;
+}
 .iconfont {
   font-size: 16px;
 }
 .opSetting{
     text-align: center;
     margin-top:30px;
+    span {
+      display: inline-block;
+      width:40px;
+      height:32px;
+      background:rgba(243,245,249,1);
+      border-radius:2px;
+      border:1px solid rgba(192,203,233,1);
+      line-height: 32px;
+    }
+    // span:hover {
+    //   border-color: #3f6df1;
+    //   color: #fff;
+    //   background: #3f6df1;
+    // }
   }
   .spacing{
     margin-top:10px;
   }
-
 .list-style {
   height: calc(100vh - 120px);
   overflow-y: auto;
@@ -377,25 +420,13 @@
     z-index: 999;
   }
 }
-// .pd-right {
-//   .w-input {
-//     width:200px!important
-//   }
-// }
 .w-select {
   width:100%!important;
 }
 
-
 .w-row {
   padding-bottom: 16px;
 }
-// .w-form
-//   .w-form-item__label
-//     margin-left 0px
-//   .w-select
-//     width 100%
-
   .unitDepartment-tag {
     width: 70%;
     min-height: 44px;
@@ -422,8 +453,17 @@
   //   border-color: #5175f4;
   //   box-shadow: #2d5afa 0px 0px 0px;
   // }
+  .allowed {
+    cursor:not-allowed 
+  }
 </style>
 <style lang="scss">
+.opSetting {
+ .w-button--primary, 
+ .w-button--default {
+    width: 44px !important;
+  }
+}
 
 .modal {
   .iconfont {
@@ -447,5 +487,4 @@
   justify-content: space-between;
   align-items: center;
 }
-
 </style>

@@ -2,11 +2,12 @@ import { debounce } from 'throttle-debounce'
 import apiData from './api/api'
 
 import { MODAL_TITLE, QUERY_PAGE} from '../constant'
-// import { ClipEffect } from 'html2canvas/dist/types/render/effects';
 export default {
   data() {
     let checkOrgTypeCode = async (rule, value, callback) => {
+      console.log('value',value);
       if (value) {
+
          const params = {
           type:this.type,
           name:value
@@ -23,14 +24,17 @@ export default {
         } else {
           callback()
         }
+      } else {
+        callback()
       }
     }
     return {
       modalTitle:'',
+      
       type:'',
       fileList: [],
       height:'200px',
-      isDisabled: false,
+      isDisabled: true,
       MODAL_TITLE,
       QUERY_PAGE,
       clickIndex:0,
@@ -51,7 +55,7 @@ export default {
       // pageSize:10,
       // currentPage:20,
       total:100,
-      value: [1,2,3,4],
+      value: [1,3,4],
       rowRightList: {},
       rowLeftList: {},
       visible: false,
@@ -100,8 +104,8 @@ export default {
         templateName: "", // 申请单名称
         printTemplate: '' , // 打印模板
         isShowOperation:"0",	//--是否显示手术
-        isShowSpecimen:"1",		//--是否显示标本
-        isShowEndpscopic:"1", //是否显示内镜信息
+        isShowSpecimen:"0",		//--是否显示标本
+        isShowEndpscopic:"0", //是否显示内镜信息
         isShowGynecological:"0",//	--是否显示妇科
         isShowTumour:"0",	//	--是否显示肿瘤
         isShowHpv:"0", // --是否显示HPV信息
@@ -132,11 +136,7 @@ export default {
           name: '临床信息',
           disabled: true
         },
-        {
-          label:2, // 3
-          name: '标本信息',
-          disabled: true
-        },
+        
         {
           label:3, // 4
           name: '医嘱信息',
@@ -148,6 +148,11 @@ export default {
           disabled: true
         },
         {
+          label:2, // 3
+          name: '标本信息',
+          disabled: false
+        },
+        {
           label:5, // 5
           name: '妇科信息',
           disabled: false
@@ -155,6 +160,12 @@ export default {
         {
           label:6, //1
           name: '手术信息',
+          disabled: false
+        },
+        
+        {
+          label:9, //1
+          name: '内镜信息',
           disabled: false
         },
         {
@@ -173,10 +184,12 @@ export default {
       selectionVal: [],
       rules: {
         'item.itemCode': [
-          {required: true, validator: checkOrgTypeCode,  trigger: 'blur' }
+          { required: true, message: '请输入项目代码',trigger: 'blur'},
+          {validator: checkOrgTypeCode,  trigger: 'blur' }
         ],
         'item.itemName': [
-          {required: true, validator: checkOrgTypeCode,  trigger: 'blur' }
+          { required: true, message: '请输入项目名称',trigger: 'blur'},
+          { validator: checkOrgTypeCode,  trigger: 'blur' }
 
         ],
         'item.itemPrice': [
@@ -184,8 +197,9 @@ export default {
         ],
         
         'templateName': [
-        {required: true, validator: checkOrgTypeCode,  trigger: 'blur' }
-      ]
+          { required: true,message: '请输入申请单名称',trigger: 'blur'},
+          { validator: checkOrgTypeCode,  trigger: 'blur' }
+        ]
       },
       rigthData: [],
       rowLi:{},
@@ -197,14 +211,6 @@ export default {
   },
   watch: {
     'costList' (oldVal, newVal) {
-      // let list = []
-      // this.selectionVal.forEach((vv,ii) => {
-      //   list.push({
-      //     CHARGE_CODE:vv.chargeItemCode,
-      //     CHARGE_NAME:vv.chargeItemName,
-      //     CHARGE_PRICE:vv.chargeItemPrice
-      //   })
-      // })
       this.$nextTick(() => {
         this.form.chargeItems.map((v) => {
             this.costList.find(it =>{
@@ -216,7 +222,7 @@ export default {
         })
     },
     'value' (oldVal, newVal) {
-      let find = oldVal.find(it => it === 5)
+      let find = oldVal.find(it => it === 9)
       let find1 = oldVal.find(it => it === 6)
       if (find) {
         this.checkboxList.map(it => {
@@ -233,13 +239,13 @@ export default {
       }
       if (find1) {
         this.checkboxList.map(it => {
-          if (it.label === 5) {
+          if (it.label === 9) {
             it.disabled = true
           }
         })
       } else {
         this.checkboxList.map(it => {
-          if (it.label === 5) {
+          if (it.label === 9) {
             it.disabled = false
           }
         })
@@ -253,6 +259,9 @@ export default {
   methods: {
     handlePreview(file) {
       console.log(file);
+    },
+    handleTagClose (index) {
+      this.form.chargeItems.splice(index, 1)
     },
     async list (id) {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
@@ -273,8 +282,13 @@ export default {
         }
         if (item.isShowHpv === '1') {
           this.value.push(8)
+        } 
+        if (item.isShowEndpscopic === '1') {
+          this.value.push(9)
         }
-
+        if (item.isShowSpecimen === '1') {
+          this.value.push(2)
+        }
       })
       if ( res.data !== null) {
         if (id === undefined) {
@@ -342,6 +356,7 @@ export default {
         default:
           this.h =  MODAL_TITLE.CLONE
           this.getcopy(item.ID)
+          this.visible = true
       } 
     },
     
@@ -401,11 +416,19 @@ export default {
       if (res.data.isShowHpv === '1') {
         this.value.push(8)
       }
+      if (res.data.isShowEndpscopic === '1') {
+        this.value.push(9)
+      }
+      if (res.data.isShowSpecimen === '1') {
+        this.value.push(2)
+      }
       this.form.templateName = res.data.templateName
       this.form.isShowGynecological=res.data.isShowGynecological//	--是否显示妇科
       this.form.isShowOperation=res.data.isShowOperation	//--是否显示手术
       this.form.isShowTumour=res.data.isShowTumour//	--是否显示肿瘤
       this.form.isShowHpv=res.data.isShowHpv // --是否显示HPV信息
+      this.form.isShowSpecimen=res.data.isShowSpecimen		//--是否显示标本
+      this.form.isShowEndpscopic=res.data.isShowEndpscopic //是否显示内镜信息      
     },
     // 删除申请列表数据
     async getDeletePafTemplate (id,index) {
@@ -444,13 +467,24 @@ export default {
     async handleIputVal () {
       this.innerVisible  = true
       this.tableconten='请输入关键字查询数据'
+      let list = []
+      const res = await apiData.getQuery({CHARGE_SEARCH:''})
+      this.form.chargeItems.map(it => {
+        res.data.find(id => {
+          if (it.chargeItemCode === id.CHARGE_CODE) {
+            list.push(id)
+          }
+        })
+        this.costList = list
+      })
     },
     async handleSearch(search) {
+      this.isDisabled = true
       await this.getCostList(search)
     },
     //  获取收费项目列表
     async getCostList (search) {
-      this.selectionVal = []
+      // this.selectionVal = []
       const res = await apiData.getQuery({CHARGE_SEARCH:search})
       if (res.data === null) return
       this.loading = true
@@ -490,13 +524,14 @@ export default {
 
     },
      // 当选择项发生变化时会触发该事件
-     handleSelectionChange (rows) {
-       console.log('rows',rows);
-      //  rows = []
-       this.selectionVal = rows
+     handleSelectionChange (rows,row) {
+       console.log('row',rows,row);
+       this.isDisabled= false
+      this.selectionVal = rows
     },
     async submit(t) {
       if (t !== 'out') {
+        console.log('this.selectionVal',this.selectionVal);
         this.innerVisible = false
         this.visible = true
         this.modalTitle = MODAL_TITLE.ITEM
@@ -505,6 +540,11 @@ export default {
         this.form.value2 = []
         this.form.chargeItems = []
         this.form.item.itemPrice = ''
+        var obj = {};
+        this.selectionVal = this.selectionVal.reduce((item, next) => {
+            obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
+            return item;
+        }, []);
         this.selectionVal.map(item => {
           if (item) {
             this.form.chargeItems.push({
@@ -537,19 +577,18 @@ export default {
                 isShowOperation: this.form.isShowOperation,
                 isShowGynecological: this.form.isShowGynecological,
                 isShowTumour: this.form.isShowTumour,
-                isShowSpecimen:"1",		//--是否显示标本
-                isShowEndpscopic:"1", //是否显示内镜信息
+                isShowSpecimen:this.form.isShowSpecimen,		//--是否显示标本
+                isShowEndpscopic:this.form.isShowEndpscopic, //是否显示内镜信息
                 isShowHpv: this.form.isShowHpv
-                
               }
               const res = await apiData.getAddUpdateTemplate({
                 ...list, 
-                id:this.formTitle ==='edit'?this.rowLeftList.ID:''})
+                id:this.h ==='修改'?this.rowLeftList.ID:''})
               if (res.type === 'SUCCESS') {
-                this.showMsg(this.formTitle ==='edit'?'修改申请单成功':'新增申请单成功','success')
-                if (this.formTitle ==='edit') {
+                this.showMsg(this.h ==='修改'?'修改申请单成功':'新增申请单成功','success')
+                if (this.h ==='修改') {
                   this.list(this.rowLeftList.ID)
-                  this.formTitle= ''
+                  this.h= ''
                 } else {
                   const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
                   this.leftData = res.data
@@ -563,7 +602,7 @@ export default {
                 this.visible = false
                 this.init()
               } else {
-                this.showMsg(this.formTitle ==='edit'?'修改申请单失败':'新增申请单失败','error')
+                this.showMsg(this.h ==='修改'?'修改申请单失败':'新增申请单失败','error')
               }
               // this.showMsg1(res,'新增申请单')
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
@@ -595,6 +634,8 @@ export default {
               delete this.form.isShowGynecological
               delete this.form.isShowTumour
               delete this.form.isShowHpv
+              delete this.form.isShowSpecimen,		//--是否显示标本
+              delete this.form.isShowEndpscopic, //是否显示内镜信息
               delete this.form.value2
               this.form.item['pafTemplateId'] = pafTemplateId
               this.form.item['seqNo'] = seqNo
@@ -642,7 +683,9 @@ export default {
         this.form.isShowOperation='0'	//--是否显示手术
         this.form.isShowTumour='0'//	--是否显示肿瘤
         this.form.isShowHpv='0' // --是否显示HPV信息
-        this.value = [1,2,3,4]
+        this.form.isShowSpecimen='0',		//--是否显示标本
+        this.form.isShowEndpscopic='0', //是否显示内镜信息
+        this.value = [1,3,4]
       } else {
         this.form.item.itemExplain  = ''
         this.$refs.form.resetFields()
@@ -664,6 +707,7 @@ export default {
         this.visible = false
         this.form.chargeItemName=[]
         console.log('this.form.chargeItems = []',this.form);
+        this.$refs.form.resetFields()
         this.init()
       }
     },
@@ -685,6 +729,12 @@ export default {
           case 8:
             this.form.isShowHpv = '1'
             break;
+          case 2:
+              this.form.isShowSpecimen = '1'
+              break;
+          case 9:
+            this.form.isShowEndpscopic = '1'
+            break;
           default:
         } 
       } else {
@@ -700,6 +750,12 @@ export default {
               break;
           case 8:
             this.form.isShowHpv = '0'
+          case 2:
+              this.form.isShowSpecimen = '0'
+              break;
+          case 9:
+            this.form.isShowEndpscopic = '0'
+            break;
           default:
         } 
       }

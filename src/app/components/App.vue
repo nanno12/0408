@@ -209,7 +209,7 @@ export default {
     padding: 16px 20px;
     margin-bottom: 10px;
 }
-.w-modal {
+.w-modal__footer {
   .w-button--primary,
   .w-button--default{
     min-width: 88px;
@@ -218,6 +218,17 @@ export default {
       padding: 8px 16px;
     }
   }
+}
+
+.w-modal {
+  // .w-button--primary,
+  // .w-button--default{
+  //   min-width: 88px;
+  //   margin-left: 15px !important;
+  //   .w-button--medium, .w-button--medium.is-round {
+  //     padding: 8px 16px;
+  //   }
+  // }
 }
 .w-form-item__label {
   margin-left: 0px;
