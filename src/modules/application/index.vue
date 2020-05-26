@@ -226,6 +226,7 @@
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
+           @open="show"
           append-to-body>
           <div class="search-style clearfix">
             <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
@@ -238,7 +239,6 @@
               v-loading="loading"
               :data="costList"
               :lower-threshold="10"
-              @scrollToLower="scrollToLower"
               win-loading-text="正在获取数据..."
               height="300"
               style="width: 100%"
@@ -251,6 +251,11 @@
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+              <template slot="append" v-if=" costList.length>20 && listData.length===costList.length  ">
+                  <div class="no-more">
+                    我~是有底线的 (～￣▽￣)～
+                  </div>
+              </template>
             </w-table>
           </div>
           <!-- :disabled="isDisabled" -->
@@ -302,7 +307,10 @@
   } */
 </style>
 <style lang='scss' scoped>
-
+.no-more {
+  text-align: center;
+    color: #666;
+}
 .tab-style {
   min-height: 32px;
   // height:32px;

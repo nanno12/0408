@@ -150,7 +150,6 @@ export default {
           DETAIL_NAME: '',
           MAIN_CODE: ''
         }, // 成分小类代码
-        chargeList: [],
         chargeitems:[],
         detailname:'', // 成分小类名称
         amount:"1", // 默认数量
@@ -388,10 +387,11 @@ export default {
         this.addfactor = row.DETAIL_UNIT
         this.form = {...this.form}
       }
+      console.log('this.form.maincode',this.form.maincode);
       if (this.form.maincode.MAIN_CODE === '' ) {
         const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
         const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
-        console.log(find,'res',res,this.form);
+        console.log(find,'res',res.data.MAIN_CODE,res,this.form);
         this.form.maincode.MAIN_CODE= find.MAIN_CODE
         this.form.maincode.MAIN_NAME = find.MAIN_NAME
         this.form.maincode = {...this.form.maincode}
@@ -412,10 +412,10 @@ export default {
               this.submitItemDate()
               console.log(this.modalTitle);
             }
-            this.$refs.form.clearValidate();
-            this.$refs.form.resetFields();
+            // this.$refs.form.clearValidate();
+            // this.$refs.form.resetFields();
           }else {
-            console.log('invalid form !')
+            console.log('invalid form !',this.form)
           }
         })
       } else {
@@ -514,22 +514,27 @@ export default {
       }
     },
     async submitItemDate() {
-      if(this.modalType === MODAL_TITLE.ADD) {
-        console.log('this.form.chargeItems',this.form.chargeItems);
-        const list = {
-          mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
-          itemcode: this.form.itemcode, // 项目代码
-          itemname: this.form.itemname, // 项目名称
-          chargeitems: this.form.chargeItems,
-          maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
-          mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
-          detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
-          detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
-          amount: this.form.amount, // 默认数量
-          hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-          addfactor:this.form.addfactor, // 增减因子
-          remark: this.form.remark // 备注
-        }
+      let olditemcode =''
+      if(this.modalType !== MODAL_TITLE.ADD) {
+        olditemcode=this.oldItemcode// 原来的项目代码
+      }
+      console.log('this.oldItemcode',this.oldItemcode);
+      let list = {
+        mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
+        itemcode: this.form.itemcode, // 项目代码
+        olditemcode,
+        itemname: this.form.itemname, // 项目名称
+        chargeitems: this.form.chargeItems,
+        maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
+        mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
+        detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
+        detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
+        amount: this.form.amount, // 默认数量
+        hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
+        addfactor:this.form.addfactor, // 增减因子
+        remark: this.form.remark // 备注
+      }
+      console.log('this.form.chargeItems',this.form,list);
         const res = await dataApi.getAddMouldItem({...list})
         if (res.type === 'SUCCESS') {
           this.showMsg(res.message,'success')
@@ -543,7 +548,7 @@ export default {
         } else {
           this.showMsg(res.message,'error')
         }
-      }
+      
     },
     //  if {
       // this.$refs.form.validateForm(async (valid) => {
@@ -640,16 +645,23 @@ export default {
       // })
     // },
     // 点击模态框取消按钮事件
-    reset (t) {
-      console.log('tt',t);
-      if (t === 'inner') {
+    reset (formName) {
+      console.log('tt',formName);
+      if (formName === 'inner') {
         this.innerVisible = false
         this.visible = true
       } else {
-        this.$refs.form.clearValidate();
-        this.$refs.form.resetFields();
+        
+      this.$nextTick(() => {
+        this.$refs[formName].resetFields()
+      })
+        // this.$refs[formName].resetFields();
+        // this.$refs.form.clearValidate();
+        // this.$refs.form.resetFields();
         this.visible = false
       }
+      // this.$refs.form.resetFields();
+      console.log(this.form);
     },
     // 列表删除提示框确定按钮
     handleConfirm (row,t,index) {
@@ -719,11 +731,11 @@ export default {
         this.form.amount = res.data.amount
         this.form.mouldcode = res.data.mouldcode
         this.form.remark = res.data.remark
-        this.form.detailcode =  res.data.detailname
+        // this.form.detailcode =  res.data.detailname
         this.form.maincode = {...this.form.maincode}
         this.form.detailcode = {...this.form.detailcode}
         this.oldItemcode = res.data.itemcode
-        console.log('hfkjdsk');
+        console.log('hfkjdsk',this.form.detailcode);
         this.modalTitle = MODAL_TITLE.ITEM
         this.modalType = this.MODAL_TITLE.EADIT
         this.modalShow = false
@@ -852,12 +864,12 @@ export default {
       console.log(this.$refs.costList.scrollTop , this.$refs.costList.scrollHeight);
       this.loading = true
       const list = this.listData.slice(this.s,this.e)
-      const temp = []
-      for (let i = list; i <= list.length + 20; i++) {
-        console.log('iiii',i);
-        temp.push(i);
-      }
-      console.log('temp',temp);
+      // const temp = []
+      // for (let i = list; i <= list.length + 20; i++) {
+      //   console.log('iiii',i);
+      //   temp.push(i);
+      // }
+      // console.log('temp',temp);
       list.map((item,index)=>{
         console.log('index',index);
         setTimeout(() => {

@@ -55,7 +55,7 @@ export default {
       hoverIndex2: -1,
       clickIndex2: -1, 
       editVal: false,
-      isDisabled:false,
+      isDisabled:true,
       show: true,
       findId: '',
       findtype:'',
@@ -87,11 +87,18 @@ export default {
   },
   watch: {
     'form.editVal'(o,n) {
+      console.log('o,n',o,n);
       if ( o === this.idVal.SPECIMEN_NAME)  {
         this.isDisabled = true
       }else {
         this.isDisabled = false
       }
+    },
+    'handleChangeInput' (o,n) {
+      const find = o.find(it => it.specimenName !=='')
+      console.log('find',find);
+      // if ()
+      console.log('o,n',o,n);
     }
   },
   methods:{
@@ -350,6 +357,15 @@ export default {
     });
     },300),
     async handleChangeInput (val) {
+      console.log(this.form.dynamicArr,'789');
+      const find = this.form.dynamicArr.find(it => it.specimenName !=='')
+      console.log('find',find);
+      if (find === undefined) {
+        this.isDisabled = true
+      } else {
+        this.isDisabled = false
+      }
+      // console.log('o,n',o,n);
       this.inputValue = val
         // if (this.form.dynamicArr.length>1) {
         // const list = this.form.dynamicArr.slice(0,this.form.dynamicArr.length-2)
@@ -418,9 +434,9 @@ export default {
       })
     },300),
     reset () {
-      this.int()
       this.$refs.form.resetFields()
       this.visible = false
+      this.int()
     },
     isTitle (title) {
       if (title ==='器官/系统') {

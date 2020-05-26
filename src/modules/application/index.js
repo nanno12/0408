@@ -1,13 +1,13 @@
-import { debounce } from 'throttle-debounce'
+// import { debounce } from 'throttle-debounce'
 import apiData from './api/api'
 
 import { MODAL_TITLE, QUERY_PAGE} from '../constant'
 export default {
   data() {
     let checkOrgTypeCode = async (rule, value, callback) => {
-      console.log('value',value);
+      console.log('value',value,this.rowLeftList.TEMPLATE_NAME);
+      if (value === this.rowLeftList.TEMPLATE_NAME || value === this.rowRightList.itemCode || value === this.rowRightList.itemName) return
       if (value) {
-
          const params = {
           type:this.type,
           name:value
@@ -43,9 +43,10 @@ export default {
       loading1:false,
       innerVisible:false,
       paginationBoxReflow:true,
-      s:0,
-      e:20,
-      scrollToLower: () => {},
+      SELECTWRAP_DOM:'',
+      s:20,
+      e:40,
+      // scrollToLower: () => {},
       listData:[],
       hoverIndex: -1,
       tableconten:'请输入关键字查询数据',
@@ -218,8 +219,15 @@ export default {
                 this.$refs.costList.toggleRowSelection(it,true)
               }
             })
-          })
         })
+        
+       
+        //     // 获取到的不是全部数据 当滚动到底部 继续获取新的数据
+        //     // if (!this.allData) this.getMoreLog()
+        //     console.log(Math.ceil(scrollTop+windowHeight),'',scrollTop+windowHeight,scrollHeight);
+        //   }
+        // })
+      })
     },
     'value' (oldVal, newVal) {
       let find = oldVal.find(it => it === 9)
@@ -256,6 +264,10 @@ export default {
     this.list()
     
   },
+  mounted() {
+    this.show()
+    console.log('this.SELECTWRAP_DOM',this.SELECTWRAP_DOM);
+  },
   methods: {
     handlePreview(file) {
       console.log(file);
@@ -263,6 +275,44 @@ export default {
     handleTagClose (index) {
       this.form.chargeItems.splice(index, 1)
     },
+    show () {
+      console.log('5829');
+      this.$nextTick(_ => {
+        // console.log(this.$refs.costList.bodyWrapper) // 获取el-dialog中的table
+        let SELECTWRAP_DOM = this.$refs.costList.bodyWrapper
+        SELECTWRAP_DOM.addEventListener('scroll', () => {
+          let scrollTop = SELECTWRAP_DOM.scrollTop
+          // 变量windowHeight是可视区的高度
+          let windowHeight = SELECTWRAP_DOM.clientHeight || SELECTWRAP_DOM.clientHeight
+          // 变量scrollHeight是滚动条的总高度
+          let scrollHeight = SELECTWRAP_DOM.scrollHeight || SELECTWRAP_DOM.scrollHeight
+          let add = Math.ceil(scrollTop+windowHeight)
+          if (this.listData.length < 20 ) return
+          if (add === scrollHeight) {
+            if (this.listData.length!==this.costList.length) {
+              this.loading = true
+            }
+            console.log(this.s,this.e);
+            const list = this.listData.slice(this.s,this.e)
+            list.map((item)=>{
+              setTimeout(() => {
+                this.costList.push(item)
+                this.loading = false
+              }, 600)
+            })
+            if (this.listData.length!==this.costList.length) {
+              this.s= this.s+20
+              this.e= this.e+20
+            }
+            console.log(this.s,this.e,'leng',this.listData.length,this.costList.length);
+            //  console.log('this.s,this.e',this.s,this.e,this.listData.length);
+            // 获取到的不是全部数据 当滚动到底部 继续获取新的数据
+            // if (!this.allData) this.getMoreLog()
+            console.log(Math.ceil(scrollTop+windowHeight),scrollHeight);
+          }
+        })
+      })
+    },
     async list (id) {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
       this.loading1 = true
@@ -316,7 +366,9 @@ export default {
       console.log('ididiid',id);
       const res = await apiData.getPafTemplateitems({
         pafTemplateId:id,
-        ...QUERY_PAGE
+        pageIndex:1,
+        pageSize:20,
+        // currentPager:1
       })
       this.rigthData = res.data.itemList
       this.total = res.data.itemSum
@@ -355,7 +407,8 @@ export default {
           break;
         default:
           this.h =  MODAL_TITLE.CLONE
-          this.getcopy(item.ID)
+          this.getPafTemplate(item.ID)
+          // this.getcopy(item.ID)
           this.visible = true
       } 
     },
@@ -480,31 +533,40 @@ export default {
     },
     async handleSearch(search) {
       this.isDisabled = true
+      this.s= 20
+      this.e= 40
+      // this.costList = []
       await this.getCostList(search)
+      // this.show()
     },
     //  获取收费项目列表
     async getCostList (search) {
       // this.selectionVal = []
+  
       const res = await apiData.getQuery({CHARGE_SEARCH:search})
       if (res.data === null) return
       this.loading = true
-      this.costList = res.data.slice(0,20)
-      this.listData = res.data
-      this.loading = false
-      this.tableconten = '暂无数据'
-    },
-    fetchData () {
-      this.loading = true
-      const list = this.listData.slice(this.s,this.e)
-      list.map(item=>{
-        setTimeout(() => {
-        this.costList.push(item)
+      setTimeout(() => {
+        this.costList = res.data.slice(0,20)
         this.loading = false
+
+        this.listData = res.data
       }, 600)
-      })
-      this.s= this.s+20
-      this.e= this.e+20
+      this.tableconten = '暂无数据'
+      console.log('leng',res.data.length,this.costList.length);
     },
+    // fetchData () {
+    //   this.loading = true
+    //   const list = this.listData.slice(this.s,this.e)
+    //   list.map(item=>{
+    //     setTimeout(() => {
+    //     this.costList.push(item)
+    //     this.loading = false
+    //   }, 600)
+    //   })
+    //   this.s= this.s+20
+    //   this.e= this.e+20
+    // },
     // 界面新增按钮
     async handleAdd(w) {
       this.h = MODAL_TITLE.ADD
@@ -533,6 +595,7 @@ export default {
       if (t !== 'out') {
         console.log('this.selectionVal',this.selectionVal);
         this.innerVisible = false
+        this.loading = false
         this.visible = true
         this.modalTitle = MODAL_TITLE.ITEM
         let arr = []
@@ -570,6 +633,9 @@ export default {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {          
             if (this.modalTitle === MODAL_TITLE.FORM) {
+              // if (this.h ===  MODAL_TITLE.CLONE) {
+              //   this.getcopy(item.ID)
+              // }
               this.form = {... this.form}
               const list = {
                 templateName: this.form.templateName,
@@ -602,13 +668,13 @@ export default {
                 this.visible = false
                 this.init()
               } else {
-                this.showMsg(this.h ==='修改'?'修改申请单失败':'新增申请单失败','error')
+                this.showMsg(this.h ==='修改'?res.message:res.message,'error')
               }
               // this.showMsg1(res,'新增申请单')
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
               let pafTemplateId = ''  
               let seqNo =''
-              this.form.chargeItemName=[]
+              // this.form.chargeItemName=[]
               if(this.h !=='修改') {
                 if (this.clickIndex === 0) {
                   pafTemplateId = this.leftData[0].ID
@@ -667,6 +733,7 @@ export default {
                 this.showMsg(this.h ==='修改'?'修改申请单项目失败':'新增申请单项目失败','error')
               }
             } else {
+              console.log('7698');
               this.modalTitle = MODAL_TITLE.ITEM
             }
         } else {
@@ -703,9 +770,10 @@ export default {
         // this.costList = []
         this.innerVisible = false
         this.visible = true
+        this.loading = false
       } else {
         this.visible = false
-        this.form.chargeItemName=[]
+        // this.form.chargeItemName=[]
         console.log('this.form.chargeItems = []',this.form);
         this.$refs.form.resetFields()
         this.init()
@@ -777,7 +845,7 @@ export default {
       // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
   },
-  mounted () {
-    this.scrollToLower = debounce(200, this.fetchData)
-  }
+  // mounted () {
+  //   this.scrollToLower = debounce(200, this.fetchData)
+  // }
 };

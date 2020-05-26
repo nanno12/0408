@@ -126,32 +126,32 @@
               </w-form-item>
             </w-col>
             <w-col :span="12">
-              <w-form-item label="开单科室" class="select-input">
-              <w-select
-                style="width:100%"
-                v-model="form.applydepts"
-                 multiple
-                filterable
-                remote
-                reserve-keyword
-                :collapse-tags=true
-                value-key="deptcode"
-                :loading="loading"
-                @focus="handleFocusInput"
-                placeholder="请输入编码/名称搜索"
-                :remote-method="remoteMethod">
-                <w-option
-                  v-for="(item,index) in openings"
-                  :key="index"
-                  :label="item.DEPTNAME"
-                  :value="{deptcode:item.DEPTCODE,value:item.DEPTCODE}"
-                >
-                <span class="flex justify">
-                  <span>{{item.DEPTNAME}}</span>
-                  <span>{{item.DEPTCODE}}</span>
-                </span>
-                </w-option>
-              </w-select>
+              <w-form-item label="开单科室" prop="applydepts" class="select-input">
+                <w-select
+                  style="width:100%"
+                  v-model="form.applydepts"
+                  multiple
+                  filterable
+                  remote
+                  reserve-keyword
+                  :collapse-tags=true
+                  value-key="deptcode"
+                  :loading="loading"
+                  @focus="handleFocusInput"
+                  placeholder="请输入编码/名称搜索"
+                  :remote-method="remoteMethod">
+                  <w-option
+                    v-for="(item,index) in openings"
+                    :key="index"
+                    :label="item.DEPTNAME"
+                    :value="{deptcode:item.DEPTCODE,value:item.DEPTCODE}"
+                  >
+                  <span class="flex justify">
+                    <span>{{item.DEPTNAME}}</span>
+                    <span>{{item.DEPTCODE}}</span>
+                  </span>
+                  </w-option>
+                </w-select>
               </w-form-item>
             </w-col>
           </w-row>
@@ -160,7 +160,7 @@
         <w-row v-else>
           <w-row>
             <w-col :span="12" class="po_re">
-              <w-form-item label="成分大类" required >
+              <w-form-item label="成分大类" required  prop="maincode">
                 <w-select v-model="form.maincode" filterable value-key="MAIN_CODE" @change="handleSelChange" placeholder="请选择成分大类">
                   <w-option
                     v-for="item in mainTypesList"
@@ -174,9 +174,9 @@
             </w-col>
             <w-col :span="12" class="po_re">
               <w-form-item label="成分小类" prop="detailcode"
-              :rules="[
-                { required: true, message: '请选择成分小类'},
-              ]">
+                :rules="[
+                  { required: true, message: '请选择成分小类'},
+                ]">
                 <w-select @change="handleSelChange1" filterable value-key="DETAIL_CODE" v-model="form.detailcode" placeholder="请选择成分小类">
                   <w-option
                     v-for="item in detailTypesList"
@@ -190,7 +190,6 @@
                 </span>
               </w-form-item>
             </w-col>
-            
           </w-row>
           <w-row>
             <w-col :span="12">
@@ -208,21 +207,10 @@
           </w-row>
           <w-row>
             <w-col>
-              <!-- <w-form-item class=" pd-right" label="费用对应" prop="">
-                <w-input
-                  @focus="handlePlus('charge')"
-                  readonly
-                  sufAppendIsButton
-                  placeholder="请输入关键字搜索收费项目"
-                  v-model="form.chargeList">
-                </w-input>
-              </w-form-item> -->
               <w-form-item
                 label="费用对应"
                 prop="value2"
-                :rules="[{
-                  required: true,type: 'array', message: '请选择费用对应', trigger: 'change'
-                }]"
+               
                >
                 <template>
                   <div class="tab-style" @click="handleIputVal">
@@ -240,7 +228,7 @@
           </w-row>
           <w-row>
             <w-col :span="12">
-              <w-form-item label="默认数量">
+              <w-form-item label="默认数量" prop="amount">
                 <w-input v-model.number="form.amount">
                   <template slot="suf-append"><span style="padding: 0 5px;">{{amount}}</span></template>
                 </w-input>
@@ -257,7 +245,7 @@
           </w-row>
           <w-row>
             <w-col :span="24">
-              <w-form-item label="备注">
+              <w-form-item label="备注" prop="remark">
                 <w-input v-model="form.remark"  showCounter
                   placeholder="请填写备注"></w-input>
               </w-form-item>
