@@ -219,7 +219,15 @@ export default {
     }
   }
 }
+.w-table__body tr,
+  .w-table__body td {
+    padding: 0;
+    height: 40px;
+}
 
+.w-table .cell, .w-table th>div {
+  padding: 0 10px;
+}
 .w-modal {
   // .w-button--primary,
   // .w-button--default{

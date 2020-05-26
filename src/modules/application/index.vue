@@ -62,7 +62,7 @@
           <w-pagination
             :total="total"
             class="fr pd-top_16"
-             @current-change="handleCurrentChange"
+            @current-change="handleCurrentChange"
             :current-page="QUERY_PAGE.pageIndex"
             :page-size="QUERY_PAGE.pageSize"
             @actived-change="currentChange"
@@ -193,14 +193,19 @@
                >
                 <template>
                   <div class="tab-style" @click="handleIputVal">
+                    <i class="iconfont  iconweibiaoti--"></i>
+                  </div>
                     <!-- 点击选择收费项目 -->
                     <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
-                    :closable="true"
+                      :closable="true"
                       @close="handleTagClose(index)"
                       :key="item.chargeItemCode">
-                      {{item.chargeItemName}}
+                      <w-radio-group v-model="radioValue" @change="handleTagChoose(item)">
+                        <w-radio :label="item.chargeItemCode">{{item.chargeItemName}}</w-radio>
+                      </w-radio-group>
+                      <!-- <i  class="iconfont iconshoucang pd-right_5"></i> -->
+                      
                     </w-tag>
-                  </div>
                 </template>
               </w-form-item>
             </w-col>
@@ -226,7 +231,7 @@
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
-           @open="show"
+           @open="showList"
           append-to-body>
           <div class="search-style clearfix">
             <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
@@ -238,6 +243,7 @@
             <w-table
               v-loading="loading"
               :data="costList"
+              :border="true"
               :lower-threshold="10"
               win-loading-text="正在获取数据..."
               height="300"
@@ -251,7 +257,9 @@
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
-              <template slot="append" v-if=" costList.length>20 && listData.length===costList.length  ">
+              <w-table-column prop="CHARGE_MTECH_FLAG"  width= '150px'  label="医技确认"></w-table-column>
+              <!--  || this.selectionVal.length===this.form.chargeItems.length -->
+              <template slot="append" v-if=" costList.length>20 && listData.length===costList.length ">
                   <div class="no-more">
                     我~是有底线的 (～￣▽￣)～
                   </div>
@@ -261,7 +269,7 @@
           <!-- :disabled="isDisabled" -->
           <span slot="footer" class="dialog-footer ">
             <w-button @click="reset('inner')">取消</w-button>
-            <w-button  @click="submit('inner')" type="primary" >确定</w-button>
+            <w-button :disabled="isDisabled"  @click="submit('inner')" type="primary" >确定</w-button>
           </span>
         </w-modal>
       </w-form>
@@ -278,15 +286,31 @@
 </template>
 
 <script src="./index.js"></script>
+<style lang ='scss'>
+  .w-radio,
+  .w-radio__label  {
+    color: #0F49ED!important;
+  }
+</style>
 <style lang='scss' scoped>
+.no-more {
+  text-align: center;
+    color: #666;
+}
 .list-style {
   height: calc(100vh - 120px);
   overflow-y: auto;
 }
-// .w-row {
-//   margin-bottom: 15px;
-// }
 .w-modal__body {
+  .w-tag {
+   background: rgba(194,210,255,1);
+    border-radius: 2px;
+    color: #0F49ED;
+    height: 32px;
+    line-height: 29px;
+    margin-right: 5px;
+  }
+  
   .row-style {
     .w-row {
       margin-bottom: 16px;
@@ -299,28 +323,18 @@
     width: 260px!important;
   }
 }
-</style>
-
-<style lang ='scss'>
-  /* .w-modal__body {
-    padding: 16px 20px!important;
-  } */
-</style>
-<style lang='scss' scoped>
-.no-more {
-  text-align: center;
-    color: #666;
-}
 .tab-style {
-  min-height: 32px;
-  // height:32px;
-  // width: 300px;
-  background:#f3f6fe;
-  border-radius:2px;
+    display: inline-block;
+    border-radius: 2px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    opacity:0.5;
+    font-weight: 700;
+    border: 1px solid #999;
 }
-.tab-style:hover {
-  background-color: #e7edfd;
-}
+
 .addclass {
   color: red;
 }
@@ -347,14 +361,9 @@
   .clickBg,
   .hoverBg {
     background:rgba(207,224,255,1)!important;
-    // color #0F49ED;
   }
-   
 }
 .w-select {
   width: 100%;
 }
-</style>
-<style lang='stylus'>
-
 </style>

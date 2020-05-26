@@ -30,7 +30,7 @@ export default {
     }
     return {
       modalTitle:'',
-      
+      radioValue:1,
       type:'',
       fileList: [],
       height:'200px',
@@ -44,8 +44,8 @@ export default {
       innerVisible:false,
       paginationBoxReflow:true,
       SELECTWRAP_DOM:'',
-      s:20,
-      e:40,
+      s:0,
+      e:20,
       // scrollToLower: () => {},
       listData:[],
       hoverIndex: -1,
@@ -213,10 +213,16 @@ export default {
   watch: {
     'costList' (oldVal, newVal) {
       this.$nextTick(() => {
+        // this.costList = []
         this.form.chargeItems.map((v) => {
+          this.loading = true
             this.costList.find(it =>{
+              // this.costList = []
               if (v.chargeItemCode === it.CHARGE_CODE) {
-                this.$refs.costList.toggleRowSelection(it,true)
+                setTimeout(() => {
+                  this.$refs.costList.toggleRowSelection(it,true)
+                  this.loading = false
+                }, 600)
               }
             })
         })
@@ -264,19 +270,19 @@ export default {
     this.list()
     
   },
-  mounted() {
-    this.show()
-    console.log('this.SELECTWRAP_DOM',this.SELECTWRAP_DOM);
-  },
+  
   methods: {
+    handleTagChoose (item) {
+      console.log('item',item);
+    },
     handlePreview(file) {
       console.log(file);
     },
     handleTagClose (index) {
       this.form.chargeItems.splice(index, 1)
     },
-    show () {
-      console.log('5829');
+    showList () {
+      console.log(this.selectionVal.length ,this.form.chargeItems.length,'leng',this.listData.length,this.costList.length);
       this.$nextTick(_ => {
         // console.log(this.$refs.costList.bodyWrapper) // 获取el-dialog中的table
         let SELECTWRAP_DOM = this.$refs.costList.bodyWrapper
@@ -287,9 +293,12 @@ export default {
           // 变量scrollHeight是滚动条的总高度
           let scrollHeight = SELECTWRAP_DOM.scrollHeight || SELECTWRAP_DOM.scrollHeight
           let add = Math.ceil(scrollTop+windowHeight)
+          // console.log(this.form.chargeItems.length , this.costList.length);
           if (this.listData.length < 20 ) return
           if (add === scrollHeight) {
             if (this.listData.length!==this.costList.length) {
+              this.s= this.s+20
+              this.e= this.e+20
               this.loading = true
             }
             console.log(this.s,this.e);
@@ -300,12 +309,7 @@ export default {
                 this.loading = false
               }, 600)
             })
-            if (this.listData.length!==this.costList.length) {
-              this.s= this.s+20
-              this.e= this.e+20
-            }
-            console.log(this.s,this.e,'leng',this.listData.length,this.costList.length);
-            //  console.log('this.s,this.e',this.s,this.e,this.listData.length);
+            // console.log(this.s,this.e,'leng',this.listData.length,this.costList.length);
             // 获取到的不是全部数据 当滚动到底部 继续获取新的数据
             // if (!this.allData) this.getMoreLog()
             console.log(Math.ceil(scrollTop+windowHeight),scrollHeight);
@@ -519,6 +523,7 @@ export default {
     // 点击收费项目
     async handleIputVal () {
       this.innerVisible  = true
+      this.isDisabled = true
       this.tableconten='请输入关键字查询数据'
       let list = []
       const res = await apiData.getQuery({CHARGE_SEARCH:''})
@@ -532,28 +537,27 @@ export default {
       })
     },
     async handleSearch(search) {
-      this.isDisabled = true
-      this.s= 20
-      this.e= 40
+      // console.log('search',this.search);
+      // this.isDisabled = true
+      this.s= 0
+      this.e= 20
       // this.costList = []
       await this.getCostList(search)
-      // this.show()
     },
     //  获取收费项目列表
     async getCostList (search) {
       // this.selectionVal = []
-  
       const res = await apiData.getQuery({CHARGE_SEARCH:search})
       if (res.data === null) return
       this.loading = true
       setTimeout(() => {
         this.costList = res.data.slice(0,20)
+        this.listData = res.data
         this.loading = false
 
-        this.listData = res.data
       }, 600)
       this.tableconten = '暂无数据'
-      console.log('leng',res.data.length,this.costList.length);
+      console.log(res.data.length);
     },
     // fetchData () {
     //   this.loading = true
@@ -614,7 +618,8 @@ export default {
               chargeItemCode:item.CHARGE_CODE,	// --收费编码
               chargeItemName:item.CHARGE_NAME,	// --收费项目名称
               chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
-              chargeItemType:item.CHARGE_TYPE //  --收费项目类型
+              chargeItemType:item.CHARGE_TYPE, //  --收费项目类型
+              nuozi:item.CHARGE_MTECH_FLAG
             })
             this.form.value2.push(item.CHARGE_NAME)
             arr.push(item.CHARGE_PRICE)
@@ -628,15 +633,14 @@ export default {
         }
         this.form.item.itemPrice = sum
         this.search = ''
+        this.listData = []
         this.$refs.costList.clearSelection()
       }else {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {          
             if (this.modalTitle === MODAL_TITLE.FORM) {
-              // if (this.h ===  MODAL_TITLE.CLONE) {
-              //   this.getcopy(item.ID)
-              // }
               this.form = {... this.form}
+              
               const list = {
                 templateName: this.form.templateName,
                 printTemplate: this.form.printTemplate,
@@ -647,11 +651,20 @@ export default {
                 isShowEndpscopic:this.form.isShowEndpscopic, //是否显示内镜信息
                 isShowHpv: this.form.isShowHpv
               }
-              const res = await apiData.getAddUpdateTemplate({
-                ...list, 
-                id:this.h ==='修改'?this.rowLeftList.ID:''})
+              let res = ''
+              if (this.h ===  MODAL_TITLE.CLONE) {
+                res = await apiData.getcopy({
+                  ...list,
+                  id:this.rowLeftList.ID
+                })
+              } else {
+                res = await apiData.getAddUpdateTemplate({
+                  ...list, 
+                  id:this.h ==='修改'?this.rowLeftList.ID:''})
+              }
+              console.log('res',res);
               if (res.type === 'SUCCESS') {
-                this.showMsg(this.h ==='修改'?'修改申请单成功':'新增申请单成功','success')
+                this.showMsg(this.h ==='修改'?'修改申请单成功':(this.h ==='新增'?'新增申请单成功':'复制申请单成功'),'success')
                 if (this.h ==='修改') {
                   this.list(this.rowLeftList.ID)
                   this.h= ''
@@ -668,7 +681,7 @@ export default {
                 this.visible = false
                 this.init()
               } else {
-                this.showMsg(this.h ==='修改'?res.message:res.message,'error')
+                this.showMsg(res.message,'error')
               }
               // this.showMsg1(res,'新增申请单')
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
@@ -679,7 +692,7 @@ export default {
                 if (this.clickIndex === 0) {
                   pafTemplateId = this.leftData[0].ID
                 } else if (this.clickIndex === this.leftData.length - 1) {
-                  pafTemplateId = this.leftData[this.leftData.length-1]
+                  pafTemplateId = this.leftData[this.leftData.length-1].ID
                 } else {
                   pafTemplateId = this.rowLeftList.ID
                 }
@@ -689,11 +702,12 @@ export default {
                 if (this.clickIndex === 0) {
                   pafTemplateId = this.leftData[0].ID
                 } else if (this.clickIndex === this.leftData.length - 1) {
-                  pafTemplateId = this.leftData[this.leftData.length-1]
+                  pafTemplateId = this.leftData[this.leftData.length-1].ID
                 } else {
                   pafTemplateId = this.rowLeftList.ID
                 }
               }
+              console.log('pafTemplateId',pafTemplateId);
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -768,6 +782,7 @@ export default {
       if (t !== 'out') {
         this.search = ''
         // this.costList = []
+        this.listData = []
         this.innerVisible = false
         this.visible = true
         this.loading = false
@@ -845,7 +860,7 @@ export default {
       // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
   },
-  // mounted () {
-  //   this.scrollToLower = debounce(200, this.fetchData)
-  // }
+  mounted() {
+    this.showList()
+  },
 };

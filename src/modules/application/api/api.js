@@ -20,7 +20,7 @@ const url = {
   findPafTemplate:DEBUGAPI + '/clf/pafbase/findPafTemplate', // 查看申请单模板
   pafTemplate:DEBUGAPI +'/clf/pafbase/getPafTemplateDetails', // 查看申请单详情
   pafTemplateitems:DEBUGAPI + '/clf/pafbase/getPafTemplateitems', // 获得申请单下的项目集合
-  copy: DEBUGAPI + '/clf/pafbase/copyTemplate',  // 申请单模板复制
+  copy: DEBUGAPI + '/clf/pafbase/copyTemplate2',  // 申请单模板复制
   deletePafTemplate: DEBUGAPI + '/clf/pafbase/deletePafTemplate',  // 删除申请单模板,根据ID进行
   addUpdateTemplate:DEBUGAPI + '/clf/pafbase/addOrUpdatePafTemplate' // 添加或者更新申请单模板，包含了医嘱检查项目信息
   // ceshi: DEBUGAP + 'Pacs/common/request/gethospitalinfo'

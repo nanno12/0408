@@ -3,8 +3,8 @@
     <w-table :data="tableData" border style="width: 100%"
       @selection-change="handleSelectionChange"
       @row-click="handleRow" >
-      <w-table-column v-if="isShow.selection" type="selection" width="55"></w-table-column>
-      <w-table-column v-if="isShow.index" type="index" :label="isShow.indexTitle" align="center"  width="80"></w-table-column>
+      <w-table-column v-if="isShow.selection" type="selection" width="40"></w-table-column>
+      <w-table-column v-if="isShow.index" type="index" :label="isShow.indexTitle" align="center"  width="50"></w-table-column>
       <w-table-column v-for="(item,index) in listTable" :key="index" 
         :prop="item.prop"
         :label="item.label"
