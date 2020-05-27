@@ -42,7 +42,7 @@
         <w-table-column
           label="序号"
           type="index"
-          width="80"
+          width="50"
         ></w-table-column>
         <w-table-column
           label="规则描述"

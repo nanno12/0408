@@ -11,7 +11,7 @@
             :row-class-name="tableRowClassName"
             ref="interfaceTable"
             :data="listMoulds" :border="true" style="width: 100%">
-            <w-table-column type="index" width="70" align="center" label="序号"></w-table-column>
+            <w-table-column type="index" width="50" align="center" label="序号"></w-table-column>
             <w-table-column prop="MOULD_TYPE_STR" label="类型" width="100"></w-table-column>
             <w-table-column prop="MOULD_NAME" label="名称" ></w-table-column>
             <w-table-column fixed="right" label="操作" align="center" width="170" reference-cell>
@@ -31,7 +31,7 @@
           </title-style>
           <div class="list-style">
           <w-table  :data="listMouldItems"  :border="true" style="width: 100%">
-            <w-table-column type="index" width="70" align="center" label="序号">
+            <w-table-column type="index" width="50" align="center" label="序号">
             </w-table-column>
             <w-table-column prop="MOULD_ITEM_NAME" label="项目名称">
             </w-table-column>

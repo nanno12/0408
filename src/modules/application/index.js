@@ -32,7 +32,6 @@ export default {
       modalTitle:'',
       radioValue:1,
       type:'',
-      fileList: [],
       height:'200px',
       isDisabled: true,
       MODAL_TITLE,
@@ -44,6 +43,7 @@ export default {
       innerVisible:false,
       paginationBoxReflow:true,
       SELECTWRAP_DOM:'',
+      tagChooseVal:'',
       s:0,
       e:20,
       // scrollToLower: () => {},
@@ -55,7 +55,7 @@ export default {
       value2: [], // 搜索值
       // pageSize:10,
       // currentPage:20,
-      total:100,
+      total:0,
       value: [1,3,4],
       rowRightList: {},
       rowLeftList: {},
@@ -203,6 +203,7 @@ export default {
         ]
       },
       rigthData: [],
+      printTemplateList:[],
       rowLi:{},
       leftData: {
         IS_SHOW_GYNECOLOGICAL:'1234'
@@ -268,15 +269,26 @@ export default {
   },
   created() {
     this.list()
+    this.getPrintTemplate()
     
   },
   
   methods: {
     handleTagChoose (item) {
-      console.log('item',item);
+      this.tagChooseVal = item
+      this.form.chargeItems.find(it => {
+        if(it.chargeItemCode === item.chargeItemCode) {
+          it.chargeMainFlag = '1'
+        } else {
+          it.chargeMainFlag = '0'
+        }
+      })
+      console.log('item',item,this.form.chargeItems);
     },
-    handlePreview(file) {
-      console.log(file);
+    async getPrintTemplate () {
+      const res = await apiData.getPrintTemplate({typeTemplate: '病理申请单'})
+      this.printTemplateList= res.data
+      console.log(res);
     },
     handleTagClose (index) {
       this.form.chargeItems.splice(index, 1)
@@ -293,7 +305,7 @@ export default {
           // 变量scrollHeight是滚动条的总高度
           let scrollHeight = SELECTWRAP_DOM.scrollHeight || SELECTWRAP_DOM.scrollHeight
           let add = Math.ceil(scrollTop+windowHeight)
-          // console.log(this.form.chargeItems.length , this.costList.length);
+          console.log(scrollTop,windowHeight);
           if (this.listData.length < 20 ) return
           if (add === scrollHeight) {
             if (this.listData.length!==this.costList.length) {
@@ -309,10 +321,8 @@ export default {
                 this.loading = false
               }, 600)
             })
-            // console.log(this.s,this.e,'leng',this.listData.length,this.costList.length);
-            // 获取到的不是全部数据 当滚动到底部 继续获取新的数据
-            // if (!this.allData) this.getMoreLog()
-            console.log(Math.ceil(scrollTop+windowHeight),scrollHeight);
+            
+            console.log(scrollTop+windowHeight,scrollHeight);
           }
         })
       })
@@ -431,7 +441,7 @@ export default {
         id:row.pafTemplateitemId
       })
       this.form = res.data
-      console.log( this.form,'项目修改');
+      console.log(res, this.form,'项目修改');
       let list = []
       res.data.chargeItems.map(item=>{
         list.push(item.chargeItemName)
@@ -480,6 +490,7 @@ export default {
         this.value.push(2)
       }
       this.form.templateName = res.data.templateName
+      this.form.printTemplate = res.data.printTemplate
       this.form.isShowGynecological=res.data.isShowGynecological//	--是否显示妇科
       this.form.isShowOperation=res.data.isShowOperation	//--是否显示手术
       this.form.isShowTumour=res.data.isShowTumour//	--是否显示肿瘤
@@ -619,7 +630,9 @@ export default {
               chargeItemName:item.CHARGE_NAME,	// --收费项目名称
               chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
               chargeItemType:item.CHARGE_TYPE, //  --收费项目类型
-              nuozi:item.CHARGE_MTECH_FLAG
+              chargeMtechFlag:item.CHARGE_MTECH_FLAG, // --收费项目医技确认标志  0不需确认 1确认
+              chargeMainFlag:'0'     // --主项目标志  0非主项目 1主项目
+              
             })
             this.form.value2.push(item.CHARGE_NAME)
             arr.push(item.CHARGE_PRICE)
@@ -719,6 +732,7 @@ export default {
               delete this.form.value2
               this.form.item['pafTemplateId'] = pafTemplateId
               this.form.item['seqNo'] = seqNo
+              // this.form.chargeItems['chargeMainFlag']=   //  --主项目标志	0非主项目 1主项目
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
@@ -781,7 +795,7 @@ export default {
     reset(t) {
       if (t !== 'out') {
         this.search = ''
-        // this.costList = []
+        this.costList = []
         this.listData = []
         this.innerVisible = false
         this.visible = true

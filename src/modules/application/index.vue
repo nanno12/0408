@@ -118,24 +118,14 @@
                 label="申请单模版"
                 prop="printTemplate" >
                 <template>
-
-                <!-- <w-input
-                   
-                  placeholder="点击浏览选择申请单模版"
-                  showCounter
-                  v-model="form.printTemplate"
-                ></w-input> -->
-                <el-upload
-                  class="upload-demo"
-                  ref="upload"
-                  :limit=1
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-preview="handlePreview"
-                  :file-list="fileList"
-                  :auto-upload="false">
-                  <w-button slot="trigger" size="small" type="primary">选取文件</w-button>
-                  <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-                </el-upload>
+                  <w-select v-model="form.printTemplate" placeholder="请选择申请单模版">
+                    <w-option
+                      v-for="(item,index) in printTemplateList"
+                      :key="index"
+                      :label="item.FILENAME"
+                      :value="item.FILENAME">
+                    </w-option>
+                  </w-select>
                 </template>
               </w-form-item>
             </w-col>
@@ -192,20 +182,19 @@
                 }]"
                >
                 <template>
+                  <!-- 点击选择收费项目 -->
+                  <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                    :closable="true"
+                    @close="handleTagClose(index)"
+                    :key="item.chargeItemCode">
+                    <w-radio-group v-if="item.chargeMtechFlag === '1'"  v-model="radioValue" @change="handleTagChoose(item)">
+                      <w-radio :label="item.chargeItemCode"></w-radio>
+                    </w-radio-group>
+                    {{item.chargeItemName}}
+                  </w-tag>
                   <div class="tab-style" @click="handleIputVal">
                     <i class="iconfont  iconweibiaoti--"></i>
                   </div>
-                    <!-- 点击选择收费项目 -->
-                    <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
-                      :closable="true"
-                      @close="handleTagClose(index)"
-                      :key="item.chargeItemCode">
-                      <w-radio-group v-model="radioValue" @change="handleTagChoose(item)">
-                        <w-radio :label="item.chargeItemCode">{{item.chargeItemName}}</w-radio>
-                      </w-radio-group>
-                      <!-- <i  class="iconfont iconshoucang pd-right_5"></i> -->
-                      
-                    </w-tag>
                 </template>
               </w-form-item>
             </w-col>
@@ -257,7 +246,11 @@
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
-              <w-table-column prop="CHARGE_MTECH_FLAG"  width= '150px'  label="医技确认"></w-table-column>
+              <w-table-column width= '100px'  align='center' label="医技确认">
+                <template slot-scope="scope">
+                  {{scope.row.CHARGE_MTECH_FLAG === '0'?'否':'是'}}
+                </template>
+              </w-table-column>
               <!--  || this.selectionVal.length===this.form.chargeItems.length -->
               <template slot="append" v-if=" costList.length>20 && listData.length===costList.length ">
                   <div class="no-more">

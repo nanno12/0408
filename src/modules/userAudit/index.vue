@@ -6,7 +6,7 @@
           <w-button class="po_ab top_0 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
         </title-style>
         <w-table class="mg-right_16" :data="tableData" :border="true" style="width: 100%">
-          <w-table-column type="index" width="70" align="center" label="序号">
+          <w-table-column type="index" width="50" align="center" label="序号">
           </w-table-column>
           <w-table-column prop="time" label="角色代码">
           </w-table-column>
@@ -42,7 +42,7 @@
             <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
           </title-style>
           <w-table :data="tableData" class="mt-15 " :border="true" style="width: 100%">
-            <w-table-column type="index" width="70" align="center" label="序号">
+            <w-table-column type="index" width="50" align="center" label="序号">
             </w-table-column>
             <w-table-column prop="time" label="医生姓名" width="100">
             </w-table-column>
