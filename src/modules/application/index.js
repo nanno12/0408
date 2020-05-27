@@ -642,7 +642,6 @@ export default {
           if (valid) {          
             if (this.modalTitle === MODAL_TITLE.FORM) {
               this.form = {... this.form}
-              
               const list = {
                 templateName: this.form.templateName,
                 printTemplate: this.form.printTemplate,
@@ -672,6 +671,12 @@ export default {
                   this.list(this.rowLeftList.ID)
                   this.h= ''
                 } else {
+                  if(this.h ===  MODAL_TITLE.CLONE) {
+                    // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
+                  } else {
+                    
+                    this.rigthData = []
+                  }
                   const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
                   this.leftData = res.data
                   this.clickIndex = this.leftData.length -1
@@ -679,7 +684,6 @@ export default {
                     this.$refs.box.scrollTop = this.$refs.box.scrollHeight;
                     this.hoverIndex = -1
                   }, 200)
-                  this.rigthData = []
                 }
                 this.visible = false
                 this.init()
