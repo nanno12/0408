@@ -52,7 +52,6 @@
         tableData:[],
         costList:[],
         getRowKeys(row) {
-          console.log('row');
         return row.CHARGE_CODE
       },
     
@@ -73,10 +72,9 @@
       handleSelectionChange(rows) {
          this.multipleSelection = val;//勾选放在multipleSelection数组中
       },
-      // handleSizeChange(val) {
-      //   this.pagesize =val;
-      // },
+      
       handleCurrentChange(val) {
+        console.log('val');
         this.currentPage = val;
       },
  

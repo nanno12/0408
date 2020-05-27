@@ -53,9 +53,10 @@ export default {
       h : '',
       formTitle:'',
       value2: [], // 搜索值
-      // pageSize:10,
-      // currentPage:20,
+      pagesize:20,
+      currentPage:1,
       total:0,
+      total1:0,
       value: [1,3,4],
       rowRightList: {},
       rowLeftList: {},
@@ -130,6 +131,9 @@ export default {
         //   chargeItemType:""  // --收费项目类型
         // }
       ],
+      },
+      getRowKeys(row) {
+        return row.CHARGE_CODE
       },
       checkboxList: [
         {
@@ -215,10 +219,10 @@ export default {
     'costList' (oldVal, newVal) {
       this.$nextTick(() => {
         // this.costList = []
+        console.log('this.form.chargeItems',this.form.chargeItems);
         this.form.chargeItems.map((v) => {
           this.loading = true
             this.costList.find(it =>{
-              // this.costList = []
               if (v.chargeItemCode === it.CHARGE_CODE) {
                 setTimeout(() => {
                   this.$refs.costList.toggleRowSelection(it,true)
@@ -227,13 +231,6 @@ export default {
               }
             })
         })
-        
-       
-        //     // 获取到的不是全部数据 当滚动到底部 继续获取新的数据
-        //     // if (!this.allData) this.getMoreLog()
-        //     console.log(Math.ceil(scrollTop+windowHeight),'',scrollTop+windowHeight,scrollHeight);
-        //   }
-        // })
       })
     },
     'value' (oldVal, newVal) {
@@ -293,40 +290,40 @@ export default {
     handleTagClose (index) {
       this.form.chargeItems.splice(index, 1)
     },
-    showList () {
-      console.log(this.selectionVal.length ,this.form.chargeItems.length,'leng',this.listData.length,this.costList.length);
-      this.$nextTick(_ => {
-        // console.log(this.$refs.costList.bodyWrapper) // 获取el-dialog中的table
-        let SELECTWRAP_DOM = this.$refs.costList.bodyWrapper
-        SELECTWRAP_DOM.addEventListener('scroll', () => {
-          let scrollTop = SELECTWRAP_DOM.scrollTop
-          // 变量windowHeight是可视区的高度
-          let windowHeight = SELECTWRAP_DOM.clientHeight || SELECTWRAP_DOM.clientHeight
-          // 变量scrollHeight是滚动条的总高度
-          let scrollHeight = SELECTWRAP_DOM.scrollHeight || SELECTWRAP_DOM.scrollHeight
-          let add = Math.ceil(scrollTop+windowHeight)
-          console.log(scrollTop,windowHeight);
-          if (this.listData.length < 20 ) return
-          if (add === scrollHeight) {
-            if (this.listData.length!==this.costList.length) {
-              this.s= this.s+20
-              this.e= this.e+20
-              this.loading = true
-            }
-            console.log(this.s,this.e);
-            const list = this.listData.slice(this.s,this.e)
-            list.map((item)=>{
-              setTimeout(() => {
-                this.costList.push(item)
-                this.loading = false
-              }, 600)
-            })
+//     showList () {
+//       console.log(this.selectionVal.length ,this.form.chargeItems.length,'leng',this.listData.length,this.costList.length);
+//       this.$nextTick(_ => {
+//         // console.log(this.$refs.costList.bodyWrapper) // 获取el-dialog中的table
+//         let SELECTWRAP_DOM = this.$refs.costList.bodyWrapper
+//         SELECTWRAP_DOM.addEventListener('scroll', () => {
+//           let scrollTop = SELECTWRAP_DOM.scrollTop
+//           // 变量windowHeight是可视区的高度
+//           let windowHeight = SELECTWRAP_DOM.clientHeight || SELECTWRAP_DOM.clientHeight
+//           // 变量scrollHeight是滚动条的总高度
+//           let scrollHeight = SELECTWRAP_DOM.scrollHeight || SELECTWRAP_DOM.scrollHeight
+//           let add = Math.ceil(scrollTop+windowHeight)
+//           console.log(scrollTop,windowHeight);
+//           if (this.listData.length < 20 ) return
+//           if (add === scrollHeight) {
+//             if (this.listData.length!==this.costList.length) {
+//               this.s= this.s+20
+//               this.e= this.e+20
+//               this.loading = true
+//             }
+//             console.log(this.s,this.e);
+//             const list = this.listData.slice(this.s,this.e)
+//             list.map((item)=>{
+//               setTimeout(() => {
+//                 this.costList.push(item)
+//                 this.loading = false
+//               }, 600)
+//             })
             
-            console.log(scrollTop+windowHeight,scrollHeight);
-          }
-        })
-      })
-    },
+//             console.log(scrollTop+windowHeight,scrollHeight);
+//           }
+//         })
+//       })
+//     },
     async list (id) {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
       this.loading1 = true
@@ -536,6 +533,8 @@ export default {
       this.innerVisible  = true
       this.isDisabled = true
       this.tableconten='请输入关键字查询数据'
+      this.total1 = 0
+      console.log('this.form.chargeItems',this.form.chargeItems);
       let list = []
       const res = await apiData.getQuery({CHARGE_SEARCH:''})
       this.form.chargeItems.map(it => {
@@ -545,6 +544,7 @@ export default {
           }
         })
         this.costList = list
+        this.total1 = list.length
       })
     },
     async handleSearch(search) {
@@ -555,6 +555,7 @@ export default {
       // this.costList = []
       await this.getCostList(search)
     },
+    
     //  获取收费项目列表
     async getCostList (search) {
       // this.selectionVal = []
@@ -562,26 +563,15 @@ export default {
       if (res.data === null) return
       this.loading = true
       setTimeout(() => {
-        this.costList = res.data.slice(0,20)
-        this.listData = res.data
+        this.costList = res.data
+        this.total1 = res.data.length
+        // this.listData = res.data
         this.loading = false
 
       }, 600)
       this.tableconten = '暂无数据'
       console.log(res.data.length);
     },
-    // fetchData () {
-    //   this.loading = true
-    //   const list = this.listData.slice(this.s,this.e)
-    //   list.map(item=>{
-    //     setTimeout(() => {
-    //     this.costList.push(item)
-    //     this.loading = false
-    //   }, 600)
-    //   })
-    //   this.s= this.s+20
-    //   this.e= this.e+20
-    // },
     // 界面新增按钮
     async handleAdd(w) {
       this.h = MODAL_TITLE.ADD
@@ -598,11 +588,10 @@ export default {
       this.$nextTick(()=>{
         this.$refs.form.resetFields();//等弹窗里的form表单的dom渲染完在执行this.$refs.staffForm.resetFields()，去除验证
       });
-
     },
      // 当选择项发生变化时会触发该事件
-     handleSelectionChange (rows,row) {
-       console.log('row',rows,row);
+     handleSelectionChange (rows) {
+       console.log('row',rows);
        this.isDisabled= false
       this.selectionVal = rows
     },
@@ -668,7 +657,8 @@ export default {
               if (this.h ===  MODAL_TITLE.CLONE) {
                 res = await apiData.getcopy({
                   ...list,
-                  id:this.rowLeftList.ID
+                  id:this.rowLeftList.ID,
+                  isDel:'0'
                 })
               } else {
                 res = await apiData.getAddUpdateTemplate({
@@ -796,16 +786,18 @@ export default {
       if (t !== 'out') {
         this.search = ''
         this.costList = []
-        this.listData = []
         this.innerVisible = false
         this.visible = true
         this.loading = false
+        console.log('this.form.chargeItems',this.form.chargeItems);
+        this.$refs.costList.clearSelection();
       } else {
+        this.form.chargeItems=[]
+        console.log('this.form.chargeItems',this.form.chargeItems);
         this.visible = false
-        // this.form.chargeItemName=[]
-        console.log('this.form.chargeItems = []',this.form);
         this.$refs.form.resetFields()
         this.init()
+        this.$refs.costList.clearSelection();
       }
     },
     // 包含元素多选框
@@ -868,13 +860,17 @@ export default {
         this.paginationBoxReflow = true;
       });
     },
+    handleCurrentChange1(val) {
+      console.log('val',val);
+      
+    },
     // 当前页
     currentChange1(val) {
-      this.QUERY_PAGE.pageIndex = val // 当前页
+      this.currentPage = val; // 当前页
       // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
   },
   mounted() {
-    this.showList()
+    // this.showList()
   },
 };

@@ -51,12 +51,6 @@
           @handleDelete="handleDelete"
           style="height: calc(100vh - 160px); overflow-y: auto;"
           :isShow=isShow></win-table>
-        <!-- <win-page
-          :total="100"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          @sizeChange="sizeChange"
-          @currentChange="currentChange"></win-page> -->
           <div
              v-if="paginationBoxReflow">
           <w-pagination
@@ -220,7 +214,6 @@
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
           :visible.sync="innerVisible"
-           @open="showList"
           append-to-body>
           <div class="search-style clearfix">
             <w-input class="mg-bottom_16" v-model="search" placeholder="请输入关键字进行搜索" sufAppendIsButton
@@ -231,17 +224,16 @@
             </w-input>
             <w-table
               v-loading="loading"
-              :data="costList"
+              :data="costList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
               :border="true"
-              :lower-threshold="10"
+              :row-key="getRowKeys"
               win-loading-text="正在获取数据..."
               height="300"
               style="width: 100%"
               ref="costList"
               stripe
-              :empty-text="tableconten"
-              @select-all="handleSelectionChange"
-              @select="handleSelectionChange">
+              @selection-change="handleSelectionChange"
+              :empty-text="tableconten">
               <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
@@ -251,13 +243,16 @@
                   {{scope.row.CHARGE_MTECH_FLAG === '0'?'否':'是'}}
                 </template>
               </w-table-column>
-              <!--  || this.selectionVal.length===this.form.chargeItems.length -->
-              <template slot="append" v-if=" costList.length>20 && listData.length===costList.length ">
-                  <div class="no-more">
-                    我~是有底线的 (～￣▽￣)～
-                  </div>
-              </template>
             </w-table>
+              <w-pagination
+                :total="total1"
+                class="fr pd-top_16"
+                @current-change="handleCurrentChange1"
+                :current-page="currentPage"
+                :page-size="pagesize"
+                @actived-change="currentChange1"
+                :show="['prev', 'next', 'total']">
+              </w-pagination>
           </div>
           <!-- :disabled="isDisabled" -->
           <span slot="footer" class="dialog-footer ">
