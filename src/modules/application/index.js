@@ -618,6 +618,7 @@ export default {
         this.costList = []
         this.form.chargeItems = []
         this.form.item.itemPrice = ''
+        this.currentPage = 1
         var obj = {};
         this.selectionVal = this.selectionVal.reduce((item, next) => {
             obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
@@ -800,6 +801,7 @@ export default {
         this.innerVisible = false
         this.visible = true
         this.loading = false
+        this.currentPage = 1
         console.log('this.form.chargeItems',this.form.chargeItems);
         this.$refs.costList.clearSelection();
       } else {
