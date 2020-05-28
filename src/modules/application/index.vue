@@ -170,7 +170,6 @@
             <w-col>
               <w-form-item
                 label="收费项目"
-                prop="value2"
                 :rules="[{
                   required: true,type: 'array', message: '请选择收费项目', trigger: 'change'
                 }]"
@@ -181,8 +180,10 @@
                     :closable="true"
                     @close="handleTagClose(index)"
                     :key="item.chargeItemCode">
-                    <w-radio-group v-if="item.chargeMtechFlag === '1'"  v-model="radioValue" @change="handleTagChoose(item)">
-                      <w-radio :label="item.chargeItemCode"></w-radio>
+                    {{item.chargeMainFlag}}
+                    <w-radio-group v-if="item.chargeMtechFlag === 1"
+                      v-model="radioValue" @change="handleTagChoose(item)">
+                      <w-radio :label="item.chargeMainFlag"></w-radio>
                     </w-radio-group>
                     {{item.chargeItemName}}
                   </w-tag>

@@ -52,7 +52,6 @@ export default {
       tableconten:'请输入关键字查询数据',
       h : '',
       formTitle:'',
-      value2: [], // 搜索值
       pagesize:20,
       currentPage:1,
       total:0,
@@ -102,7 +101,6 @@ export default {
         }
       ],
       form: {
-        value2:[],
         templateName: "", // 申请单名称
         printTemplate: '' , // 打印模板
         isShowOperation:"0",	//--是否显示手术
@@ -216,23 +214,21 @@ export default {
     };
   },
   watch: {
-    'costList' (oldVal, newVal) {
-      this.$nextTick(() => {
-        // this.costList = []
-        console.log('this.form.chargeItems',this.form.chargeItems);
-        this.form.chargeItems.map((v) => {
-          this.loading = true
-            this.costList.find(it =>{
-              if (v.chargeItemCode === it.CHARGE_CODE) {
-                setTimeout(() => {
-                  this.$refs.costList.toggleRowSelection(it,true)
-                  this.loading = false
-                }, 600)
-              }
-            })
-        })
-      })
-    },
+    // 'costList' (oldVal, newVal) {
+    //   this.$nextTick(() => {
+    //     this.form.chargeItems.map((v) => {
+    //       this.loading = true
+    //         this.costList.find(it =>{
+    //           if (v.chargeItemCode === it.CHARGE_CODE) {
+    //             setTimeout(() => {
+    //               this.$refs.costList.toggleRowSelection(it,true)
+    //               this.loading = false
+    //             }, 600)
+    //           }
+    //         })
+    //     })
+    //   })
+    // },
     'value' (oldVal, newVal) {
       let find = oldVal.find(it => it === 9)
       let find1 = oldVal.find(it => it === 6)
@@ -274,13 +270,17 @@ export default {
     handleTagChoose (item) {
       this.tagChooseVal = item
       this.form.chargeItems.find(it => {
+        it.chargeMainFlag = 0
         if(it.chargeItemCode === item.chargeItemCode) {
-          it.chargeMainFlag = '1'
+          it.chargeMainFlag = 1
+          this.radioValue = 1
+          console.log(this.radioValue,'chargeItemCode',it.chargeItemCode, item.chargeItemCode);
         } else {
-          it.chargeMainFlag = '0'
+          it.chargeMainFlag = 0
+          // this.radioValue = 0
         }
       })
-      console.log('item',item,this.form.chargeItems);
+      console.log('item',item,this.form.chargeItems,this.radioValue);
     },
     async getPrintTemplate () {
       const res = await apiData.getPrintTemplate({typeTemplate: '病理申请单'})
@@ -441,9 +441,13 @@ export default {
       console.log(res, this.form,'项目修改');
       let list = []
       res.data.chargeItems.map(item=>{
-        list.push(item.chargeItemName)
+        list.push(item)
+        console.log('item',item.chargeMainFlag);
+        if (item.chargeMainFlag === 1) {
+          this.radioValue = 1
+        }
+
       })
-      this.form.value2 = list
     },
     // 项目删除
     async handleDelete (row) {
@@ -534,13 +538,19 @@ export default {
       this.isDisabled = true
       this.tableconten='请输入关键字查询数据'
       this.total1 = 0
-      console.log('this.form.chargeItems',this.form.chargeItems);
       let list = []
+      console.log(this.form.chargeItems.length);
+      if (this.form.chargeItems.length ===undefined)return
+      this.loading = true
       const res = await apiData.getQuery({CHARGE_SEARCH:''})
       this.form.chargeItems.map(it => {
         res.data.find(id => {
           if (it.chargeItemCode === id.CHARGE_CODE) {
-            list.push(id)
+            setTimeout(() => {
+              list.push(id)
+              this.$refs.costList.toggleRowSelection(id,true)
+              this.loading = false
+            }, 600)
           }
         })
         this.costList = list
@@ -574,7 +584,9 @@ export default {
     },
     // 界面新增按钮
     async handleAdd(w) {
+      console.log(this.costList,this.form.chargeItems,this.selectionVal);
       this.h = MODAL_TITLE.ADD
+      this.form.chargeItems = {...this.form.chargeItems}
       switch(w) {
         case 'left':
           this.modalTitle = MODAL_TITLE.FORM
@@ -604,7 +616,6 @@ export default {
         this.modalTitle = MODAL_TITLE.ITEM
         let arr = []
         this.costList = []
-        this.form.value2 = []
         this.form.chargeItems = []
         this.form.item.itemPrice = ''
         var obj = {};
@@ -619,11 +630,10 @@ export default {
               chargeItemName:item.CHARGE_NAME,	// --收费项目名称
               chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
               chargeItemType:item.CHARGE_TYPE, //  --收费项目类型
-              chargeMtechFlag:item.CHARGE_MTECH_FLAG, // --收费项目医技确认标志  0不需确认 1确认
-              chargeMainFlag:'0'     // --主项目标志  0非主项目 1主项目
+              chargeMtechFlag:Number(item.CHARGE_MTECH_FLAG), // --收费项目医技确认标志  0不需确认 1确认
+              chargeMainFlag:0     // --主项目标志  0非主项目 1主项目
               
             })
-            this.form.value2.push(item.CHARGE_NAME)
             arr.push(item.CHARGE_PRICE)
           }
         })
@@ -636,6 +646,8 @@ export default {
         this.form.item.itemPrice = sum
         this.search = ''
         this.listData = []
+        this.costList = []
+        this.selectionVal =[]
         this.$refs.costList.clearSelection()
       }else {
         this.$refs.form.validateForm(async (valid) => {
@@ -671,10 +683,7 @@ export default {
                   this.list(this.rowLeftList.ID)
                   this.h= ''
                 } else {
-                  if(this.h ===  MODAL_TITLE.CLONE) {
-                    // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
-                  } else {
-                    
+                  if(this.h !==  MODAL_TITLE.CLONE) {
                     this.rigthData = []
                   }
                   const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
@@ -723,7 +732,6 @@ export default {
               delete this.form.isShowHpv
               delete this.form.isShowSpecimen,		//--是否显示标本
               delete this.form.isShowEndpscopic, //是否显示内镜信息
-              delete this.form.value2
               this.form.item['pafTemplateId'] = pafTemplateId
               this.form.item['seqNo'] = seqNo
               // this.form.chargeItems['chargeMainFlag']=   //  --主项目标志	0非主项目 1主项目
@@ -783,7 +791,6 @@ export default {
         this.form.chargeItems=[]
         // this.$refs.costList.clearSelection()
         // this.form.item.itemCode = ''
-        // this.form.value2 = []
       }
     },
     reset(t) {
