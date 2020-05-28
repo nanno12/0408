@@ -16,9 +16,13 @@ export default {
       search:'',
       e:40,
       s:20,
+      radioValue:1,
       oldItemcode:'',
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
+      pagesize:20,
+      currentPage:1,
+      total:0,
       modalTitle: '', // 模态框标题
       modalType: '', // 模态框类型
       showInput: false,
@@ -130,6 +134,9 @@ export default {
       codeLIst: {
         code:'',
         name:''
+      },
+      getRowKeys(row) {
+        return row.CHARGE_CODE
       },
       form: {
         mouldcode:'', // 模板代码
@@ -438,9 +445,11 @@ export default {
               chargeItemCode:item.CHARGE_CODE,	// --收费编码
               chargeItemName:item.CHARGE_NAME,	// --收费项目名称
               chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
-              chargeItemType:item.CHARGE_TYPE //  --收费项目类型
+              chargeItemType:item.CHARGE_TYPE, //  --收费项目类型
+              chargeMtechFlag:Number(item.CHARGE_MTECH_FLAG), // --收费项目医技确认标志  0不需确认 1确认
+              chargeMainFlag:0     // --主项目标志  0非主项目 1主项目
             })
-            this.form.value2.push(item.CHARGE_NAME)
+            // this.form.value2.push(item.CHARGE_NAME)
             // arr.push(item.CHARGE_PRICE)
           }
         })
@@ -456,20 +465,41 @@ export default {
         console.log('inner');
       }
     },
+    handleTagChoose (item) {
+      this.form.chargeItems.find(it => {
+        it.chargeMainFlag = 0
+        if(it.chargeItemCode === item.chargeItemCode) {
+          it.chargeMainFlag = 1
+          this.radioValue = 1
+          console.log(this.radioValue,'chargeItemCode',it.chargeItemCode, item.chargeItemCode);
+        } else {
+          it.chargeMainFlag = 0
+        }
+      })
+      console.log('item',item,this.form.chargeItems,this.radioValue);
+    },
     // 点击收费项目
     async handleIputVal () {
       this.innerVisible  = true
       this.modalTitle = MODAL_TITLE.SELECT_ITEM
       this.tableconten='请输入关键字查询数据'
+      this.total = 0
       let list = []
-      const res = await dataApi.getQuery({CHARGE_SEARCH:''})
+      if (this.form.chargeItems.length ===undefined)return
+      this.loading = true
+      const res = await apiData.getQuery({CHARGE_SEARCH:''})
       this.form.chargeItems.map(it => {
         res.data.find(id => {
           if (it.chargeItemCode === id.CHARGE_CODE) {
-            list.push(id)
+            setTimeout(() => {
+              list.push(id)
+              this.$refs.costList.toggleRowSelection(id,true)
+              this.loading = false
+            }, 600)
           }
         })
         this.costList = list
+        this.total = list.length
       })
     },
     async submitFormData() {
@@ -731,11 +761,12 @@ export default {
         this.form.amount = res.data.amount
         this.form.mouldcode = res.data.mouldcode
         this.form.remark = res.data.remark
+        this.form.chargeitems = res.data.chargeitems
         // this.form.detailcode =  res.data.detailname
         this.form.maincode = {...this.form.maincode}
         this.form.detailcode = {...this.form.detailcode}
         this.oldItemcode = res.data.itemcode
-        console.log('hfkjdsk',this.form.detailcode);
+        console.log('hfkjdsk',this.form);
         this.modalTitle = MODAL_TITLE.ITEM
         this.modalType = this.MODAL_TITLE.EADIT
         this.modalShow = false
@@ -845,9 +876,11 @@ export default {
       console.log('res.data',res.data);
       if (res.data === null) return
       this.loading = true
-      this.costList = res.data.slice(0,20)
-      this.listData = res.data
-      this.loading = false
+      setTimeout(() => {
+        this.costList = res.data
+        this.total = res.data.length
+        this.loading = false
+      }, 600)
       this.tableconten = '暂无数据'
     },
      // 成分小类接口
@@ -881,5 +914,10 @@ export default {
       this.e= this.e+20
       console.log('this.s,this.e',this.s,this.e);
     },
+    // 当前页
+    currentChange1(val) {
+      this.currentPage = val; // 当前页
+      // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
+    }
   },
 };

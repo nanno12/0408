@@ -203,7 +203,9 @@ export default {
   font-weight: 600;
 }
 
-
+.w-textarea__inner {
+  font-family: "微软雅黑";
+}
 .w-modal__body {
     border-bottom: 1px solid #DFE7F5;
     padding: 16px 20px;

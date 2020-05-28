@@ -6,7 +6,14 @@ export default {
   data() {
     let checkOrgTypeCode = async (rule, value, callback) => {
       console.log('value',value,this.rowLeftList.TEMPLATE_NAME);
-      if (value === this.rowLeftList.TEMPLATE_NAME || value === this.rowRightList.itemCode || value === this.rowRightList.itemName) return
+      if (this.h !==  MODAL_TITLE.CLONE) return
+      // if (value === this.rowLeftList.TEMPLATE_NAME || 
+      //     value === this.rowRightList.itemCode || 
+      //     value === this.rowRightList.itemName) return
+      if (this.h ===  MODAL_TITLE.CLONE){
+        this.type = 'pafTemplate'
+      }
+
       if (value) {
          const params = {
           type:this.type,
@@ -14,6 +21,8 @@ export default {
         }
         const res = await apiData.getIsHaveReName(params)
         if (res.type !== 'SUCCESS') {
+        console.log('value',value,res);
+
           let title =''
           if (this.type === 'pafTemplate' ||this.type === 'itemName' ) {
             title = '该名称已存在！'
@@ -652,7 +661,8 @@ export default {
         this.$refs.costList.clearSelection()
       }else {
         this.$refs.form.validateForm(async (valid) => {
-          if (valid) {          
+          console.log('valid',valid); 
+          if (valid) {
             if (this.modalTitle === MODAL_TITLE.FORM) {
               this.form = {... this.form}
               const list = {
@@ -802,11 +812,9 @@ export default {
         this.visible = true
         this.loading = false
         this.currentPage = 1
-        console.log('this.form.chargeItems',this.form.chargeItems);
         this.$refs.costList.clearSelection();
       } else {
         this.form.chargeItems=[]
-        console.log('this.form.chargeItems',this.form.chargeItems);
         this.visible = false
         this.$refs.form.resetFields()
         this.init()

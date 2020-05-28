@@ -1,7 +1,7 @@
 <template>
   <div class="home-page-wrap-ba">
     <w-row  class="home-page-body">
-      <w-col :span="9" >
+      <w-col :span="8" >
         <title-style class=" po_re pd-bottom_22"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
         </title-style>
@@ -12,9 +12,9 @@
             ref="interfaceTable"
             :data="listMoulds" :border="true" style="width: 100%">
             <w-table-column type="index" width="50" align="center" label="序号"></w-table-column>
-            <w-table-column prop="MOULD_TYPE_STR" label="类型" width="100"></w-table-column>
+            <w-table-column prop="MOULD_TYPE_STR" label="类型" width="80"></w-table-column>
             <w-table-column prop="MOULD_NAME" label="名称" ></w-table-column>
-            <w-table-column fixed="right" label="操作" align="center" width="170" reference-cell>
+            <w-table-column fixed="right" label="操作" align="center" width="150" reference-cell>
               <template slot-scope="scope">
                   <w-button type="text" @click="onEditing(scope.row,'left')">修改</w-button>
                   <w-button type="text" @click="onEditing(scope.row, 'clone')">复制</w-button>
@@ -24,7 +24,7 @@
           </w-table>
         </div>
       </w-col> 
-      <w-col :span="15">
+      <w-col :span="16">
         <div class="pd-left_15">
           <title-style class="pd-bottom_22  po_re"><span slot="header">项目列表</span>
             <w-button class="po_ab top_-5 right_0" @click="handleAdd('right')"  type="text" plain>+ 新增</w-button>
@@ -35,21 +35,21 @@
             </w-table-column>
             <w-table-column prop="MOULD_ITEM_NAME" label="项目名称">
             </w-table-column>
-            <w-table-column prop="ITEM_AMOUNT" label="默认数量" width="100">
+            <w-table-column prop="ITEM_AMOUNT" label="默认数量" width="80">
             </w-table-column>
             <w-table-column prop="HIS_ITEMUNIT" label="单位" width="70">
             </w-table-column>
             <w-table-column prop="MAIN_NAME" label="成分大类">
             </w-table-column>
-            <w-table-column prop="HIS_ITEMNAME" label="对应费用明细" width="130">
+            <w-table-column prop="HIS_ITEMNAME" label="对应费用明细" width="120">
             </w-table-column>
-            <w-table-column prop="HIS_ITEMPRICE" label="费用价格" width="100">
+            <w-table-column prop="HIS_ITEMPRICE" align="right" label="费用价格" width="80">
             </w-table-column>
             <w-table-column prop="ITEM_REMARK" label="备注"> </w-table-column>
-            <w-table-column fixed="right" label="操作" reference-cell align="center" width="120">
+            <w-table-column fixed="right" label="操作" reference-cell align="center" width="100">
               <template slot-scope="scope">
                 <w-button type="text" @click="onEditing(scope.row,'right')">修改</w-button>
-                <w-popconfirm  title="确认删除这条内容吗? "
+                <w-popconfirm class="mg-left_8" title="确认删除这条内容吗? "
                   @document-click="handleCancel(scope.$index)"
                    @confirm="handleConfirm(scope.row, 'right', scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
                   <span class="popconfirm-reference" slot="reference">
@@ -210,17 +210,21 @@
               <w-form-item
                 label="费用对应"
                 prop="value2"
-               
                >
                 <template>
-                  <div class="tab-style" @click="handleIputVal">
-                    <!-- 点击选择收费项目 -->
-                    <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                  <!-- 点击选择收费项目 -->
+                  <w-tag size="mini" v-for="(item,index) in this.form.chargeitems"
                     :closable="true"
-                      @close="handleTagClose(index)"
-                      :key="item.chargeItemCode">
-                      {{item.chargeItemName}}
-                    </w-tag>
+                    @close="handleTagClose(index)"
+                    :key="index">
+                    <w-radio-group v-if="item.chargeMtechFlag === 1"
+                      v-model="radioValue" @change="handleTagChoose(item)">
+                      <w-radio :label="item.chargeMainFlag"></w-radio>
+                    </w-radio-group>
+                    {{item.chargeItemName}}
+                  </w-tag>
+                  <div class="tab-style" @click="handleIputVal">
+                    <i class="iconfont  iconweibiaoti--"></i>
                   </div>
                 </template>
               </w-form-item>
@@ -266,7 +270,7 @@
                 <i @click="handleSearch(search)" class="w-icon-search"></i>
               </template>
             </w-input>
-            <w-table
+            <!-- <w-table
               v-loading="loading"
               :data="costList"
               :lower-threshold="10"
@@ -283,7 +287,37 @@
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
               <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+            </w-table> -->
+            <w-table
+              v-loading="loading"
+              :data="costList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              :border="true"
+              :row-key="getRowKeys"
+              win-loading-text="正在获取数据..."
+              height="300"
+              style="width: 100%"
+              ref="costList"
+              stripe
+              @selection-change="handleSelectionChange"
+              :empty-text="tableconten">
+              <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
+              <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
+              <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
+              <w-table-column prop="CHARGE_PRICE"  width= '150px' align= 'right' label="项目价格（元）"></w-table-column>
+              <w-table-column width= '100px'  align='center' label="医技确认">
+                <template slot-scope="scope">
+                  {{scope.row.CHARGE_MTECH_FLAG === '0'?'否':'是'}}
+                </template>
+              </w-table-column>
             </w-table>
+            <w-pagination
+              :total="total"
+              class="fr pd-top_16"
+              :current-page="currentPage"
+              :page-size="pagesize"
+              @actived-change="currentChange1"
+              :show="['prev', 'next', 'total']">
+            </w-pagination>
           </div>
           <div v-else>
             <w-row>
@@ -364,15 +398,32 @@
       background #fff
 </style>
 <style lang="scss" scoped>
-.tab-style {
-  min-height: 32px;
-  // height:32px;
-  // width: 300px;
-  background:#f3f6fe;
-  border-radius:2px;
+.w-modal__body {
+  .w-tag {
+   background: rgba(194,210,255,1);
+    border-radius: 2px;
+    color: #0F49ED;
+    height: 32px;
+    line-height: 29px;
+    margin-right: 5px;
+  }
+  
+  .row-style {
+    .w-row {
+      margin-bottom: 16px;
+    }
+  }
 }
-.tab-style:hover {
-  background-color: #e7edfd;
+.tab-style {
+  display: inline-block;
+  border-radius: 2px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  opacity:0.5;
+  font-weight: 700;
+  border: 1px solid #999;
 }
 .iconfont {
   font-size: 16px;

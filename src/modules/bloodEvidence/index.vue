@@ -1,213 +1,120 @@
 <template>
-  <div class="home-page-wrap-ba">
-    <div class="home-page-body">
-      <w-input
-        sufAppendIsButton
-        v-model="value2"
-      >
-        <template slot="suf-append">
-          <i class="w-icon-search"></i>
-        </template>
-      </w-input>
-      <w-button
-        @click="handleAdd"
-        class="fr mb-15"
-        plain
-        type="primary"
-      >新增</w-button>
-    </div>
-    <div class="home-page-body">
-      <ul
-        class="ul"
-        style="display:inline-block;"
-      >
-        <li
-          :class="active===index ? 'styleHover' : '' "
-          :key="index"
-          v-for="(item, index) in titleList"
-        >
-          <w-button
-            @click="handleTab(item, index)"
-            class="title"
-            type="text"
-          >{{item.name}}</w-button>
-        </li>
-      </ul>
-      <w-table
-        :border="true"
-        :data="tableData"
-        class="table"
-        v-if="active === 0"
-      >
-        <w-table-column
-          label="序号"
-          type="index"
-          width="50"
-        ></w-table-column>
-        <w-table-column
-          label="规则描述"
-          prop="time"
-        ></w-table-column>
-        <w-table-column
-          label="合理性条件判断"
-          prop="name"
-          width="180"
-        ></w-table-column>
-        <w-table-column
-          label="无检验…"
-          prop="status"
-          width="180"
-        ></w-table-column>
-        <w-table-column
-          label="不合理对应操作"
-          prop="type"
-        ></w-table-column>
-        <w-table-column
-          label="科室"
-          prop="type"
-        ></w-table-column>
-        <w-table-column
-          label="病种"
-          prop="type"
-        ></w-table-column>
-        <w-table-column
-          label="是否手术"
-          prop="type"
-        ></w-table-column>
-        <w-table-column
-          align="center"
-          label="操作"
-          width="230"
-        >
-          <template slot-scope="scope">
-            <w-button type="text">复制</w-button>
-            <w-button type="text">修改</w-button>
-            <w-button type="text">停用</w-button>
-            <w-button type="text">删除</w-button>
-          </template>
-        </w-table-column>
-      </w-table>
-    </div>
-
+  <div class="home-page-wrap-ba home-page-body">
+    <w-row>
+      <w-col :span="4" class="blood">
+        <title-style class=" mg-right_16 pd-bottom_22 po_re">
+          <span slot="header">血液成分列表</span>
+        </title-style>
+        <ul class="tag-list">
+          <li :class="detailsShow===index ? 'styleHover' : '' "
+            class="tag-title"
+            :key="index"
+            v-for="(item, index) in bloodTagList"
+            @click="handleBloodTab(item, index)">
+            {{item.name}}
+          </li>
+        </ul>
+      </w-col>
+      <w-col :span="20" class="details">
+        <title-style class=" mg-right_16 pd-bottom_22 po_re">
+          <span slot="header">规则明细列表</span>
+          <w-input
+            class="po_ab top_-5"
+            style="left:120px"
+            sufAppendIsButton
+            v-model="value2" >
+            <template slot="suf-append">
+              <i class="w-icon-search"></i>
+            </template>
+          </w-input>
+          <w-button class="po_ab top_-5 right_0" @click="handleAdd"  type="text" plain>+ 新增</w-button>
+        </title-style>
+        <win-table :listTable=detailsTableTitle
+          v-if="detailsShow === 0"
+          :tableData=detailsList
+          :isShow=detailsIsShow>
+        </win-table>
+      </w-col>
+    </w-row>
     <w-modal
       :close-on-click-modal="false"
-      :title="title"
+      title="新增规则明细"
       :showClose="false"
       :visible.sync="visible"
-      width="60%"
-    >
+      width="70%" >
       <w-form
         :model="form"
         :rules="rules"
         label-align="right"
-        label-width="150px"
-        ref="form"
-      >
-        <w-row>
-          <w-col :span="12">
-            <w-form-item
-              label="规则描述"
-              prop="region"
-            >
-              <w-input
-                :maxlength="20"
-                placeholder="请输入规则描述"
-                showCounter
-                v-model="form.name"
-              ></w-input>
+        label-width="120px"
+        ref="form" >
+        <w-row >
+          <w-col :span="8">
+            <w-form-item label="规则代码" prop="region" >
+              <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
             </w-form-item>
           </w-col>
-          <w-col :span="12">
-            <w-form-item
-              label="科室"
-              prop="region"
-            >
-              <w-select
-                placeholder="请选择科室"
-                v-model="form.region"
-              >
+          <w-col :span="8">
+            <w-form-item label="规则名称" prop="region" >
+              <w-input v-model="form.region" showCounter placeholder="请输入规则名称"></w-input>
+            </w-form-item>
+          </w-col>
+          <w-col :span="8">
+            <w-form-item label="是否合理" prop="region" >
+              <w-select placeholder="请选择是否合理" v-model="form.region" >
                 <w-option
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  v-for="item in options"
-                ></w-option>
+                  v-for="item in options" >
+                </w-option>
               </w-select>
             </w-form-item>
           </w-col>
         </w-row>
         <w-row>
-          <w-col :span="12">
-            <w-form-item
-              label="病种"
-              prop="name"
-              required
-            >
-              <w-select
-                placeholder="请选择病种"
-                v-model="form.region"
-              >
+          <w-col :span="8">
+            <w-form-item label="科室类型" prop="region" >
+              <w-select placeholder="请选择科室类型" v-model="form.region" >
                 <w-option
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  v-for="item in options"
-                ></w-option>
+                  v-for="item in options" >
+                </w-option>
               </w-select>
             </w-form-item>
           </w-col>
-          <w-col :span="12">
-            <w-form-item
-              label="不合理对应操作"
-              prop="name"
-              required
-            >
-              <w-select
-                placeholder="请选择"
-                v-model="form.region"
-              >
+          <w-col :span="8">
+            <w-form-item label="判断顺序" prop="region" >
+              <w-select placeholder="请选择判断顺序" v-model="form.region" >
                 <w-option
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  v-for="item in options"
-                ></w-option>
+                  v-for="item in options" >
+                </w-option>
               </w-select>
             </w-form-item>
+            
+          </w-col>
+          <w-col :span="8">
+            
           </w-col>
         </w-row>
         <w-row>
-          <w-col :span="24">
-            <w-form-item prop="name">
-              <template slot-scope="scope">
-                <w-checkbox-group v-model="value">
-                  <w-checkbox :label="1">无检验结果判定成立</w-checkbox>
-                  <w-checkbox :label="2">需要手术</w-checkbox>
-                </w-checkbox-group>
-              </template>
+          <w-col :span="12">
+            <w-form-item >
+              <w-radio v-model="value" label="1">手术</w-radio>
+              <w-radio v-model="value" label="2">急诊</w-radio>
             </w-form-item>
           </w-col>
         </w-row>
         <w-row>
-          <w-col :span="24">
-            <w-form-item label="规则生效条件"></w-form-item>
-            <div>
-              <w-checkbox-group v-model="value">
-                <w-checkbox :label="1">
-                  <div>我的患者</div>
-                  <w-select v-model="value" placeholder="请选择">
-                    <w-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </w-option>
-                  </w-select>
-                </w-checkbox>
-                <w-checkbox :label="2">本科室</w-checkbox>
-                <w-checkbox :label="3">本地区</w-checkbox>
-              </w-checkbox-group>
-            </div>
+          <w-col :span="12">
+            <w-form-item label=" 规则生效条件"  prop="region">
+              <template>规则生效条件</template>
+            </w-form-item>
           </w-col>
         </w-row>
       </w-form>
@@ -230,10 +137,56 @@ export default {
   data() {
     return {
       value2: "", // 搜索值
-      active: 0,
-      value: [1],
-      visible: true,
-      titleList: [
+      value:'',
+      detailsShow: 0,
+      visible: false,
+      detailsTableTitle:[
+        {
+          label:'规则描述',
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'合理性条件判断',
+          prop:'name'
+        },
+        {
+          label:'无检验…',
+          prop:'name'
+        },
+        {
+          label:'不合理对应操作',
+          prop:'name'
+        },
+        {
+          label:'科室',
+          prop:'name'
+        },
+        {
+          label:'病种',
+          prop:'name'
+        },
+        {
+          label:'是否手术',
+          prop:'name'
+        }
+      ],
+      detailsList:[
+        {
+          time: "2019.05.12 11:02:33",
+          status: "其他区签约",
+          name: "赵宇翔",
+          type: "其他"
+        }
+      ],
+      detailsIsShow:{
+        index:true,
+        copy:true,
+        stop:true,
+        width:'180px'
+        // operation:true
+      },
+      bloodTagList: [
         {
           id: "SX0001",
           name: "红细胞类"
@@ -275,73 +228,65 @@ export default {
           }
         ]
       },
-      tableData: [
-        {
-          time: "2019.05.12 11:02:33",
-          status: "其他区签约",
-          name: "赵宇翔",
-          type: "其他"
-        },
-        {
-          time: "2019.05.12 12:24:30",
-          status: "未签约",
-          name: "肖新宇",
-          type: "本地医保"
-        },
-        {
-          time: "2019.05.13 08:15:10",
-          status: "已签约",
-          name: "陈慕杰",
-          type: "本地医保"
-        },
-        {
-          time: "2019.05.14 09:23:09",
-          status: "未签约",
-          name: "李自然",
-          type: "本地医保"
-        },
-        {
-          time: "2019.05.15 08:45:48",
-          status: "未签约",
-          name: "尤道礼",
-          type: "本地医保"
-        }
-      ]
+      options:[]
     };
   },
   created() {},
   methods: {
     submit() {},
     reset() {},
-    //
-    handleTab(item, index) {
-      console.log(item, index);
-      this.active = index;
-      // this.titleVal = index
-    },
     // 界面新增按钮
     handleAdd() {
-      console.log("新增");
-    }
+      this.visible = true
+    },
+    //
+    handleBloodTab(item, index) {
+      console.log(item, index);
+      this.detailsShow = index;
+      // this.titleVal = index
+    },
   }
 };
 </script>
+<style lang="scss" scoped>
+.home-page-wrap-ba {
+  // height: 100%;
+  background: rgba(255, 255, 255, 1);
+  .blood {
+    .tag-title {
+      text-align: center;
+      display: inline-block;
+      margin-bottom: 16px;
+      width: 180px;
+      height: 52px;
+      background: rgba(243, 245, 249, 1);
+      border-radius: 2px;
+      line-height:52px;
+      font-size: 14px;
+    }
+    .styleHover,
+    .styleHover:hover {
+        color: #0F49ED;
+        background: rgba(207, 224, 255, 1) !important;
+      }
+  }
+  .details {
+
+  }
+}
+</style>
 <style lang='stylus' scoped>
 .addclass {
   color: red;
 }
 
 .home-page-wrap-ba {
-  height: 100%;
-  padding: 12px 15px;
-  background: rgba(234, 237, 244, 1);
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  .home-page-body {
-    padding: 16px;
+  // height: 100%;
+  // background: rgba(234, 237, 244, 1);
+   .home-page-body{
+    // padding: 16px;
     background: rgba(255, 255, 255, 1);
-    border-radius: 2px;
+    // border-radius: 2px;
     position: relative;
 
     .ul {
@@ -355,12 +300,13 @@ export default {
       margin-left: 200px;
     }
 
-    .title {
+    .tag-title {
       text-align: center;
       display: inline-block;
       margin: 16px 0px;
       width: 180px;
       height: 52px;
+      
       background: rgba(243, 245, 249, 1);
       border-radius: 2px;
     }
@@ -372,9 +318,9 @@ export default {
 }
 </style>
 <style lang='stylus'>
-.w-input {
-  width: 200px !important;
-}
+// .w-input {
+//   width: 200px !important;
+// }
 
 .ul {
   .w-button:hover, .w-button:focus {

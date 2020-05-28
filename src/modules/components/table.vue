@@ -4,7 +4,7 @@
       @selection-change="handleSelectionChange"
       @row-click="handleRow" >
       <w-table-column v-if="isShow.selection" type="selection" width="40"></w-table-column>
-      <w-table-column v-if="isShow.index" type="index" :label="isShow.indexTitle" align="center"  width="50"></w-table-column>
+      <w-table-column v-if="isShow.index" type="index" label="序号" align="center"  width="50"></w-table-column>
       <w-table-column v-for="(item,index) in listTable" :key="index" 
         :prop="item.prop"
         :label="item.label"
@@ -19,7 +19,7 @@
         label="操作">
         <template slot-scope="scope">
           <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text">复制</w-button>
-          <!-- <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text" size="small">复制</w-button> -->
+          <w-button @click="handleStop(scope.row)" v-if="isShow.stop" type="text" size="small">复制</w-button>
           <w-button @click="handleEdit(scope.row)" v-if="!isShow.edit" type="text">修改</w-button>
           <w-button @click="handleDelete(scope.row,scope.$index,t)" type="text" >删除</w-button>
         </template>

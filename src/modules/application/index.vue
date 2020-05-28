@@ -157,7 +157,7 @@
                 label="项目价格"
                 prop="item.itemPrice">
                 <w-input
-                  placeholder="请输入项目价格"
+                  placeholder="请先添加收费项目"
                   showCounter
                   :readonly=true
                   v-model.number="form.item.itemPrice"
@@ -170,6 +170,7 @@
             <w-col>
               <w-form-item
                 label="收费项目"
+                prop="chargeItems"
                 :rules="[{
                   required: true,type: 'array', message: '请选择收费项目', trigger: 'change'
                 }]"
@@ -180,7 +181,6 @@
                     :closable="true"
                     @close="handleTagClose(index)"
                     :key="item.chargeItemCode">
-                    {{item.chargeMainFlag}}
                     <w-radio-group v-if="item.chargeMtechFlag === 1"
                       v-model="radioValue" @change="handleTagChoose(item)">
                       <w-radio :label="item.chargeMainFlag"></w-radio>
@@ -202,7 +202,6 @@
                 <w-input
                   type="textarea"
                   placeholder="请输入描述内容"
-                  showCounter
                   v-model="form.item.itemExplain"
                 ></w-input>
               </w-form-item>
@@ -245,15 +244,15 @@
                 </template>
               </w-table-column>
             </w-table>
-              <w-pagination
-                :total="total1"
-                class="fr pd-top_16"
-                @current-change="handleCurrentChange1"
-                :current-page="currentPage"
-                :page-size="pagesize"
-                @actived-change="currentChange1"
-                :show="['prev', 'next', 'total']">
-              </w-pagination>
+            <w-pagination
+              :total="total1"
+              class="fr pd-top_16"
+              @current-change="handleCurrentChange1"
+              :current-page="currentPage"
+              :page-size="pagesize"
+              @actived-change="currentChange1"
+              :show="['prev', 'next', 'total']">
+            </w-pagination>
           </div>
           <!-- :disabled="isDisabled" -->
           <span slot="footer" class="dialog-footer ">
@@ -313,15 +312,15 @@
   }
 }
 .tab-style {
-    display: inline-block;
-    border-radius: 2px;
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
-    text-align: center;
-    opacity:0.5;
-    font-weight: 700;
-    border: 1px solid #999;
+  display: inline-block;
+  border-radius: 2px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  opacity:0.5;
+  font-weight: 700;
+  border: 1px solid #999;
 }
 
 .addclass {
