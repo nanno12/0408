@@ -228,7 +228,7 @@ export default {
 }
 
 .w-table .cell, .w-table th>div {
-  padding: 0 10px;
+  padding: 0 10px !important;
 }
 .w-modal {
   // .w-button--primary,

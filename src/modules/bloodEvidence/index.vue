@@ -34,6 +34,45 @@
           :tableData=detailsList
           :isShow=detailsIsShow>
         </win-table>
+        <ul class="rule_conditions">
+          <li v-for="(item,index) in ruleConditionsList" :key="index" class="rule_conditions_list">
+            <w-checkbox-group v-model="ruleCheckboxData" @change="handleRuleCheckbox">
+              <w-checkbox :label="index"> 
+                <w-select placeholder="请选择科室类型" v-model="form.region" >
+                  <w-option
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    v-for="item in options" >
+                  </w-option>
+                </w-select>
+                <w-select placeholder="请选择科室类型" v-model="form.region" >
+                  <w-option
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    v-for="item in options" >
+                  </w-option>
+                </w-select>
+                <w-select placeholder="请选择科室类型" v-model="form.region" >
+                  <w-option
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    v-for="item in options" >
+                  </w-option>
+                </w-select>
+                <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
+                <w-button type="text" @click="handleRuleDele(item,index)" class="w-icon-delete"></w-button>
+              </w-checkbox>
+            </w-checkbox-group>
+          </li>
+          <li>
+            <w-button type="text" @click="handleRuleButton('add')" class="iconfont iconweibiaoti--">新增</w-button>
+            <w-button type="text" @click="handleRuleButton('item')" class="iconfont iconfenzu">分组</w-button>
+            <w-button type="text" @click="handleRuleButton('noItem')" class="iconfont iconquxiaofenzu">取消分组</w-button>
+          </li>
+        </ul>
       </w-col>
     </w-row>
     <w-modal
@@ -140,6 +179,12 @@ export default {
       value:'',
       detailsShow: 0,
       visible: false,
+      ruleConditionsList:[ 
+        {
+
+        }
+      ],
+      ruleCheckboxData:[],
       detailsTableTitle:[
         {
           label:'规则描述',
@@ -235,6 +280,21 @@ export default {
   methods: {
     submit() {},
     reset() {},
+    handleRuleCheckbox (eve) {
+      console.log('eve',eve);
+    },
+    handleRuleButton (name) {
+      console.log('name',name);
+      if(name === 'add') {
+        this.ruleConditionsList.push({})
+      } else if (name === 'item') {
+
+      }
+    },
+    handleRuleDele (item,index) {
+      console.log('index',index,item);
+      this.ruleConditionsList.splice(index)
+    },
     // 界面新增按钮
     handleAdd() {
       this.visible = true
@@ -271,7 +331,15 @@ export default {
       }
   }
   .details {
-
+    .rule_conditions {
+      .w-input {
+        width: 200px;
+      }
+      .w-checkbox {
+        height: 40px;
+        // .w-checkbox__input 
+      }
+    }
   }
 }
 </style>

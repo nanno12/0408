@@ -157,7 +157,7 @@ export default {
           DETAIL_NAME: '',
           MAIN_CODE: ''
         }, // 成分小类代码
-        chargeitems:[],
+        chargeItems:[],
         detailname:'', // 成分小类名称
         amount:"1", // 默认数量
         // hisitemcode:'', // 对应费用明细项编号
@@ -453,6 +453,8 @@ export default {
             // arr.push(item.CHARGE_PRICE)
           }
         })
+        console.log(this.form.chargeItems,'this.selectionVal',this.selectionVal);
+
         // let sumArr = arr.map(Number)
         // // for方法
         // let sum = 0;
@@ -487,7 +489,7 @@ export default {
       let list = []
       if (this.form.chargeItems.length ===undefined)return
       this.loading = true
-      const res = await apiData.getQuery({CHARGE_SEARCH:''})
+      const res = await dataApi.getQuery({CHARGE_SEARCH:''})
       this.form.chargeItems.map(it => {
         res.data.find(id => {
           if (it.chargeItemCode === id.CHARGE_CODE) {
@@ -554,14 +556,14 @@ export default {
         itemcode: this.form.itemcode, // 项目代码
         olditemcode,
         itemname: this.form.itemname, // 项目名称
-        chargeitems: this.form.chargeItems,
+        chargeItems: this.form.chargeItems,
         maincode: this.form.maincode.MAIN_CODE, // 成分大类代码
         mainname: this.form.maincode.MAIN_NAME, // 成分大类名称
         detailcode: this.form.detailcode.DETAIL_CODE, // 成分小类代码
         detailname: this.form.detailcode.DETAIL_NAME, // 成分小类名称
         amount: this.form.amount, // 默认数量
         hisitemcode: this.form.hisitemcode, // 对应费用明细项编号
-        addfactor:this.form.addfactor, // 增减因子
+        addfactor: this.form.addfactor, // 增减因子
         remark: this.form.remark // 备注
       }
       console.log('this.form.chargeItems',this.form,list);
@@ -748,6 +750,7 @@ export default {
         const res = await dataApi.getFindMouldItem({
           mouldcode:row.MOULD_CODE,
           itemcode:row.MOULD_ITEM_CODE})
+          console.log('res',res.data);
         this.form.maincode.MAIN_CODE =  res.data.maincode || ''
         this.form.maincode.MAIN_NAME =  res.data.mainname || ''
         this.form.detailcode.DETAIL_CODE =  res.data.detailcode || ''
@@ -761,7 +764,7 @@ export default {
         this.form.amount = res.data.amount
         this.form.mouldcode = res.data.mouldcode
         this.form.remark = res.data.remark
-        this.form.chargeitems = res.data.chargeitems
+        this.form.chargeItems = res.data.chargeitems
         // this.form.detailcode =  res.data.detailname
         this.form.maincode = {...this.form.maincode}
         this.form.detailcode = {...this.form.detailcode}

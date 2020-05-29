@@ -213,7 +213,7 @@
                >
                 <template>
                   <!-- 点击选择收费项目 -->
-                  <w-tag size="mini" v-for="(item,index) in this.form.chargeitems"
+                  <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
                     :closable="true"
                     @close="handleTagClose(index)"
                     :key="index">

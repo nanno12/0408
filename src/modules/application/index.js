@@ -298,6 +298,21 @@ export default {
     },
     handleTagClose (index) {
       this.form.chargeItems.splice(index, 1)
+      let arr = []
+      this.form.chargeItems.map(item => {
+        if (item) {
+          arr.push(item.chargeItemPrice)
+        }
+      })
+      console.log('arr',arr,this.form.chargeItems);
+      let sumArr = arr.map(Number)
+      // for方法
+      let sum = 0;
+      for (let i = 0, len = sumArr.length; i < len; i++) {
+          sum += sumArr[i]
+      }
+      console.log('sum',sum);
+      this.form.item.itemPrice = sum
     },
 //     showList () {
 //       console.log(this.selectionVal.length ,this.form.chargeItems.length,'leng',this.listData.length,this.costList.length);
@@ -714,7 +729,6 @@ export default {
             } else if (this.modalTitle === MODAL_TITLE.ITEM) {
               let pafTemplateId = ''  
               let seqNo =''
-              // this.form.chargeItemName=[]
               if(this.h !=='修改') {
                 if (this.clickIndex === 0) {
                   pafTemplateId = this.leftData[0].ID
@@ -745,10 +759,20 @@ export default {
               delete this.form.isShowEndpscopic, //是否显示内镜信息
               this.form.item['pafTemplateId'] = pafTemplateId
               this.form.item['seqNo'] = seqNo
+              console.log('this.form.chargeItemName',this.form.chargeItems);
+              let find = this.form.chargeItems.find(it => it.chargeMtechFlag === 1)
+              let find1 = {}
+              if (find) {
+                find1 = this.form.chargeItems.find(it => it.chargeMainFlag === 1)
+              }
+              console.log('findfind',find1,find,'9823');
+              if (find1===undefined ) return this.showMsg('请选择一个收费项目为主项目','error')
+              
               // this.form.chargeItems['chargeMainFlag']=   //  --主项目标志	0非主项目 1主项目
               const res = await apiData.getAddUpdateItem({
                 ...this.form
               })
+
               if (res.type === 'SUCCESS') {
                 this.showMsg(this.h ==='修改'?'修改申请单项目成功':'新增申请单项目成功','success')
                 let id = ''

@@ -167,9 +167,13 @@
             
           </w-row>
           <w-row>
-            <w-col>
+            <w-col class="fonst_style">
+              <div class="overh">
+                <div class="fonst_style_title">选择的收费项目中如果有“医技确认“项目，则必须选择一个标记为“主项目”。</div>
+              </div>
               <w-form-item
                 label="收费项目"
+                label-width="0px"
                 prop="chargeItems"
                 :rules="[{
                   required: true,type: 'array', message: '请选择收费项目', trigger: 'change'
@@ -183,9 +187,9 @@
                     :key="item.chargeItemCode">
                     <w-radio-group v-if="item.chargeMtechFlag === 1"
                       v-model="radioValue" @change="handleTagChoose(item)">
-                      <w-radio :label="item.chargeMainFlag"></w-radio>
+                      <w-radio :label="item.chargeMainFlag">{{item.chargeItemName}}</w-radio>
                     </w-radio-group>
-                    {{item.chargeItemName}}
+                    <span v-else>{{item.chargeItemName}}</span>
                   </w-tag>
                   <div class="tab-style" @click="handleIputVal">
                     <i class="iconfont  iconweibiaoti--"></i>
@@ -279,6 +283,39 @@
   .w-radio__label  {
     color: #0F49ED!important;
   }
+.fonst_style {
+  display:inline-block;
+  .w-form-item__label {
+    color: #0F49ED;
+    text-decoration: underline;
+  }
+  .fonst_style_title {
+    position:absolute;
+    display:none;
+  }
+  .overh {
+    position: absolute;
+    width: 100px;
+    height: 39px;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+}
+ .overh:hover .fonst_style_title{
+    display:block;
+    position: absolute;
+    top: 35px;
+    left: 30px;
+    width:264px;
+    font-size:13px;
+    padding: 16px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 1px 7px 2px rgba(0,0,0,0.14);
+    border-radius:2px;
+    z-index: 1;
+    border: 1px solid #dedede;
+  }
 </style>
 <style lang='scss' scoped>
 .no-more {
@@ -305,6 +342,7 @@
     }
   }
 }
+
 .search-style {
   .w-input,
   .w-input.is-expansion {
