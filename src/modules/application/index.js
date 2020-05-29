@@ -58,7 +58,6 @@ export default {
       // scrollToLower: () => {},
       listData:[],
       hoverIndex: -1,
-      tableconten:'请输入关键字查询数据',
       h : '',
       formTitle:'',
       pagesize:20,
@@ -225,18 +224,18 @@ export default {
   watch: {
     // 'costList' (oldVal, newVal) {
     //   this.$nextTick(() => {
-    //     this.form.chargeItems.map((v) => {
-    //       this.loading = true
-    //         this.costList.find(it =>{
-    //           if (v.chargeItemCode === it.CHARGE_CODE) {
-    //             setTimeout(() => {
-    //               this.$refs.costList.toggleRowSelection(it,true)
-    //               this.loading = false
-    //             }, 600)
-    //           }
+    //     // this.form.chargeItems.map((v) => {
+    //       // this.loading = true
+    //         this.costList.find((it,index) =>{
+    //           // if (v.chargeItemCode === it.CHARGE_CODE) {
+    //           //   setTimeout(() => {
+    //           //     // this.$refs.costList.toggleRowSelection(it,true)
+    //           //     this.loading = false
+    //           //   }, 600)
+    //           // }
     //         })
     //     })
-    //   })
+    //   // })
     // },
     'value' (oldVal, newVal) {
       let find = oldVal.find(it => it === 9)
@@ -286,7 +285,6 @@ export default {
           console.log(this.radioValue,'chargeItemCode',it.chargeItemCode, item.chargeItemCode);
         } else {
           it.chargeMainFlag = 0
-          // this.radioValue = 0
         }
       })
       console.log('item',item,this.form.chargeItems,this.radioValue);
@@ -314,40 +312,6 @@ export default {
       console.log('sum',sum);
       this.form.item.itemPrice = sum
     },
-//     showList () {
-//       console.log(this.selectionVal.length ,this.form.chargeItems.length,'leng',this.listData.length,this.costList.length);
-//       this.$nextTick(_ => {
-//         // console.log(this.$refs.costList.bodyWrapper) // 获取el-dialog中的table
-//         let SELECTWRAP_DOM = this.$refs.costList.bodyWrapper
-//         SELECTWRAP_DOM.addEventListener('scroll', () => {
-//           let scrollTop = SELECTWRAP_DOM.scrollTop
-//           // 变量windowHeight是可视区的高度
-//           let windowHeight = SELECTWRAP_DOM.clientHeight || SELECTWRAP_DOM.clientHeight
-//           // 变量scrollHeight是滚动条的总高度
-//           let scrollHeight = SELECTWRAP_DOM.scrollHeight || SELECTWRAP_DOM.scrollHeight
-//           let add = Math.ceil(scrollTop+windowHeight)
-//           console.log(scrollTop,windowHeight);
-//           if (this.listData.length < 20 ) return
-//           if (add === scrollHeight) {
-//             if (this.listData.length!==this.costList.length) {
-//               this.s= this.s+20
-//               this.e= this.e+20
-//               this.loading = true
-//             }
-//             console.log(this.s,this.e);
-//             const list = this.listData.slice(this.s,this.e)
-//             list.map((item)=>{
-//               setTimeout(() => {
-//                 this.costList.push(item)
-//                 this.loading = false
-//               }, 600)
-//             })
-            
-//             console.log(scrollTop+windowHeight,scrollHeight);
-//           }
-//         })
-//       })
-//     },
     async list (id) {
       const res = await apiData.getFindPafTemplate({...QUERY_PAGE})
       this.loading1 = true
@@ -430,7 +394,6 @@ export default {
       console.log('tttttt',t);
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
-      // this.formTitle = t
        switch(t) {
         case 'edit':
           this.visible = true
@@ -443,7 +406,6 @@ export default {
         default:
           this.h =  MODAL_TITLE.CLONE
           this.getPafTemplate(item.ID)
-          // this.getcopy(item.ID)
           this.visible = true
       } 
     },
@@ -546,7 +508,6 @@ export default {
         }
         this.clickIndex = index
       }
-      // this.list()
       this.leftData.splice(index,1)
       this.getPafTemplateitems(ids)
     }).catch(() => {
@@ -560,51 +521,50 @@ export default {
     async handleIputVal () {
       this.innerVisible  = true
       this.isDisabled = true
-      this.tableconten='请输入关键字查询数据'
       this.total1 = 0
-      let list = []
-      console.log(this.form.chargeItems.length);
-      if (this.form.chargeItems.length ===undefined)return
-      this.loading = true
-      const res = await apiData.getQuery({CHARGE_SEARCH:''})
-      this.form.chargeItems.map(it => {
-        res.data.find(id => {
-          if (it.chargeItemCode === id.CHARGE_CODE) {
-            setTimeout(() => {
-              list.push(id)
-              this.$refs.costList.toggleRowSelection(id,true)
-              this.loading = false
-            }, 600)
-          }
-        })
-        this.costList = list
-        this.total1 = list.length
-      })
+      this.getCostList()
     },
     async handleSearch(search) {
-      // console.log('search',this.search);
-      // this.isDisabled = true
-      this.s= 0
-      this.e= 20
-      // this.costList = []
       await this.getCostList(search)
     },
     
     //  获取收费项目列表
     async getCostList (search) {
-      // this.selectionVal = []
+      this.loading = true
       const res = await apiData.getQuery({CHARGE_SEARCH:search})
       if (res.data === null) return
-      this.loading = true
-      setTimeout(() => {
+      // setTimeout(() => {
         this.costList = res.data
         this.total1 = res.data.length
-        // this.listData = res.data
+        this.currentPage = 1
+        console.log('res.data',res.data.length,this.costList.length);
         this.loading = false
-
-      }, 600)
-      this.tableconten = '暂无数据'
-      console.log(res.data.length);
+      // }, 600)
+      let checkedList = [];
+      if(this.form.chargeItems.length ===undefined) return
+      this.form.chargeItems.map((v) => {
+          this.costList.find((it,index) =>{
+            if (v.chargeItemCode === it.CHARGE_CODE) {
+              checkedList.push(it);
+              console.log('it',index,it,this.costList);
+              // this.$set(it,'checked',true)
+              // this.$set(v,'checked',true)
+            }
+          })
+      })
+      console.log(this.selectionVal,this.selectionVal);
+      this.$nextTick(_ => {
+        checkedList.forEach(item => {
+          this.$refs.costList.toggleRowSelection(item, true);
+        });
+      });
+      var obj = {};
+      this.costList = checkedList.concat(this.costList)
+      this.costList = this.costList.reduce((item, next) => {
+        obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
+        return item;
+    }, []);
+      console.log('this.costList',this.costList);
     },
     // 界面新增按钮
     async handleAdd(w) {
@@ -824,8 +784,6 @@ export default {
         this.form.item.itemName = ''
         this.form.item.itemPrice = ''
         this.form.chargeItems=[]
-        // this.$refs.costList.clearSelection()
-        // this.form.item.itemCode = ''
       }
     },
     reset(t) {
@@ -912,10 +870,8 @@ export default {
     // 当前页
     currentChange1(val) {
       this.currentPage = val; // 当前页
-      // this.getPafTemplateitems(this.rowLi.ID)  // 刷新
     }
   },
   mounted() {
-    // this.showList()
   },
 };

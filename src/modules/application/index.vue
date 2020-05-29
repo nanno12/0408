@@ -237,7 +237,7 @@
               ref="costList"
               stripe
               @selection-change="handleSelectionChange"
-              :empty-text="tableconten">
+              >
               <w-table-column type="selection" :reserve-selection="true" width="55"></w-table-column>
               <w-table-column prop="CHARGE_CODE"  width= '120px' label="收费编码"></w-table-column>
               <w-table-column prop="CHARGE_NAME"  label="收费项目"></w-table-column>
@@ -255,7 +255,8 @@
               :current-page="currentPage"
               :page-size="pagesize"
               @actived-change="currentChange1"
-              :show="['prev', 'next', 'total']">
+              :show="['prev', 'next', 'total']"
+              v-if="total1">
             </w-pagination>
           </div>
           <!-- :disabled="isDisabled" -->
