@@ -266,6 +266,22 @@ export default {
           }
         })
       }
+    },
+    'form.chargeItems' ( newVal,oldVal) {
+      console.log(' newVal,oldVal', newVal,oldVal,this.form.chargeItems.length);
+      if(this.form.chargeItems.length === 0 || this.form.chargeItems.length === undefined) return
+      console.log('ioewuy');
+      let find = ''
+      if (oldVal.length !==0) {
+        find = oldVal.find(it => it.chargeMainFlag === 1)
+        if (find !==undefined) {
+          this.form.chargeItems.find(it => {
+            if(it.chargeItemCode === find.chargeItemCode) {
+              it.chargeMainFlag = 1
+            }
+          })
+        }
+      }
     }
   },
   created() {
@@ -392,6 +408,7 @@ export default {
     // 点击申请单某一行
     async handleRowL (item,index,t) {
       console.log('tttttt',t);
+      this.form.printTemplate = ''
       this.modalTitle = MODAL_TITLE.FORM
       this.h =  MODAL_TITLE.EADIT
        switch(t) {
@@ -532,12 +549,16 @@ export default {
     async getCostList (search) {
       this.loading = true
       const res = await apiData.getQuery({CHARGE_SEARCH:search})
-      if (res.data === null) return
+      if (res.data === null) {
+        setTimeout(() => {
+          this.loading = false
+        }, 800)
+      }
+      if (res.data === null)  return
       // setTimeout(() => {
         this.costList = res.data
         this.total1 = res.data.length
         this.currentPage = 1
-        console.log('res.data',res.data.length,this.costList.length);
         this.loading = false
       // }, 600)
       let checkedList = [];
@@ -546,9 +567,6 @@ export default {
           this.costList.find((it,index) =>{
             if (v.chargeItemCode === it.CHARGE_CODE) {
               checkedList.push(it);
-              console.log('it',index,it,this.costList);
-              // this.$set(it,'checked',true)
-              // this.$set(v,'checked',true)
             }
           })
       })
@@ -564,11 +582,12 @@ export default {
         obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
         return item;
     }, []);
-      console.log('this.costList',this.costList);
     },
     // 界面新增按钮
     async handleAdd(w) {
-      console.log(this.costList,this.form.chargeItems,this.selectionVal);
+      this.form = {...this.form}
+      this.form.printTemplate = ''
+      console.log(this.costList,this.form,this.selectionVal);
       this.h = MODAL_TITLE.ADD
       this.form.chargeItems = {...this.form.chargeItems}
       switch(w) {
@@ -587,7 +606,6 @@ export default {
     },
      // 当选择项发生变化时会触发该事件
      handleSelectionChange (rows) {
-       console.log('row',rows);
        this.isDisabled= false
       this.selectionVal = rows
     },
@@ -636,13 +654,16 @@ export default {
         this.$refs.costList.clearSelection()
       }else {
         this.$refs.form.validateForm(async (valid) => {
-          console.log('valid',valid); 
           if (valid) {
             if (this.modalTitle === MODAL_TITLE.FORM) {
               this.form = {... this.form}
+              // this.form.printTemplate = ''
+              if ( this.form.printTemplate === null || this.form.printTemplate.length === 0 ) {
+                this.form.printTemplate = ''
+              }
               const list = {
                 templateName: this.form.templateName,
-                printTemplate: this.form.printTemplate,
+                printTemplate: this.form.printTemplate ,
                 isShowOperation: this.form.isShowOperation,
                 isShowGynecological: this.form.isShowGynecological,
                 isShowTumour: this.form.isShowTumour,
@@ -650,6 +671,7 @@ export default {
                 isShowEndpscopic:this.form.isShowEndpscopic, //是否显示内镜信息
                 isShowHpv: this.form.isShowHpv
               }
+              console.log('this.form',this.form,list,this.h);
               let res = ''
               if (this.h ===  MODAL_TITLE.CLONE) {
                 res = await apiData.getcopy({
@@ -708,7 +730,6 @@ export default {
                   pafTemplateId = this.rowLeftList.ID
                 }
               }
-              console.log('pafTemplateId',pafTemplateId);
               delete this.form.templateName
               delete this.form.printTemplate
               delete this.form.isShowOperation
@@ -726,7 +747,7 @@ export default {
                 find1 = this.form.chargeItems.find(it => it.chargeMainFlag === 1)
               }
               console.log('findfind',find1,find,'9823');
-              if (find1===undefined ) return this.showMsg('请选择一个收费项目为主项目','error')
+              if (find1===undefined || find ===undefined) return this.showMsg('请选择一个收费项目为主项目','error')
               
               // this.form.chargeItems['chargeMainFlag']=   //  --主项目标志	0非主项目 1主项目
               const res = await apiData.getAddUpdateItem({
@@ -788,19 +809,27 @@ export default {
     },
     reset(t) {
       if (t !== 'out') {
+        console.log('this.f',this.form);
         this.search = ''
         this.costList = []
         this.innerVisible = false
         this.visible = true
         this.loading = false
         this.currentPage = 1
+        this.form.printTemplate = ''
         this.$refs.costList.clearSelection();
+        console.log('this.f',this.form);
       } else {
-        this.form.chargeItems=[]
+        console.log('this.f',this.form);
+        this.form.printTemplate = ''
+
+        // this.form.chargeItems=[]
         this.visible = false
         this.$refs.form.resetFields()
         this.init()
-        this.$refs.costList.clearSelection();
+        // this.form.printTemplate = ''
+        // this.$refs.costList.clearSelection();
+        // this.form = {}
       }
     },
     // 包含元素多选框

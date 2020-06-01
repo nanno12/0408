@@ -175,6 +175,7 @@ export default {
       // 如果点击单独某一条 false没有
       let ids = ''
       if (this.title === '标本部位' ) {
+
         this.type = '2'
         if (this.isHandleOrgRow === false) {
           if (this.hah !== '') {
@@ -189,6 +190,12 @@ export default {
           }
         } else {
           ids = this.rowOrgList.ID 
+          if(this.positionList.length === 0 ) {
+            this.nameList = []
+          }
+          // this.nameList = 
+        console.log('7593879',this.positionList.length);
+
         }
       } else if (this.title === '标本名称' ) {
         this.type = '3'
@@ -218,6 +225,7 @@ export default {
     async succData(item,v){
       this.idData()
       if (this.title === '标本部位') {
+        console.log('llllll');
         // if (this.hah !== '') {
         //   this.idValue = this.hah
         // }

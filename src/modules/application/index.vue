@@ -214,6 +214,7 @@
         </w-row>
         <w-modal
           width="50%"
+          top="10vh"
           class="modal-style"
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
