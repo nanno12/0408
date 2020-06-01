@@ -34,8 +34,8 @@
           :tableData=detailsList
           :isShow=detailsIsShow>
         </win-table>
-        <ul class="rule_conditions">
-          <li v-for="(item,index) in ruleConditionsList" :key="index" class="rule_conditions_list">
+        <ul ref="element" class="rule_conditions">
+          <li  v-for="(item,index) in ruleConditionsList" :key="index" class="rule_conditions_list">
             <w-checkbox-group v-model="ruleCheckboxData" @change="handleRuleCheckbox">
               <w-checkbox :label="index"> 
                 <w-select placeholder="请选择科室类型" v-model="form.region" >
@@ -72,6 +72,7 @@
             <w-button type="text" @click="handleRuleButton('item')" class="iconfont iconfenzu">分组</w-button>
             <w-button type="text" @click="handleRuleButton('noItem')" class="iconfont iconquxiaofenzu">取消分组</w-button>
           </li>
+        <canvas id="mycanvas" width="20" height="700"></canvas>
         </ul>
       </w-col>
     </w-row>
@@ -276,6 +277,51 @@ export default {
       options:[]
     };
   },
+  mounted(){
+    this.$nextTick(()=> {
+        let height = this.$refs.element.offsetHeight-32
+        console.log('li',height);
+      });
+    
+    // let canvas = document.getElementById("mycanvas")
+    // if (canvas.getContext) {
+    //   let context = canvas.getContext('2d');
+    //   console.log('context',context);
+    //   context.strokeStyle='#0F49ED'
+    //   context.fillStyle='#0F49ED'
+    //   context.lineWidth='2'
+    //   context.font='5px sans-serif'
+    //   // context.fillStyle='#0F49ED'
+    //   context.moveTo(25, 15);
+    //   context.lineTo(10, 15);
+    //   context.lineTo(10, 60);
+    //   context.lineTo(15, 60);
+    //   context.stroke();
+    // }
+  },
+  watch:{
+    // 'ruleConditionsList' () {
+    //   this.$nextTick(()=> {
+    //     let height = this.$refs.element.offsetHeight-32
+    //     console.log('li',height);
+    //     let canvas = document.getElementById("mycanvas")
+    //     if (canvas.getContext) {
+    //       let context = canvas.getContext('2d');
+    //       console.log('context',context);
+    //       context.strokeStyle='#0F49ED'
+    //       context.fillStyle='#0F49ED'
+    //       context.lineWidth='2'
+    //       context.font='5px sans-serif'
+    //       // context.fillStyle='#0F49ED'
+    //       context.moveTo(25, 15);
+    //       context.lineTo(10, 15);
+    //       context.lineTo(10, height);
+    //       context.lineTo(10, height);
+    //       context.stroke();
+    //     }
+    //   });
+    // }
+  },
   created() {},
   methods: {
     submit() {},
@@ -288,7 +334,24 @@ export default {
       if(name === 'add') {
         this.ruleConditionsList.push({})
       } else if (name === 'item') {
-
+        this.$nextTick(()=> {
+        let height = this.$refs.element.offsetHeight-32
+        console.log('height',height,this.$refs.element.offsetHeight);
+        console.log('li',height);
+        let canvas = document.getElementById("mycanvas")
+        if (canvas.getContext) {
+          let context = canvas.getContext('2d');
+          console.log('context',context);
+          context.strokeStyle='#0F49ED'
+          context.lineWidth='2'
+          context.moveTo(15, 15);
+          context.lineTo(10, 15);
+          context.lineTo(10, height);
+          context.lineTo(15, height);
+          context.stroke();
+          console.log((this.ruleCheckboxData.length - 1) * 40,this.ruleCheckboxData.length);
+        }
+      });
       }
     },
     handleRuleDele (item,index) {
@@ -305,10 +368,12 @@ export default {
       this.detailsShow = index;
       // this.titleVal = index
     },
-  }
+  },
+  
 };
 </script>
 <style lang="scss" scoped>
+
 .home-page-wrap-ba {
   // height: 100%;
   background: rgba(255, 255, 255, 1);
@@ -332,82 +397,68 @@ export default {
   }
   .details {
     .rule_conditions {
-      .w-input {
+      position: relative;
+      #mycanvas {
+        // border: 1px solid #0F49ED;
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: -25px;
+      }
+      .w-input,
+      .w-select{
         width: 200px;
       }
       .w-checkbox {
-        height: 40px;
-        // .w-checkbox__input 
+        height: 32px;
+        margin: 5px 0;
       }
     }
   }
 }
 </style>
-<style lang='stylus' scoped>
-.addclass {
-  color: red;
-}
-
-.home-page-wrap-ba {
-  // height: 100%;
-  // background: rgba(234, 237, 244, 1);
-   .home-page-body{
-    // padding: 16px;
-    background: rgba(255, 255, 255, 1);
-    // border-radius: 2px;
-    position: relative;
-
-    .ul {
-      position: absolute;
-      top: 0;
-      left: 20px;
-    }
-
-    .table {
-      width: calc(100% - 200px);
-      margin-left: 200px;
-    }
-
-    .tag-title {
-      text-align: center;
-      display: inline-block;
-      margin: 16px 0px;
-      width: 180px;
-      height: 52px;
-      
-      background: rgba(243, 245, 249, 1);
-      border-radius: 2px;
-    }
+<style lang='scss'>
+.rule_conditions {
+  .w-checkbox__input {
+    padding: 6px 0;
   }
 }
+
+// .home-page-wrap-ba {
+//   // height: 100%;
+//   // background: rgba(234, 237, 244, 1);
+//    .home-page-body{
+//     // padding: 16px;
+//     background: rgba(255, 255, 255, 1);
+//     // border-radius: 2px;
+//     position: relative;
+
+//     .ul {
+//       position: absolute;
+//       top: 0;
+//       left: 20px;
+//     }
+
+//     .table {
+//       width: calc(100% - 200px);
+//       margin-left: 200px;
+//     }
+
+//     .tag-title {
+//       text-align: center;
+//       display: inline-block;
+//       margin: 16px 0px;
+//       width: 180px;
+//       height: 52px;
+      
+//       background: rgba(243, 245, 249, 1);
+//       border-radius: 2px;
+//     }
+//   }
+// }
 
 .styleHover {
   color: #666;
 }
 </style>
-<style lang='stylus'>
-// .w-input {
-//   width: 200px !important;
-// }
 
-.ul {
-  .w-button:hover, .w-button:focus {
-    background: rgba(207, 224, 255, 1) !important;
-  }
-
-  .w-button--text:hover {
-    color: #0F49ED;
-  }
-
-  .w-button--text {
-    color: #000622;
-  }
-
-  .styleHover {
-    .w-button {
-      color: #0F49ED;
-      background: rgba(207, 224, 255, 1) !important;
-    }
-  }
-}
-</style>

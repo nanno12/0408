@@ -252,7 +252,6 @@
             <w-pagination
               :total="total1"
               class="fr pd-top_16"
-              @current-change="handleCurrentChange1"
               :current-page="currentPage"
               :page-size="pagesize"
               @actived-change="currentChange1"

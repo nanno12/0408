@@ -570,18 +570,27 @@ export default {
             }
           })
       })
-      console.log(this.selectionVal,this.selectionVal);
+      checkedList.map(item=>{
+        this.costList.map((it,index) =>{
+          if(item.CHARGE_CODE === it.CHARGE_CODE) {
+            this.costList.splice(index, 1)
+          }
+        })
+      })
+      console.log(this.costList.length);
       this.$nextTick(_ => {
         checkedList.forEach(item => {
           this.$refs.costList.toggleRowSelection(item, true);
         });
       });
-      var obj = {};
       this.costList = checkedList.concat(this.costList)
-      this.costList = this.costList.reduce((item, next) => {
-        obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
-        return item;
-    }, []);
+      console.log(this.costList.length);
+      // var obj = {};
+      // console.log(this.costList.length);
+      // this.costList = reduceList.reduce((item, next) => {
+      //   obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
+      //   return item;
+      // }, []);
     },
     // 界面新增按钮
     async handleAdd(w) {
@@ -892,13 +901,16 @@ export default {
         this.paginationBoxReflow = true;
       });
     },
-    handleCurrentChange1(val) {
-      console.log('val',val);
+    // handleCurrentChange1(val) {
+    //   console.log('val',val);
       
-    },
+    // },
     // 当前页
     currentChange1(val) {
-      this.currentPage = val; // 当前页
+      this.$nextTick(() => {
+        this.currentPage = val; // 当前页
+      });
+      console.log('val',val);
     }
   },
   mounted() {
