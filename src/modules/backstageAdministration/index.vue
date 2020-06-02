@@ -185,7 +185,7 @@
                     :value="item">
                   </w-option>
                 </w-select>
-                <span v-if="form.maincode !==''" class="inline-block po_ab top_0 right_-35">
+                <span v-if="form.maincode.MAIN_CODE !== ''" class="inline-block po_ab top_0 right_-35">
                   <i  @click="handlePlus('sma')" class="iconfont icondaoru"></i>
                 </span>
               </w-form-item>
@@ -213,7 +213,7 @@
                >
                 <template>
                   <!-- 点击选择收费项目 -->
-                  <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                  <!-- <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
                     :closable="true"
                     @close="handleTagClose(index)"
                     :key="index">
@@ -222,6 +222,16 @@
                       <w-radio :label="item.chargeMainFlag"></w-radio>
                     </w-radio-group>
                     {{item.chargeItemName}}
+                  </w-tag> -->
+                  <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                    :closable="true"
+                    @close="handleTagClose(index)"
+                    :key="item.chargeItemCode">
+                    <w-radio-group v-if="item.chargeMtechFlag === 1"
+                      v-model="radioValue" @change="handleTagChoose(item)">
+                      <w-radio :label="item.chargeMainFlag">{{item.chargeItemName}}</w-radio>
+                    </w-radio-group>
+                    <span v-else>{{item.chargeItemName}}</span>
                   </w-tag>
                   <div class="tab-style" @click="handleIputVal">
                     <i class="iconfont  iconweibiaoti--"></i>
@@ -258,6 +268,7 @@
         </w-row>
         <w-modal
           width="60%"
+          top="10vh"
           class="modal-style"
           :close-on-click-modal="false"
           :title=" MODAL_TITLE.SELECT_ITEM"
@@ -323,10 +334,10 @@
             <w-row>
               <w-col :span="11">
                 <p class="mg-bottom_10">已选择大类列表</p>
-                <win-table :listTable=tableTitle
-                  :tableData=mainTypeData
+                <win-table :listTable="classList === 'big'?tableTitle:tableTitle1"
+                  :tableData="mainTypeData"
                   @handleSelectionChange="checkAll"
-                  :isShow=isShow>
+                  :isShow="isShow">
                 </win-table>
               </w-col>
               <w-col :span="2">
@@ -345,10 +356,10 @@
               </w-col>
               <w-col :span="11">
                 <p class="mg-bottom_10">未选择大类列表</p>
-                <win-table :listTable=tableTitle
-                  :tableData=selectArr
+                <win-table :listTable="classList === 'big'?tableTitle:tableTitle1"
+                  :tableData="selectArr"
                   @handleSelectionChange="checkRightAll"
-                  :isShow=isShow>
+                  :isShow="isShow">
                 </win-table>
               </w-col>
             </w-row>
@@ -435,7 +446,6 @@
   .w-select {
     width:100%!important;
   }
-
   .w-row {
     padding-bottom: 16px;
   }
@@ -443,6 +453,13 @@
 
 </style>
 <style lang="scss">
+.backstage-administration {
+  .w-radio,
+  .w-radio__label  {
+    color: #0F49ED!important;
+  }
+}
+
 .opSetting {
  .w-button--primary, 
  .w-button--default {
