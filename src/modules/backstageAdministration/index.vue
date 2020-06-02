@@ -1,6 +1,6 @@
 <template>
-  <div class="home-page-wrap-ba">
-    <w-row  class="home-page-body">
+  <div class="backstage-administration">
+    <w-row>
       <w-col :span="8" >
         <title-style class=" po_re pd-bottom_22"><span slot="header">申请单列表</span>
           <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
@@ -370,131 +370,77 @@
 <script src="./index.js">
 </script>
 
-<style lang="stylus" scoped>
-.home-page-wrap-ba
-  height 100%
-  padding 12px 15px
-  background rgba(234,237,244,1)
-  overflow-x auto
-  overflow-y hidden
-  
-  .title
-    font-weight 500;
-    font-size 14px;
-    color #000622;
-  .home-page-body
-    padding 16px
-    background rgba(255,255,255,1)
-    border-radius 2px
-    .left-body
-      height 100%
-      width calc(100% - 415px)
-      float left
-    .right-body
-      width 400px
-      margin-left 15px
-      height 100%
-      float right
-      background #fff
-</style>
 <style lang="scss" scoped>
-.w-modal__body {
-  .w-tag {
-   background: rgba(194,210,255,1);
+.backstage-administration {
+  .title {
+    font-weight:500;
+    font-size: 14px;
+    color: #000622;
+  }
+  .w-modal__body {
+    .w-tag {
+    background: rgba(194,210,255,1);
+      border-radius: 2px;
+      color: #0F49ED;
+      height: 32px;
+      line-height: 29px;
+      margin-right: 5px;
+    }
+    .row-style {
+      .w-row {
+        margin-bottom: 16px;
+      }
+    }
+  }
+  .tab-style {
+    display: inline-block;
     border-radius: 2px;
-    color: #0F49ED;
-    height: 32px;
-    line-height: 29px;
-    margin-right: 5px;
-  }
-  
-  .row-style {
-    .w-row {
-      margin-bottom: 16px;
-    }
-  }
-}
-.tab-style {
-  display: inline-block;
-  border-radius: 2px;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  text-align: center;
-  opacity:0.5;
-  font-weight: 700;
-  border: 1px solid #999;
-}
-.iconfont {
-  font-size: 16px;
-}
-.opSetting{
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
     text-align: center;
-    margin-top:30px;
-    span {
-      display: inline-block;
-      width:40px;
-      height:32px;
-      background:rgba(243,245,249,1);
-      border-radius:2px;
-      border:1px solid rgba(192,203,233,1);
-      line-height: 32px;
+    opacity:0.5;
+    font-weight: 700;
+    border: 1px solid #999;
+  }
+  .iconfont {
+    font-size: 16px;
+  }
+  .opSetting{
+      text-align: center;
+      margin-top:30px;
+      span {
+        display: inline-block;
+        width:40px;
+        height:32px;
+        background:rgba(243,245,249,1);
+        border-radius:2px;
+        border:1px solid rgba(192,203,233,1);
+        line-height: 32px;
+      }
     }
-    // span:hover {
-    //   border-color: #3f6df1;
-    //   color: #fff;
-    //   background: #3f6df1;
-    // }
+    .spacing{
+      margin-top:10px;
+    }
+  .list-style {
+    height: calc(100vh - 125px);
+    overflow-y: auto;
   }
-  .spacing{
-    margin-top:10px;
+// .select-input {
+//   .w-select__input {
+//     width: 50px!important;
+//     z-index: 999;
+//   }
+// }
+  .w-select {
+    width:100%!important;
   }
-.list-style {
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-.select-input {
-  .w-select__input {
-    width: 50px!important;
-    z-index: 999;
+
+  .w-row {
+    padding-bottom: 16px;
   }
-}
-.w-select {
-  width:100%!important;
 }
 
-.w-row {
-  padding-bottom: 16px;
-}
-  .unitDepartment-tag {
-    width: 70%;
-    min-height: 44px;
-    background-color: #f3f6fe;
-    border-radius: 4px;
-    display:inline-block;
-    span {
-      display:inline-block;
-      padding-left: 10px;
-      color:#999;
-    }
-    .w-input,
-    .w-select,
-    .w-input__inner {
-      width:100%!important;
-      min-height: 44px!important;
-    }
-  }
-  .unitDepartment-tag:hover {
-    background-color: #e7edfd;
-    // box-shadow: #2d5afa 0px 0px 3px;
-  }
-  // .unitDepartment-tag:focus {
-  //   border-color: #5175f4;
-  //   box-shadow: #2d5afa 0px 0px 0px;
-  // }
-  .allowed {
-    cursor:not-allowed 
-  }
 </style>
 <style lang="scss">
 .opSetting {

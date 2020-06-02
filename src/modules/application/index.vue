@@ -1,6 +1,6 @@
 <template>
-  <div class=" pd_16">
-    <w-row class="home-page-body">
+  <div class="application-body">
+    <w-row >
       <w-col :span="7" >
         <title-style class=" mg-right_16 pd-bottom_22 po_re"><span slot="header">申请单列表</span>
         <!-- <i class="icon iconfont iconweibiaoti--"> -->
@@ -280,29 +280,30 @@
 
 <script src="./index.js"></script>
 <style lang ='scss'>
+.application-body {
   .w-radio,
   .w-radio__label  {
     color: #0F49ED!important;
   }
-.fonst_style {
-  display:inline-block;
-  .w-form-item__label {
-    color: #0F49ED;
-    text-decoration: underline;
+  .fonst_style {
+    display:inline-block;
+    .w-form-item__label {
+      color: #0F49ED;
+      text-decoration: underline;
+    }
+    .fonst_style_title {
+      position:absolute;
+      display:none;
+    }
+    .overh {
+      position: absolute;
+      width: 100px;
+      height: 39px;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
   }
-  .fonst_style_title {
-    position:absolute;
-    display:none;
-  }
-  .overh {
-    position: absolute;
-    width: 100px;
-    height: 39px;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-  }
-}
  .overh:hover .fonst_style_title{
     display:block;
     position: absolute;
@@ -317,62 +318,10 @@
     z-index: 1;
     border: 1px solid #dedede;
   }
+}
 </style>
 <style lang='scss' scoped>
-.no-more {
-  text-align: center;
-    color: #666;
-}
-.list-style {
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-.w-modal__body {
-  .w-tag {
-   background: rgba(194,210,255,1);
-    border-radius: 2px;
-    color: #0F49ED;
-    height: 32px;
-    line-height: 29px;
-    margin-right: 5px;
-  }
-  
-  .row-style {
-    .w-row {
-      margin-bottom: 16px;
-    }
-  }
-}
-
-.search-style {
-  .w-input,
-  .w-input.is-expansion {
-    width: 260px!important;
-  }
-}
-.tab-style {
-  display: inline-block;
-  border-radius: 2px;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  text-align: center;
-  opacity:0.5;
-  font-weight: 700;
-  border: 1px solid #999;
-}
-
-.addclass {
-  color: red;
-}
-.w-checkbox+.w-checkbox {
-  margin-left: 0px!important;
-}
-.w-checkbox {
-  margin-right: 24px!important;
-  margin-bottom:8px!important;
-}
-.home-page-body {
+.application-body {
   background: rgba(255, 255, 255, 1);
   padding: 16px;
   .application {
@@ -387,7 +336,46 @@
   }
   .clickBg,
   .hoverBg {
-    background:rgba(207,224,255,1)!important;
+    color: #000;
+  }
+  
+  .tab-style {
+    display: inline-block;
+    border-radius: 2px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    opacity:0.5;
+    font-weight: 700;
+    border: 1px solid #999;
+  }
+  .list-style {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .w-modal__body {
+    .w-tag {
+      background: rgba(194,210,255,1);
+      border-radius: 2px;
+      color: #0F49ED;
+      height: 32px;
+      font-size: 14px;
+      line-height: 29px;
+      margin-right: 5px;
+    }
+    .row-style {
+      .w-row {
+        margin-bottom: 16px;
+      }
+    }
+  }
+  .w-checkbox+.w-checkbox {
+    margin-left: 0px!important;
+  }
+  .w-checkbox {
+    margin-right: 24px!important;
+    margin-bottom:8px!important;
   }
 }
 .w-select {

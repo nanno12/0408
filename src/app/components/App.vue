@@ -5,21 +5,18 @@
       <v-head v-if="!deploy"></v-head>
     </div>
     <!--content-->
-    <!-- <div class="wrapper-content" :style="{top:deploy?'0px':'60px'}"> -->
-      <keep-alive>
-        <router-view class="wrapper-content"></router-view>
-      </keep-alive>
-      	
-
- 
-    <!-- </div> -->
-    <!--menu-->
+    <keep-alive>
+      <div  class="wrapper-content">
+        <router-view  class="content"></router-view>
+      </div>
+    </keep-alive>
+    <!-- menu
     <div class="wrapper-menu">
-    	<!-- <v-menu></v-menu> -->
+    	<v-menu></v-menu>
     </div>
-    <!--footer-->
+    footer
     <div class="footer">
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -181,19 +178,16 @@ export default {
   }
 };
 </script>
-<style lang="stylus" scoped>
-
+<style lang="scss" scoped>
 .wrapper {
   height: 100%;
-
   .wrapper-content {
     background: rgba(234, 237, 244, 1);
     padding: 16px;
-    // position: absolute;
-    // left: 0px;
-    // right: 0px;
-    // bottom: 0px;
-    // overflow-x: hidden;
+    .content {
+      background: rgba(255, 255, 255, 1);
+      padding: 16px;
+    }
   }
 }
 </style>
@@ -226,7 +220,19 @@ export default {
     padding: 0;
     height: 40px;
 }
-
+// 搜索框固定宽度
+.search-style {
+  .w-input,
+  .w-input.is-expansion {
+    width: 260px!important;
+  }
+}
+// 点击hover样式按钮除外的
+.hoverBg,
+.clickBg {
+  background: rgba(207,224,255,1)!important;
+  color: #0F49ED;
+}
 .w-table .cell, .w-table th>div {
   padding: 0 10px !important;
 }

@@ -1,87 +1,109 @@
 <template>
   <div class="home-page-wrap-test tabs-demo">
-    <w-input v-model="search" sufAppendIsButton>
+    <w-row>
+      <w-col :span="14"  class="pd-right_16">
+        <title-style class=" po_re pd-bottom_18">
+          <span slot="header">
+            <w-tabs v-model="activeName2" @tab-click="handleTabsClick('left')" type="dark">
+              <w-tab-pane label="必检项目" name="first"></w-tab-pane>
+              <w-tab-pane label="关注项目" name="second"></w-tab-pane>
+            </w-tabs>
+          </span>
+          <w-button class="po_ab top_0 right_0" @click="handleModelAdd('left')"  type="text" plain>+ 新增</w-button>
+        </title-style>
+        <win-table
+          :listTable=leftTableTitle
+          :tableData=leftList
+          :isShow=isShow>
+        </win-table>
+      </w-col>
+      <w-col :span="10">
+        <title-style class=" po_re pd-bottom_18">
+          <span slot="header">
+            <w-tabs v-model="activeName1" @tab-click="handleTabsClick('right')" type="dark">
+              <w-tab-pane label="检验项目匹配" name="first"></w-tab-pane>
+              <w-tab-pane label="收费项目匹配" name="second"></w-tab-pane>
+            </w-tabs>
+          </span>
+          <w-button class="po_ab top_0 right_0" @click="handleModelAdd('right')"  type="text" plain>+ 新增</w-button>
+        </title-style>
+        <win-table
+          :listTable=rightTableTitle
+          :tableData=rightList
+          :isShow=isShow>
+        </win-table>
+      </w-col>
+    </w-row>
+    <!-- <w-input v-model="search" sufAppendIsButton>
       <template slot="suf-append">
         <i class="w-icon-search"></i>
       </template>
-    </w-input>
-    <w-button @click="handleAdd"
-      class="fr mb-15"
-      plain
-      type="primary"
-    >新增</w-button>
-    <w-tabs
-      @tab-click="handleClick"
-      type="dark"
-      v-model="activeName1" >
-      <w-tab-pane v-for="(item, index) in tabList" :key="index" :label="item.title" :name="item.value" >
-        <w-table :data="tableData" :border="true" style="width: 100%">
-          <w-table-column prop="time" label="项目名称">
-          </w-table-column>
-          <w-table-column prop="name" label="项目标识">
-          </w-table-column>
-          <w-table-column label="操作" align="center" width="80">
-             <template slot-scope="scope">
-                <w-popconfirm  title="确认删除这条内容吗? "
-                  @document-click="handleCancel(scope.$index)"
-                  @confirm="handleConfirm(scope.$index)" @cancel="handleCancel(scope.$index)" placement="bottom">
-                  <span class="popconfirm-reference" slot="reference">
-                    <w-button type="text" @click="handleDelete(scope.row)">删除</w-button>
-                  </span>
-                </w-popconfirm>
-              </template>
-          </w-table-column>
-        </w-table>
-      </w-tab-pane>
-    </w-tabs>
-
+    </w-input> -->
     <w-modal  :visible.sync="visible"
-      title="新增"
+      :title="modalTitle"
       :showClose="false"
       :close-on-click-modal="false"
       class="home-page-body"
-      width="50%">
-      <ul class="ul-style" style="display:inline-block;" >
-        <li
-          :class="active===index ? 'styleHover' : '' "
-          :key="index"
-          v-for="(item, index) in titleList" >
-          <w-button
-            @click="handleTab(item, index)"
-            class="title"
-            type="text"
-          >{{item.name}}</w-button>
-        </li>
-      </ul>
-      <w-table
-        :border="true"
-        ref="multiTable"
-        :data="tableData"
-        class="table"
-        v-if="active === 0"
-        @selection-change="handleSelectionChange"
-      >
-        <w-table-column
-          type="selection"
-          width="50"
-        ></w-table-column>
-        <w-table-column
-          label="项目编码"
-          prop="time"
-        ></w-table-column>
-        <w-table-column
-          label="项目名称"
-          prop="status"
-        ></w-table-column>
-        <w-table-column
-          label="项目备注"
-          prop="status"
-        ></w-table-column>
-      </w-table>
+      :width="modalTitle==='新增必检项目'?'25%':'50%'">
+      <w-form
+        :model="form"
+        :rules="rules"
+        label-align="right"
+        label-width="100px"
+        v-if="this.modalTitle === '新增必检项目'"
+        ref="form">
+        <w-form-item label="项目名称" prop="region" >
+          <w-input v-model="form.region" showCounter placeholder="请输入项目名称"></w-input>
+        </w-form-item>
+        <w-form-item label="项目代码" prop="region" >
+          <w-input v-model="form.region" showCounter placeholder="请输入项目代码"></w-input>
+        </w-form-item>
+      </w-form>
+      <div v-else style="height:300px">
+        <ul class="ul-style" style="display:inline-block;" >
+          <li
+            :class="active===index ? 'styleHover' : '' "
+            :key="index"
+            v-for="(item, index) in titleList" >
+            <w-button
+              @click="handleTab(item, index)"
+              class="title"
+              type="text"
+            >{{item.name}}</w-button>
+          </li>
+        </ul>
+        <w-table
+          :border="true"
+          ref="multiTable"
+          :data="tableData"
+          class="table"
+          v-if="active === 0"
+          @selection-change="handleSelectionChange">
+          <w-table-column
+            type="selection"
+            width="50"
+          ></w-table-column>
+          <w-table-column
+            label="项目编码"
+            prop="time"
+          ></w-table-column>
+          <w-table-column
+            label="项目名称"
+            prop="status"
+          ></w-table-column>
+          <w-table-column
+            label="项目备注"
+            prop="status"
+          ></w-table-column>
+        </w-table>
+      </div>
       <span slot="footer" class="dialog-footer">
         <w-button @click="reset">取 消</w-button>
-        <w-button @click="handleAdd" type="primary">添加到必检项目</w-button>
-        <w-button @click="handleAdd" type="primary">添加到关注项目</w-button>
+        <w-button @click="handleMainAdd" v-if="this.modalTitle === '新增必检项目'" type="primary">确定</w-button>
+        <div v-else class="inline-block">
+          <w-button @click="handleMainAdd('check')" type="primary">添加到必检项目</w-button>
+          <w-button @click="handleMainAdd('follow')" type="primary">添加到关注项目</w-button>
+        </div>
       </span>
     </w-modal>
   </div>
@@ -94,9 +116,60 @@ import tab from '../ademo/ceshi'
 export default {
   data() {
     return {
-      activeName1: '1', // tab默认值
+      activeName2:'first',
+      activeName1: 'first', // tab默认值
+      modalTitle:'新增必检项目',
+      form: {
+        region: ""
+      },
+      rules: {
+        region: [
+          {
+            required: true,
+            message: "请选择区域",
+            trigger: "change"
+          }
+        ]
+      },
+      leftTableTitle:[
+        {
+          label:'项目名称',
+          prop:'status'
+        },
+        {
+          label:'项目编码',
+          prop:'time'
+        }
+      ],
+      leftList:[
+        {
+          time: '2019',
+          status: '其他区签约',
+        }
+      ],
+      isShow:{
+        index:true,
+        width:'80px',
+        edit:true
+      },
+      rightTableTitle:[
+         {
+          label:'项目名称',
+          prop:'time'
+        },
+        {
+          label:'项目代码',
+          prop:'status'
+        }
+      ],
+      rightList:[
+        {
+          time: '2019',
+          status: '其他区签约',
+        }
+      ],
       search:'', // 搜索值
-      visible: false,
+      visible: true,
       active: 0,
       selection: [],
       titleList: [
@@ -122,26 +195,6 @@ export default {
           status: '其他区签约',
           name: '赵宇翔',
           type: '其他'
-        }, {
-          time: '22:24:30',
-          status: '未签约',
-          name: '肖新宇',
-          type: '本地医保'
-        }, {
-          time: '3 08:15:10',
-          status: '已签约',
-          name: '陈慕杰',
-          type: '本地医保'
-        }, {
-          time: '4 09:23:09',
-          status: '未签约',
-          name: '李自然',
-          type: '本地医保'
-        }, {
-          time: '28:45:48',
-          status: '未签约',
-          name: '尤道礼',
-          type: '本地医保'
         }],
       tabList: [
         {
@@ -169,10 +222,24 @@ export default {
       console.log(val)
       this.selection = val
     },
-    handleAdd() {
+     // 模态框功能型按钮
+    handleMainAdd(title) {
+      this.visible = true
       console.log("add")
     },
-    handleClick(tab, event) {
+    // 点击主界面新增弹出模态框
+    handleModelAdd (title) {
+      this.visible = true
+      if(title === 'left') {
+        this.modalTitle = '新增必检项目'
+      } else {
+        this.modalTitle = '新增检验项目'
+        
+      }
+      console.log("add")
+    },
+    // 点击主界面tabs切换表格
+    handleTabsClick(tab, event) {
       console.log(tab, event)
     },
     // 弹框tabs切换点击时间
@@ -204,6 +271,18 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+  .card-icon{
+    display: inline-block!important;
+    margin-right: 0px!important;
+    width: 0px!important;
+    height: 0px!important;
+    background: #5a7bef;
+  }
+  .w-tabs--border-card>.w-tabs__content, .w-tabs--dark>.w-tabs__content {
+    padding: 0!important;
+  }
+</style>
 <style lang="stylus" scoped>
 .home-page-wrap-test {
   height: 100%;

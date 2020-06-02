@@ -33,12 +33,13 @@
               <i class="w-icon-search"></i>
             </template>
           </w-input> -->
-          <title-style class=" po_re pd-bottom_18"><span slot="header">
-            <w-tabs v-model="activeName2" @tab-click="handleClick" type="dark">
-            <w-tab-pane label="对应职称" name="first"></w-tab-pane>
-            <w-tab-pane label="非对应职称医生" name="second"></w-tab-pane>
-          </w-tabs>
-          </span>
+          <title-style class=" po_re pd-bottom_18">
+            <span slot="header">
+              <w-tabs v-model="activeName2" @tab-click="handleClick" type="dark">
+                <w-tab-pane label="对应职称" name="first"></w-tab-pane>
+                <w-tab-pane label="非对应职称医生" name="second"></w-tab-pane>
+              </w-tabs>
+            </span>
             <w-button class="po_ab top_-5 right_0" @click="handleAdd('left')"  type="text" plain>+ 新增</w-button>
           </title-style>
           <w-table :data="tableData" class="mt-15 " :border="true" style="width: 100%">

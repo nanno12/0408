@@ -362,6 +362,7 @@ export default {
     },
     // 模态框➕按钮事件
     async handlePlus (title) {
+      console.log('title',title);
       this.innerVisible = true
       const res = await dataApi.getListMainTypes()
       this.mainTypeData = res.data

@@ -1,11 +1,11 @@
 <template>
-  <div class='home-page-wrap-in'>
-    <w-row style="background:rgba(255,255,255,1);">
+  <div class='information-specimen'>
+    <w-row>
       <w-col :span="8">
-        <title-style class="pd-x_16 pd-top_16 po_re  pd-bottom_14" > <span slot="header">人体器官/系统</span>
-          <w-button class="po_ab top_10 right_18" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
+        <title-style class=" po_re  pd-bottom_14" > <span slot="header">人体器官/系统</span>
+          <w-button class="po_ab top_-5 right_18" type="text" @click="handleAdd('器官/系统')">+新增</w-button>
         </title-style>
-        <div class="list-style" ref='box'>
+        <div class="list-style mg-right_10" ref='box'>
           <div v-for="(item,index) in organList" @click.stop="handle(item,'器官/系统',index)"  class="tab-style"
             :class="{'clickBg':index==clickIndex,'hoverBg':index==hoverIndex}"
             @mouseover="hoverIndex = index"
@@ -19,10 +19,10 @@
         </div>
       </w-col>
       <w-col :span="8"  class="center">
-        <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本部位</span>
+        <title-style class="pd-x_16 po_re pd-bottom_14"> <span slot="header">标本部位</span>
           <w-button v-if="this.organList.length !== 0 " type="text" class="po_ab top_10 right_16" @click="handleAdd('标本部位')">+新增</w-button>
         </title-style>
-        <div class="list-style" ref='boxs'>
+        <div class="list-style mg-x_10" ref='boxs'>
           <div v-for="(item,index) in positionList" :class="{'clickBg':index==clickIndex1,'hoverBg':index==hoverIndex1}"
             @click="handle(item,'标本部位',index)" class="tab-style"
             @mouseover="hoverIndex1 = index"
@@ -36,12 +36,12 @@
         </div>
       </w-col>
       <w-col :span="8" >
-        <title-style class="pd-x_16 pd-top_16 po_re pd-bottom_14"> <span slot="header">标本名称</span>
-          <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_10 right_16" @click="handleAdd('标本名称')">+新增</w-button>
+        <title-style class="pd-x_16 po_re pd-bottom_14"> <span slot="header">标本名称</span>
+          <w-button v-if="this.positionList.length !== 0 " type="text" class="po_ab top_-5 right_16" @click="handleAdd('标本名称')">+新增</w-button>
         </title-style>
         <!--   -->
         <div v-show="show">
-          <div class="list-style" ref='box2'>
+          <div class="list-style mg-left_10" ref='box2'>
             <div v-for="(item,index) in nameList" @click="handle(item,'标本名称',index)" class="tab-style" :key="index"
               :class="{'clickBg':index==clickIndex2,'hoverBg':index==hoverIndex2}"
               @mouseover="hoverIndex2 = index"
@@ -88,60 +88,40 @@
   </div>
 </template>
 <script src="./index.js"></script>
-<style lang="scss" scoped>
-.list-style {
-  height: calc(100vh - 85px);
-  overflow-y: auto;
+<style lang='scss' scoped>
+  .clickBg {
+    font-weight: 600;
+  }
+.information-specimen {
+  .list-style {
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+  .inputs-height {
+    height: 300px;
+    overflow: auto;
+  }
+  .tab-style {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    background: rgba(243,245,249,1);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .center {
+    border: 2px solid #DFE7F5;
+    border-top: none;
+    border-bottom: none;
+  }
+  .button-style {
+    display: inline-block;
+    color: #0F49ED;
+    font-size: 14px;
+    cursor: pointer;
+  }
 }
-.inputs-height {
-  height: 300px;
-  overflow: auto;
-}
-// .list-style:hover {
-//     overflow-y: auto;
-// }
-// .tab-style{
-//   overflow-y:auto;
-//   height:calc(100vh - 70px);
-// }
-</style>
-<style lang='stylus' scoped>
-.styleHover 
-  background rgba(207,224,255,1)!important;
-  color #0F49ED;
-.hoverBg
-   background rgba(207,224,255,1)!important;
-   color #0F49ED;
- 
- .clickBg
-   background rgba(207,224,255,1)!important;
-   color #0F49ED;
-   font-weight 600
- 
-.home-page-wrap-in
-    background rgba(234, 237, 244, 1)
-    .w-row 
-      height: 100%;
-      overflow: auto;
-    .tab-style 
-      height 40px
-      line-height 40px
-      padding 0 16px
-      background rgba(243,245,249,1)
-      border-radius 2px
-      cursor pointer
-      font-size 14px
-      margin 10px 16px
-    .center 
-      border 2px solid #DFE7F5
-      border-top none
-      border-bottom none
-    .button-style
-      display inline-block
-      color #0F49ED
-      font-size 14px
-      cursor pointer
-    .title-style
-      padding 16px 16px 0
 
 </style>
