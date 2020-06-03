@@ -19,9 +19,9 @@
         label="操作">
         <template slot-scope="scope">
           <w-button @click="handleCopy(scope.row)" v-if="isShow.copy" type="text">复制</w-button>
-          <w-button @click="handleStop(scope.row)" v-if="isShow.stop" type="text" >停用</w-button>
-          <w-button @click="handleEdit(scope.row)" v-if="!isShow.edit" type="text">修改</w-button>
-          <w-button @click="handleDelete(scope.row,scope.$index,t)" type="text" >删除</w-button>
+          <w-button @click="handleStop(scope.row)" v-if="isShow.stop" type="text" >{{scope.row.stopValue === true ?'启用':'停用' }}</w-button>
+          <w-button @click="handleEdit(scope.row)" v-if="!isShow.edit" :disabled="scope.row.stopValue === false" type="text">修改</w-button>
+          <w-button @click="handleDelete(scope.row,scope.$index,t)" :disabled="scope.row.stopValue === false" type="text" >删除</w-button>
         </template>
       </w-table-column>
       <slot name="handleColumn"></slot>
@@ -65,7 +65,8 @@
      data () {
       return {
         height:'calc(100vh - 150px)',
-        multipleSelection: [] // 多行选中
+        multipleSelection: [], // 多行选中
+        stopValue:'启用'
       }
     },
     
@@ -95,6 +96,10 @@
       },
       handleEdit (row) {
         this.$emit('handleEdit', row)
+      },
+      handleStop (row) {
+        console.log('rpw',row);
+        this.$emit('handleStop', row)
       },
       handleCopy (row) {
         this.$emit('handleCopy', row)

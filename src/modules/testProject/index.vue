@@ -272,6 +272,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.home-page-wrap-test {
   .card-icon{
     display: inline-block!important;
     margin-right: 0px!important;
@@ -282,6 +283,8 @@ export default {
   .w-tabs--border-card>.w-tabs__content, .w-tabs--dark>.w-tabs__content {
     padding: 0!important;
   }
+}
+
 </style>
 <style lang="stylus" scoped>
 .home-page-wrap-test {

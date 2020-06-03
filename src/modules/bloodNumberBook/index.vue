@@ -20,9 +20,9 @@
           <span slot="header">规则明细列表</span>
           <w-input
             class="po_ab top_-5"
-            style="left:120px"
+            style="left:120px; width:200px"
             sufAppendIsButton
-            v-model="value2" >
+            v-model="search" >
             <template slot="suf-append">
               <i class="w-icon-search"></i>
             </template>
@@ -31,6 +31,8 @@
         </title-style>
         <win-table :listTable=detailsTableTitle
           v-if="detailsShow === 0"
+          @handleEdit="handleEdit"
+          @handleStop="handleStop"
           :tableData=detailsList
           :isShow=detailsIsShow>
         </win-table>
@@ -38,86 +40,48 @@
     </w-row>
     <w-modal
       :close-on-click-modal="false"
-      title="新增规则明细"
+      :title="modalTitle === '计算项'?'新增'+modalTitle:AED+modalTitle"
       :showClose="false"
+      :top="modalTitle === '计算项'?'20vh':'10vh'"
       :visible.sync="visible"
-      width="70%" >
+      :width="modalTitle === '计算项'?'30%':'60%'" >
       <w-form
         :model="form"
         :rules="rules"
+        v-if="modalTitle === '计算项'"
         label-align="right"
-        label-width="120px"
+        label-width="100px"
         ref="form" >
-        <w-row >
-          <w-col :span="8">
-            <w-form-item label="规则代码" prop="region" >
-              <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="8">
-            <w-form-item label="规则名称" prop="region" >
-              <w-input v-model="form.region" showCounter placeholder="请输入规则名称"></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="8">
-            <w-form-item label="是否合理" prop="region" >
-              <w-select placeholder="请选择是否合理" v-model="form.region" >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options" >
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="8">
-            <w-form-item label="科室类型" prop="region" >
-              <w-select placeholder="请选择科室类型" v-model="form.region" >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options" >
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-          <w-col :span="8">
-            <w-form-item label="判断顺序" prop="region" >
-              <w-select placeholder="请选择判断顺序" v-model="form.region" >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options" >
-                </w-option>
-              </w-select>
-            </w-form-item>
-            
-          </w-col>
-          <w-col :span="8">
-            
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item >
-              <w-radio v-model="value" label="1">手术</w-radio>
-              <w-radio v-model="value" label="2">急诊</w-radio>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item label=" 规则生效条件"  prop="region">
-              <template>规则生效条件</template>
-            </w-form-item>
-          </w-col>
-        </w-row>
+        <w-form-item label="计算项代码" prop="region" >
+          <w-input v-model="form.region" showCounter placeholder="请输入计算项代码"></w-input>
+        </w-form-item>
+        <w-form-item label="计算项名称" prop="region" >
+          <w-input v-model="form.region" showCounter placeholder="请输入计算项名称"></w-input>
+        </w-form-item>
       </w-form>
+      <w-row class="add-rule" v-else>
+        <w-col :span="7" class="add-rule_left">
+          <title-style class=" mg-right_16 pd-bottom_22 po_re">
+            <span slot="header">计算项：</span>
+            <w-button class="po_ab top_-5 right_0" @click="handleAddRule"  type="text" plain>+ 新增</w-button>
+          </title-style>
+        </w-col>
+        <w-col :span="10" class="pd-x_20">
+          <title-style class=" mg-bottom_10">
+            <span slot="header">计算公式</span>
+          </title-style>
+          <w-input class="mg-bottom_18" v-model="formula" type="textarea" showCounter></w-input>
+          <title-style class=" mg-bottom_10">
+            <span slot="header">项目生成条件</span>
+          </title-style>
+          <w-input v-model="condition" type="textarea" showCounter></w-input>
+        </w-col>
+        <w-col :span="7" class="add-rule_right">
+          <title-style>
+            <span slot="header">运算符</span>
+          </title-style>
+        </w-col>
+      </w-row>
       <span
         class="dialog-footer"
         slot="footer"
@@ -136,8 +100,11 @@
 export default {
   data() {
     return {
-      value2: "", // 搜索值
-      value:'',
+      search: "", // 搜索值
+      formula:'', // 计算公式
+      condition:'', // 生成条件
+      modalTitle:'',
+      AED:'',
       detailsShow: 0,
       visible: false,
       ruleConditionsList:[ 
@@ -150,7 +117,7 @@ export default {
         {
           label:'性别',
           prop:'name',
-          width:'80px'
+          width:'80px',
         },
         {
           label:'开始年龄',
@@ -172,7 +139,15 @@ export default {
           time: "2019.05.12 11:02:33",
           status: "其他区签约",
           name: "赵宇翔",
-          type: "其他"
+          type: "其他",
+          stopValue:true
+        },
+        {
+          time: "2019.05.12 11:02:33",
+          status: "其他区签约",
+          name: "赵宇翔",
+          type: "其他",
+          stopValue:false
         }
       ],
       detailsIsShow:{
@@ -226,21 +201,41 @@ export default {
     };
   },
   mounted(){
-    this.$nextTick(()=> {
-      let height = this.$refs.element.offsetHeight-32
-      console.log('li',height);
-    });
+
   },
   watch:{
-    
+   
   },
   created() {},
   methods: {
     submit() {},
-    reset() {},
+    reset() {
+      if (this.modalTitle === '计算项') {
+        this.modalTitle = '规则'
+      } else {
+        this.visible = false
+      }
+      console.log('this.modalTitle',this.modalTitle);
+    },
+    handleEdit(row) {
+      this.visible = true
+      this.AED = '修改'
+      
+      this.modalTitle = '规则'
+      console.log('handleEdit',row);
+    },
+    handleStop (row) {
+      // console.log('handleStop',row);
+    },
     // 界面新增按钮
     handleAdd() {
+      this.AED = '新增'
       this.visible = true
+      this.modalTitle = '规则'
+    },
+    handleAddRule() {
+      this.modalTitle = '计算项'
+      
     },
     //
     handleBloodTab(item, index) {
@@ -294,6 +289,23 @@ export default {
       }
     }
   }
+  .add-rule {
+    height: 380px;
+    .add-rule_left {
+      border-right:1px solid rgba(223,231,245,1);
+      height: 100%;
+      padding-top: 5px;
+    }
+    .add-rule_right {
+      border:1px solid rgba(223,231,245,1);
+      height: 100%;
+      padding: 5px;
+      border-radius:2px;
+    }
+    .w-textarea__inner {
+      height: 100px;
+    }
+  }
 }
 </style>
 <style lang='scss'>
@@ -305,5 +317,19 @@ export default {
 .styleHover {
   color: #666;
 }
+.add-rule {
+  .w-textarea__inner {
+    height: 100px;
+  }
+}
+.blood-number-book {
+  .w-modal__body {
+    padding: 10px 20px!important;
+  }
+  .w-form .w-form-item+.w-form-item {
+    margin-top: 16px;
+  }
+}
+
 </style>
 

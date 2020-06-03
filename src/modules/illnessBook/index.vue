@@ -1,24 +1,10 @@
 <template>
-  <div class="home-page-wrap-ba home-page-body">
+  <div class="illness-book">
     <w-row>
-      <w-col :span="4" class="blood">
-        <title-style class=" mg-right_16 pd-bottom_22 po_re">
-          <span slot="header">血液成分列表</span>
-        </title-style>
-        <ul class="tag-list">
-          <li :class="detailsShow===index ? 'styleHover' : '' "
-            class="tag-title"
-            :key="index"
-            v-for="(item, index) in bloodTagList"
-            @click="handleBloodTab(item, index)">
-            {{item.name}}
-          </li>
-        </ul>
-      </w-col>
-      <w-col :span="20" class="details">
-        <title-style class=" mg-right_16 pd-bottom_22 po_re">
-          <span slot="header">规则明细列表</span>
-          <w-input
+      <w-col :span="8" class="drgs">
+        <title-style class="pd-bottom_22 po_re">
+          <span slot="header">单病种列表</span>
+          <!-- <w-input
             class="po_ab top_-5"
             style="left:120px"
             sufAppendIsButton
@@ -26,54 +12,54 @@
             <template slot="suf-append">
               <i class="w-icon-search"></i>
             </template>
-          </w-input>
+          </w-input> -->
           <w-button class="po_ab top_-5 right_0" @click="handleAdd"  type="text" plain>+ 新增</w-button>
         </title-style>
-        <win-table :listTable=detailsTableTitle
-          v-if="detailsShow === 0"
-          :tableData=detailsList
-          :isShow=detailsIsShow>
+        <win-table :listTable="drgsTableTitle"
+          :tableData="drgsList"
+          :isShow="drgsIsShow">
         </win-table>
-        <ul ref="element" class="rule_conditions">
-          <li  v-for="(item,index) in ruleConditionsList" :key="index" class="rule_conditions_list">
-            <w-checkbox-group v-model="ruleCheckboxData" @change="handleRuleCheckbox">
-              <w-checkbox :label="index"> 
-                <w-select placeholder="请选择科室类型" v-model="form.region" >
-                  <w-option
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    v-for="item in options" >
-                  </w-option>
-                </w-select>
-                <w-select placeholder="请选择科室类型" v-model="form.region" >
-                  <w-option
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    v-for="item in options" >
-                  </w-option>
-                </w-select>
-                <w-select placeholder="请选择科室类型" v-model="form.region" >
-                  <w-option
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    v-for="item in options" >
-                  </w-option>
-                </w-select>
-                <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
-                <w-button type="text" @click="handleRuleDele(item,index)" class="w-icon-delete"></w-button>
-              </w-checkbox>
-            </w-checkbox-group>
-          </li>
-          <li>
-            <w-button type="text" @click="handleRuleButton('add')" class="iconfont iconweibiaoti--">新增</w-button>
-            <w-button type="text" @click="handleRuleButton('item')" class="iconfont iconfenzu">分组</w-button>
-            <w-button type="text" @click="handleRuleButton('noItem')" class="iconfont iconquxiaofenzu">取消分组</w-button>
-          </li>
-        <canvas id="mycanvas" width="20" height="700"></canvas>
-        </ul>
+      </w-col>
+      <w-col :span="16" class="tabs-title">
+        <w-tabs v-model="tabsName" @tab-click="handleTabsClick" type="dark">
+          <w-tab-pane label="单病种" name="first">单病种</w-tab-pane>
+          <w-tab-pane label="输血适应症判定规则" name="second"></w-tab-pane>
+          <w-tab-pane label="输血量评估规则" name="third"></w-tab-pane>
+          <w-tab-pane label="诊断对照" name="fourth"></w-tab-pane>
+        </w-tabs>
+        <title-style v-if="tabsName === 'second' || tabsName === 'third'" 
+          class=" pd-bottom_20 mg-top_18 po_re">
+          <span slot="header">
+            <w-select placeholder="请选择成分大类" v-model="bigClassVal" >
+              <w-option
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                v-for="item in options" >
+              </w-option>
+            </w-select>
+          </span>
+          <w-button class="po_ab top_0 right_0" @click="handleAdd"  type="text" plain>+ 新增</w-button>
+        </title-style>
+        <title-style v-if="tabsName === 'fourth'" class="pd-bottom_20 mg-top_18 po_re">
+          <span slot="header">
+            <w-input
+              class="po_ab top_0"
+              style="width:200px"
+              sufAppendIsButton
+              v-model="search" >
+              <template slot="suf-append">
+                <i class="w-icon-search"></i>
+              </template>
+            </w-input>
+          </span>
+          <w-button class="po_ab top_0 right_0" @click="handleAdd"  type="text" plain>+ 新增</w-button>
+        </title-style>
+        <win-table v-if="tabsName !== 'first'" 
+          :listTable="tabsName === 'second'?applyTitle:(tabsName === 'third'?evaluationTitle:diagnosisTitle)"
+          :tableData="rightList"
+          :isShow="rightIsShow">
+        </win-table>
       </w-col>
     </w-row>
     <w-modal
@@ -82,82 +68,11 @@
       :showClose="false"
       :visible.sync="visible"
       width="70%" >
-      <w-form
-        :model="form"
-        :rules="rules"
-        label-align="right"
-        label-width="120px"
-        ref="form" >
-        <w-row >
-          <w-col :span="8">
-            <w-form-item label="规则代码" prop="region" >
-              <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="8">
-            <w-form-item label="规则名称" prop="region" >
-              <w-input v-model="form.region" showCounter placeholder="请输入规则名称"></w-input>
-            </w-form-item>
-          </w-col>
-          <w-col :span="8">
-            <w-form-item label="是否合理" prop="region" >
-              <w-select placeholder="请选择是否合理" v-model="form.region" >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options" >
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="8">
-            <w-form-item label="科室类型" prop="region" >
-              <w-select placeholder="请选择科室类型" v-model="form.region" >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options" >
-                </w-option>
-              </w-select>
-            </w-form-item>
-          </w-col>
-          <w-col :span="8">
-            <w-form-item label="判断顺序" prop="region" >
-              <w-select placeholder="请选择判断顺序" v-model="form.region" >
-                <w-option
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in options" >
-                </w-option>
-              </w-select>
-            </w-form-item>
-            
-          </w-col>
-          <w-col :span="8">
-            
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item >
-              <w-radio v-model="value" label="1">手术</w-radio>
-              <w-radio v-model="value" label="2">急诊</w-radio>
-            </w-form-item>
-          </w-col>
-        </w-row>
-        <w-row>
-          <w-col :span="12">
-            <w-form-item label=" 规则生效条件"  prop="region">
-              <template>规则生效条件</template>
-            </w-form-item>
-          </w-col>
-        </w-row>
-      </w-form>
+      <win-table v-if="tabsName !== 'first'" 
+        :listTable="diagnosisTitle"
+        :tableData="rightList"
+        :isShow="diagnosisIsShow">
+      </win-table>
       <span
         class="dialog-footer"
         slot="footer"
@@ -176,48 +91,93 @@
 export default {
   data() {
     return {
-      value2: "", // 搜索值
+      tabsName:'second',
+      search: "", // 搜索值
       value:'',
-      detailsShow: 0,
       visible: false,
-      ruleConditionsList:[ 
+      bigClassVal:'',//成分大类下拉框
+      rightTableTitle:[],
+      applyTitle:[
         {
-
-        }
-      ],
-      ruleCheckboxData:[],
-      detailsTableTitle:[
-        {
-          label:'规则描述',
+          label:'规则代码',
           prop:'name',
           width:'80px'
         },
         {
-          label:'合理性条件判断',
-          prop:'name'
+          label:'手术',
+          prop:'name',
+          width:'80px'
         },
         {
-          label:'无检验…',
-          prop:'name'
+          label:'适用专业类别',
+          prop:'name',
         },
         {
-          label:'不合理对应操作',
-          prop:'name'
+          label:'适用急诊标识',
+          prop:'name',
         },
         {
-          label:'科室',
-          prop:'name'
+          label:'适用年龄范围',
+          prop:'name',
+           width:'110px'
         },
         {
-          label:'病种',
-          prop:'name'
+          label:'适用合理规则',
+          prop:'name',
         },
         {
-          label:'是否手术',
-          prop:'name'
+          label:'规则描述',
+          prop:'name',
         }
-      ],
-      detailsList:[
+      ], // 输血适应症判定规则
+      evaluationTitle:[
+        {
+          label:'规则代码',
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'性别',
+          prop:'name',
+           width:'80px'
+        },
+        {
+          label:'开始年龄',
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'结束年龄',
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'计算公式',
+          prop:'name',
+        }
+      ], // 输血量评估规则
+      diagnosisTitle:[
+        {
+          label:'诊断代码',
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'诊断名称',
+          prop:'name',
+        },
+        {
+          label:'拼音码',
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'五笔码',
+          prop:'name',
+          width:'80px'
+        }
+      ],  // 诊断对照
+      rightList:[
         {
           time: "2019.05.12 11:02:33",
           status: "其他区签约",
@@ -225,240 +185,102 @@ export default {
           type: "其他"
         }
       ],
-      detailsIsShow:{
-        index:true,
-        copy:true,
-        stop:true,
-        width:'180px'
-        // operation:true
-      },
-      bloodTagList: [
+      drgsTableTitle:[
         {
-          id: "SX0001",
-          name: "红细胞类"
+          label:'单病种代码',
+          prop:'name'
         },
         {
-          id: "SX0002",
-          name: "冷沉淀"
-        },
-        {
-          id: "SX0003",
-          name: "血小板"
-        },
-        {
-          id: "SX0004",
-          name: "血浆类"
-        },
-        {
-          id: "SX0005",
-          name: "白细胞类"
+          label:'单病种名称',
+          prop:'name'
         }
       ],
+      rightIsShow:{
+        index:true,
+        width:'60px',
+        edit:true
+      },
+      diagnosisIsShow: {
+        selection:true,
+        width:'60px',
+        operation:true,
+        // edit:true
+      },
+      drgsList:[
+        {
+          time: "2019.05.12 11:02:33",
+          status: "其他区签约",
+          name: "赵宇翔",
+          type: "其他"
+        }
+      ],
+      drgsIsShow:{
+        index:true,
+        width:'110px'
+      },
       form: {
         name: "",
         region: ""
-      },
-      rules: {
-        region: [
-          {
-            required: true,
-            message: "请选择区域",
-            trigger: "change"
-          }
-        ],
-        name: [
-          {
-            required: true,
-            message: "请选择区域",
-            trigger: "change"
-          }
-        ]
       },
       options:[]
     };
   },
   mounted(){
-    this.$nextTick(()=> {
-        let height = this.$refs.element.offsetHeight-32
-        console.log('li',height);
-      });
-    
-    // let canvas = document.getElementById("mycanvas")
-    // if (canvas.getContext) {
-    //   let context = canvas.getContext('2d');
-    //   console.log('context',context);
-    //   context.strokeStyle='#0F49ED'
-    //   context.fillStyle='#0F49ED'
-    //   context.lineWidth='2'
-    //   context.font='5px sans-serif'
-    //   // context.fillStyle='#0F49ED'
-    //   context.moveTo(25, 15);
-    //   context.lineTo(10, 15);
-    //   context.lineTo(10, 60);
-    //   context.lineTo(15, 60);
-    //   context.stroke();
-    // }
   },
   watch:{
-    // 'ruleConditionsList' () {
-    //   this.$nextTick(()=> {
-    //     let height = this.$refs.element.offsetHeight-32
-    //     console.log('li',height);
-    //     let canvas = document.getElementById("mycanvas")
-    //     if (canvas.getContext) {
-    //       let context = canvas.getContext('2d');
-    //       console.log('context',context);
-    //       context.strokeStyle='#0F49ED'
-    //       context.fillStyle='#0F49ED'
-    //       context.lineWidth='2'
-    //       context.font='5px sans-serif'
-    //       // context.fillStyle='#0F49ED'
-    //       context.moveTo(25, 15);
-    //       context.lineTo(10, 15);
-    //       context.lineTo(10, height);
-    //       context.lineTo(10, height);
-    //       context.stroke();
-    //     }
-    //   });
-    // }
   },
   created() {},
   methods: {
-    submit() {},
-    reset() {},
-    handleRuleCheckbox (eve) {
-      console.log('eve',eve);
+    handleTabsClick(row) {
+      console.log('uioew',row);
     },
-    handleRuleButton (name) {
-      console.log('name',name);
-      if(name === 'add') {
-        this.ruleConditionsList.push({})
-      } else if (name === 'item') {
-        this.$nextTick(()=> {
-        let height = this.$refs.element.offsetHeight-32
-        console.log('height',height,this.$refs.element.offsetHeight);
-        console.log('li',height);
-        let canvas = document.getElementById("mycanvas")
-        if (canvas.getContext) {
-          let context = canvas.getContext('2d');
-          console.log('context',context);
-          context.strokeStyle='#0F49ED'
-          context.lineWidth='2'
-          context.moveTo(15, 15);
-          context.lineTo(10, 15);
-          context.lineTo(10, height);
-          context.lineTo(15, height);
-          context.stroke();
-          console.log((this.ruleCheckboxData.length - 1) * 40,this.ruleCheckboxData.length);
-        }
-      });
+    submit() {
+      if (this.tabsName==='fourth') {
+        this.visible = false
+      }
+    },
+    reset() {
+      if (this.tabsName==='fourth') {
+        this.visible = false
       }
     },
     handleRuleDele (item,index) {
       console.log('index',index,item);
-      this.ruleConditionsList.splice(index)
     },
     // 界面新增按钮
     handleAdd() {
-      this.visible = true
-    },
-    //
-    handleBloodTab(item, index) {
-      console.log(item, index);
-      this.detailsShow = index;
-      // this.titleVal = index
+      if (this.tabsName==='fourth') {
+        this.visible = true
+      }
     },
   },
   
 };
 </script>
 <style lang="scss" scoped>
+.illness-book {
+  .tabs-title {
 
-.home-page-wrap-ba {
-  // height: 100%;
-  background: rgba(255, 255, 255, 1);
-  .blood {
-    .tag-title {
-      text-align: center;
-      display: inline-block;
-      margin-bottom: 16px;
-      width: 180px;
-      height: 52px;
-      background: rgba(243, 245, 249, 1);
-      border-radius: 2px;
-      line-height:52px;
-      font-size: 14px;
-    }
-    .styleHover,
-    .styleHover:hover {
-        color: #0F49ED;
-        background: rgba(207, 224, 255, 1) !important;
-      }
   }
-  .details {
-    .rule_conditions {
-      position: relative;
-      #mycanvas {
-        // border: 1px solid #0F49ED;
-        display: inline-block;
-        position: absolute;
-        top: 0;
-        left: -25px;
-      }
-      .w-input,
-      .w-select{
-        width: 200px;
-      }
-      .w-checkbox {
-        height: 32px;
-        margin: 5px 0;
-      }
-    }
+  .drgs {
+    padding-right: 16px;
   }
 }
 </style>
 <style lang='scss'>
-.rule_conditions {
-  .w-checkbox__input {
-    padding: 6px 0;
+.tabs-title {
+  .card-icon{
+    display: inline-block!important;
+    margin-right: 0px!important;
+    width: 0px!important;
+    height: 0px!important;
+    background: #5a7bef;
+    padding-top: 20px!important;
+  }
+  .w-tabs--border-card>.w-tabs__content, .w-tabs--dark>.w-tabs__content {
+    padding: 0!important;
   }
 }
 
-// .home-page-wrap-ba {
-//   // height: 100%;
-//   // background: rgba(234, 237, 244, 1);
-//    .home-page-body{
-//     // padding: 16px;
-//     background: rgba(255, 255, 255, 1);
-//     // border-radius: 2px;
-//     position: relative;
-
-//     .ul {
-//       position: absolute;
-//       top: 0;
-//       left: 20px;
-//     }
-
-//     .table {
-//       width: calc(100% - 200px);
-//       margin-left: 200px;
-//     }
-
-//     .tag-title {
-//       text-align: center;
-//       display: inline-block;
-//       margin: 16px 0px;
-//       width: 180px;
-//       height: 52px;
-      
-//       background: rgba(243, 245, 249, 1);
-//       border-radius: 2px;
-//     }
-//   }
-// }
-
-.styleHover {
-  color: #666;
-}
 </style>
 

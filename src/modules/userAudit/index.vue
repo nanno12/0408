@@ -269,10 +269,4 @@ export default {
     padding: 0!important;
   }
 }
-
-// .pd-right
-//   .w-input
-//     width 200px!important
-// .w-row
-//   padding-bottom 16px
 </style>

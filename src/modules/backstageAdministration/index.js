@@ -771,12 +771,12 @@ export default {
     },
      // 成分小类接口
      async getListDetailTypes (n) {
-      const listDetailTypes = await dataApi.getListDetailTypes({maincode:n})
+      const listDetailTypes = await dataApi.getListDetailTypes({maincode:n,checked:true})
       this.detailTypesList = listDetailTypes.data 
     },
     // 成分大类接口
-    async getListMainTypes (checked) {
-      const listMainTypes = await dataApi.getListMainTypes({checked})
+    async getListMainTypes () {
+      const listMainTypes = await dataApi.getListMainTypes({checked:true})
       this.mainTypesList = listMainTypes.data
     },
     // 当前页
