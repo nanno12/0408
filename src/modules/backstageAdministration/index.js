@@ -233,6 +233,16 @@ export default {
           })
         })
     },
+    // 'amount' (n,o) {
+    //   if(n===o) {
+    //     this.form.amount = 11
+    //     this.form.addfactor = 22
+    //   } else {
+    //     this.form.amount = 111
+    //     this.form.addfactor = 222
+    //   }
+    //   console.log('n,o',n,o);
+    // },
     listMoulds (o, n) {
       if(this.mouldItemsRow.MOULD_CODE ) {
         this.$nextTick(function() {
@@ -410,7 +420,11 @@ export default {
     },
     // copiedmouldcode
     async handleSelChange1(row) {
-      console.log('row',row,this.form.maincode);
+      console.log('row',row.DETAIL_UNIT,this.amount);
+      if (row.DETAIL_UNIT !== this.amount) {
+        this.form.amount = '1'
+        this.form.addfactor = ''
+      }
       if (row) {
         this.form.itemcode = row.DETAIL_CODE
         this.form.itemname = row.DETAIL_NAME
@@ -599,13 +613,8 @@ export default {
       this.$nextTick(() => {
         this.$refs[formName].resetFields()
       })
-        // this.$refs[formName].resetFields();
-        // this.$refs.form.clearValidate();
-        // this.$refs.form.resetFields();
         this.visible = false
       }
-      // this.$refs.form.resetFields();
-      console.log(this.form);
     },
     // 列表删除提示框确定按钮
     async handleConfirm (row,t,index) {
@@ -650,7 +659,6 @@ export default {
     // 列表提示框取消按钮
      handleCancel (index) {
       // 手动取消
-      // this.cancelManually = true
       setTimeout(() => {
         this.listMouldItems[index].switch = !this.listMouldItems[index].switch // 恢复状态
       }, 200) // 等关闭气泡后修改状态， 避免出现数据状态过度，影响体验
@@ -676,6 +684,7 @@ export default {
     },
     // 修改按钮
     async onEditing (row,t) {
+      this.handleSelChange1()
       if (t === 'left' || t === 'clone') {
         this.modalShow = true
         this.modalTitle = MODAL_TITLE.FORM
@@ -697,10 +706,12 @@ export default {
           mouldcode:row.MOULD_CODE,
           itemcode:row.MOULD_ITEM_CODE})
           console.log('res',res.data);
+        this.getListMainTypes()
+        this.getListDetailTypes(row.MAIN_CODE)
         this.form.maincode.MAIN_CODE =  res.data.maincode || ''
         this.form.maincode.MAIN_NAME =  res.data.mainname || ''
-        this.form.detailcode.DETAIL_CODE =  res.data.detailcode || ''
-        this.form.detailcode.DETAIL_NAME =  res.data.detailname || ''
+        this.form.detailcode.DETAIL_CODE =  res.data.detailcode 
+        this.form.detailcode.DETAIL_NAME =  res.data.detailname
         this.form.detailcode.chargeitems= res.data.chargeItems,
         this.form.detailname = res.data.detailname
         this.form.mainname = res.data.mainname
@@ -715,12 +726,14 @@ export default {
         this.form.maincode = {...this.form.maincode}
         this.form.detailcode = {...this.form.detailcode}
         this.oldItemcode = res.data.itemcode
-        console.log('hfkjdsk',this.form);
         this.modalTitle = MODAL_TITLE.ITEM
+        
         this.modalType = this.MODAL_TITLE.EADIT
         this.modalShow = false
       }
+      console.log('hfkjdsk',this.form);
       this.visible=true
+      
       console.log(row);
     },
     handleTagClose (index) {

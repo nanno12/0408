@@ -1,0 +1,23 @@
+{
+  "data": [{
+    "result":"5/39",
+    "check":true,
+    "reportNumber":201711200001,
+    "state":"已审核",
+    "testDate":"2017-11-20",
+    "sampleNumber":"2017112000011",
+    "patientType":"住院",
+    "name":"张三",
+    "sex":"男",
+    "age":"20岁",
+    "":"",
+    "":"",
+    "":""
+
+  }],
+  "failtCode": "",
+  "link": "",
+  "message": "",
+  "messageCode": "",
+  "type": "SUCCESS"
+}

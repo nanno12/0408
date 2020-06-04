@@ -1,0 +1,22 @@
+{
+  "data":[
+    {"NAME":"陈正","SEX":"男","AGE":"18岁","ROOM":"+10床","PHONE":18500002835,"DETAIL":"天王盖地虎","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"王三毛","SEX":"男","AGE":"18岁","ROOM":"+160床","PHONE":1300002835,"DETAIL":"山重水复疑无路","CHECK":true,"DANGEROUS":"Y"},
+    {"NAME":"少林寺","SEX":"男","AGE":"108岁","ROOM":"+10床","PHONE":18500002835,"DETAIL":"上呼吸道感染","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"窦天娥","SEX":"女","AGE":"28岁","ROOM":"+10床","PHONE":1300002835,"DETAIL":"宝塔镇河妖","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"陈正","SEX":"男","AGE":"18岁","ROOM":"+160床","PHONE":18500002835,"DETAIL":"柳暗花明又一村","CHECK":false,"DANGEROUS":"N"},
+    {"NAME":"胡填好","SEX":"男","AGE":"25岁","ROOM":"+10床","PHONE":1300002835,"DETAIL":"上呼吸道感染","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"晁武平","SEX":"男","AGE":"18岁","ROOM":"+10床","PHONE":13185002835,"DETAIL":"上呼吸道感染","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"陈正","SEX":"男","AGE":"18岁","ROOM":"+10床","PHONE":1300002835,"DETAIL":"上呼吸道感染","CHECK":false,"DANGEROUS":"N"},
+    {"NAME":"小逗比","SEX":"男","AGE":"36岁","ROOM":"+160床","PHONE":1300002835,"DETAIL":"上呼吸道感染","CHECK":true,"DANGEROUS":"Y"},
+    {"NAME":"盖地虎","SEX":"女","AGE":"18岁","ROOM":"+10床","PHONE":13001852835,"DETAIL":"天王盖地虎","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"陈正","SEX":"男","AGE":"27岁","ROOM":"+160床","PHONE":13185002835,"DETAIL":"上呼吸道感染","CHECK":false,"DANGEROUS":"N"},
+    {"NAME":"金主","SEX":"男","AGE":"18岁","ROOM":"+10床","PHONE":1300002835,"DETAIL":"宝塔镇河妖","CHECK":false,"DANGEROUS":"Y"},
+    {"NAME":"陈正","SEX":"男","AGE":"18岁","ROOM":"+160床","PHONE":11850002835,"DETAIL":"上呼吸道感染","CHECK":false,"DANGEROUS":"Y"}
+  ],
+  "detellCode":"",
+  "link":"",
+  "message":"",
+  "messageCode":"",
+  "type":"SUCCESS"
+}
