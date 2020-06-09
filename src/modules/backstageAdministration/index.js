@@ -65,42 +65,6 @@ export default {
         {
           value:'1',
           name:'悄悄告诉'
-        },
-        {
-          value:'2',
-          name:'一个秘密'
-        },
-        {
-          value:'3',
-          name:'往下看'
-        },
-        {
-          value:'4',
-          name:'哎呀，没了'
-        },
-        {
-          value:'5',
-          name:'我出来喽'
-        },
-        {
-          value:'6',
-          name:'好吧告诉你'
-        },
-        {
-          value:'7',
-          name:'这个秘密啊'
-        },
-        {
-          value:'8',
-          name:'这个秘密就是'
-        },
-        {
-          value:'9',
-          name:'就是'
-        },
-        {
-          value:'10',
-          name:'下班喽'
         }
       ],// 对应项目列表
       mtype:[
@@ -347,11 +311,9 @@ export default {
       this.loading = false;
       this.openings = openings.data
     },
-    async remoteMethod1(query) {
-      console.log('eee',query,t);
-    },
     async handleFocusInput() {
-   
+      console.log('iutoir');
+      this.remoteMethod()
     },
     async MouldItems (row) { 
       const res = await dataApi.getMouldItems({
@@ -420,7 +382,6 @@ export default {
     },
     // copiedmouldcode
     async handleSelChange1(row) {
-      console.log('row',row.DETAIL_UNIT,this.amount);
       if (row.DETAIL_UNIT !== this.amount) {
         this.form.amount = '1'
         this.form.addfactor = ''
@@ -570,7 +531,6 @@ export default {
       if(this.modalType !== MODAL_TITLE.ADD) {
         olditemcode=this.oldItemcode// 原来的项目代码
       }
-      console.log('this.oldItemcode',this.oldItemcode);
       let list = {
         mouldcode:this.mouldItemsRow.MOULD_CODE || this.mouldcode, // 模板代码
         itemcode: this.form.itemcode, // 项目代码
@@ -604,15 +564,21 @@ export default {
     },
     // 点击模态框取消按钮事件
     reset (formName) {
-      console.log('tt',formName);
+      this.$nextTick(() => {
+        this.$refs[formName].resetFields();
+      })
+      this.$refs.form.clearValidate()
+      this.form.mouldcode = '' // 模板代码
+      this.form.mouldname = '' // 模板名称
+      this.form.mouldtype = '' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
+      this.form.execdeptcode = '' // 执行科室代码
+      this.form.applydepts = '' // 申请科室代码
+      this.form.usearea = '' // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+      console.log('tt',formName,this.form);
       if (formName === 'inner') {
         this.innerVisible = false
         this.visible = true
       } else {
-        
-      this.$nextTick(() => {
-        this.$refs[formName].resetFields()
-      })
         this.visible = false
       }
     },
@@ -665,14 +631,24 @@ export default {
     },
     // 新增按钮
     async handleAdd (t) {
+      this.$nextTick(() => {
+        this.$refs.form.resetFields();
+        this.$refs.form.clearValidate()
+      })
+      // this.form.mouldcode='' // 模板代码
+      // this.form.mouldname='' // 模板名称
+      // this.form.mouldtype='' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
+      // this.form.execdeptcode='' // 执行科室代码
+      // this.form.applydepts='' // 申请科室代码
+      // this.form.usearea='' // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
       this.visible=true
       this.modalType = this.MODAL_TITLE.ADD
       if (t === 'left') {
         this.modalShow = true
         this.modalTitle = MODAL_TITLE.FORM
         // 执行科室接口
-        const res = await dataApi.getDeptInfos({depttype:'3'})
-        this.implement = res.data
+        // const res = await dataApi.getDeptInfos({depttype:'3'})
+        // this.implement = res.data
       } else {
         this.modalTitle = MODAL_TITLE.ITEM
         this.modalShow = false
@@ -684,18 +660,23 @@ export default {
     },
     // 修改按钮
     async onEditing (row,t) {
-      this.handleSelChange1()
       if (t === 'left' || t === 'clone') {
         this.modalShow = true
         this.modalTitle = MODAL_TITLE.FORM
         const res = await dataApi.getFindMould({mouldcode:row.MOULD_CODE})
+        this.form.mouldcode = res.data.mouldcode // 模板代码
+          this.form.mouldname = res.data.mouldname // 模板名称
+          this.form.mouldtype = res.data.mouldtype // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
+          this.form.execdeptcode = res.data.execdeptcode // 执行科室代码
+          this.form.applydepts = res.data.applydepts // 申请科室代码
+          this.form.usearea = res.data.usearea // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+          this.remoteMethod()
         if (t === 'clone') {
-          this.form = res.data
+          // this.form = res.data
           this.form.mouldcode = ''
           this.form.mouldname = ''
           this.modalType = this.MODAL_TITLE.CLONE
         } else {
-          this.form = res.data
           this.modalType = this.MODAL_TITLE.EADIT
         }
         // 执行科室接口

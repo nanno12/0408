@@ -70,8 +70,109 @@
       :close-on-click-modal="false"
       width="60%">
       <w-form label-align="right" :model="form" ref="form" label-width="130px" :rules="rules">
+        
+        <!-- 新增项目 -->
+        <w-row  v-if="modalShow === false">
+          <w-row>
+            <w-col :span="12" class="po_re">
+              <w-form-item label="成分大类" required  prop="maincode">
+                <w-select v-model="form.maincode" filterable value-key="MAIN_CODE" @change="handleSelChange" placeholder="请选择成分大类">
+                  <w-option
+                    v-for="item in mainTypesList"
+                    :key="item.MAIN_CODE"
+                    :label="item.MAIN_NAME"
+                    :value="item">
+                  </w-option>
+                </w-select>
+                <span class="inline-block po_ab top_0 right_-20 " style="z-index:999"><i class=" iconfont icondaoru" @click="handlePlus('big')"></i></span>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12" class="po_re">
+              <w-form-item label="成分小类" prop="detailcode"
+                :rules="[
+                  { required: true, message: '请选择成分小类'},
+                ]">
+                <w-select @change="handleSelChange1" filterable value-key="DETAIL_CODE" v-model="form.detailcode" placeholder="请选择成分小类">
+                  <w-option
+                    v-for="item in detailTypesList"
+                    :key="item.DETAIL_CODE"
+                    :label="item.DETAIL_NAME"
+                    :value="item">
+                  </w-option>
+                </w-select>
+                <span v-if="form.maincode.MAIN_CODE !== ''" class="inline-block po_ab top_0 right_-35">
+                  <i  @click="handlePlus('sma')" class="iconfont icondaoru"></i>
+                </span>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="项目代码" prop="itemcode">
+                <w-input v-model="form.itemcode"  showCounter
+                  placeholder="请输入代码"></w-input>
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="项目名称" prop="itemname">
+                <w-input v-model="form.itemname" showCounter
+                  placeholder="请输入名称"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col>
+              <w-form-item
+                label="费用对应"
+                prop="value2"
+               >
+                <template>
+                  <!-- 点击选择收费项目 -->
+                  <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
+                    :closable="true"
+                    @close="handleTagClose(index)"
+                    :key="item.chargeItemCode">
+                    <w-radio-group v-if="item.chargeMtechFlag === 1"
+                      v-model="radioValue" @change="handleTagChoose(item)">
+                      <w-radio :label="item.chargeMainFlag">{{item.chargeItemName}}</w-radio>
+                    </w-radio-group>
+                    <span v-else>{{item.chargeItemName}}</span>
+                  </w-tag>
+                  <div class="tab-style" @click="handleIputVal">
+                    <i style="padding-left:0px" class="iconfont  iconweibiaoti--"></i>
+                  </div>
+                </template>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="12">
+              <w-form-item label="默认数量" prop="amount">
+                <w-input v-model.number="form.amount">
+                  <template slot="suf-append"><span style="padding: 0 5px;">{{amount}}</span></template>
+                </w-input>
+                <!-- <w-input v-model.number="form.amount"></w-input> -->
+              </w-form-item>
+            </w-col>
+            <w-col :span="12">
+              <w-form-item label="加减量"  prop="addfactor">
+                <w-input v-model.number="form.addfactor">
+                  <template slot="suf-append"><span style="padding: 0 5px;">{{addfactor}}</span></template>
+                </w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
+          <w-row>
+            <w-col :span="24">
+              <w-form-item label="备注" prop="remark">
+                <w-input v-model="form.remark"  showCounter
+                  placeholder="请填写备注"></w-input>
+              </w-form-item>
+            </w-col>
+          </w-row>
+        </w-row>
         <!-- 新增申请单 -->
-        <w-row v-if="modalShow === true">
+        <w-row v-else>
           <w-row>
             <w-col :span="12">
               <w-form-item label="模版代码" prop="mouldcode">
@@ -152,116 +253,6 @@
                   </span>
                   </w-option>
                 </w-select>
-              </w-form-item>
-            </w-col>
-          </w-row>
-        </w-row>
-        <!-- 新增项目 -->
-        <w-row v-else>
-          <w-row>
-            <w-col :span="12" class="po_re">
-              <w-form-item label="成分大类" required  prop="maincode">
-                <w-select v-model="form.maincode" filterable value-key="MAIN_CODE" @change="handleSelChange" placeholder="请选择成分大类">
-                  <w-option
-                    v-for="item in mainTypesList"
-                    :key="item.MAIN_CODE"
-                    :label="item.MAIN_NAME"
-                    :value="item">
-                  </w-option>
-                </w-select>
-                <span class="inline-block po_ab top_0 right_-20 " style="z-index:999"><i class=" iconfont icondaoru" @click="handlePlus('big')"></i></span>
-              </w-form-item>
-            </w-col>
-            <w-col :span="12" class="po_re">
-              <w-form-item label="成分小类" prop="detailcode"
-                :rules="[
-                  { required: true, message: '请选择成分小类'},
-                ]">
-                <w-select @change="handleSelChange1" filterable value-key="DETAIL_CODE" v-model="form.detailcode" placeholder="请选择成分小类">
-                  <w-option
-                    v-for="item in detailTypesList"
-                    :key="item.DETAIL_CODE"
-                    :label="item.DETAIL_NAME"
-                    :value="item">
-                  </w-option>
-                </w-select>
-                <span v-if="form.maincode.MAIN_CODE !== ''" class="inline-block po_ab top_0 right_-35">
-                  <i  @click="handlePlus('sma')" class="iconfont icondaoru"></i>
-                </span>
-              </w-form-item>
-            </w-col>
-          </w-row>
-          <w-row>
-            <w-col :span="12">
-              <w-form-item label="项目代码" prop="itemcode">
-                <w-input v-model="form.itemcode"  showCounter
-                  placeholder="请输入代码"></w-input>
-              </w-form-item>
-            </w-col>
-            <w-col :span="12">
-              <w-form-item label="项目名称" prop="itemname">
-                <w-input v-model="form.itemname" showCounter
-                  placeholder="请输入名称"></w-input>
-              </w-form-item>
-            </w-col>
-          </w-row>
-          <w-row>
-            <w-col>
-              <w-form-item
-                label="费用对应"
-                prop="value2"
-               >
-                <template>
-                  <!-- 点击选择收费项目 -->
-                  <!-- <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
-                    :closable="true"
-                    @close="handleTagClose(index)"
-                    :key="index">
-                    <w-radio-group v-if="item.chargeMtechFlag === 1"
-                      v-model="radioValue" @change="handleTagChoose(item)">
-                      <w-radio :label="item.chargeMainFlag"></w-radio>
-                    </w-radio-group>
-                    {{item.chargeItemName}}
-                  </w-tag> -->
-                  <w-tag size="mini" v-for="(item,index) in this.form.chargeItems"
-                    :closable="true"
-                    @close="handleTagClose(index)"
-                    :key="item.chargeItemCode">
-                    <w-radio-group v-if="item.chargeMtechFlag === 1"
-                      v-model="radioValue" @change="handleTagChoose(item)">
-                      <w-radio :label="item.chargeMainFlag">{{item.chargeItemName}}</w-radio>
-                    </w-radio-group>
-                    <span v-else>{{item.chargeItemName}}</span>
-                  </w-tag>
-                  <div class="tab-style" @click="handleIputVal">
-                    <i class="iconfont  iconweibiaoti--"></i>
-                  </div>
-                </template>
-              </w-form-item>
-            </w-col>
-          </w-row>
-          <w-row>
-            <w-col :span="12">
-              <w-form-item label="默认数量" prop="amount">
-                <w-input v-model.number="form.amount">
-                  <template slot="suf-append"><span style="padding: 0 5px;">{{amount}}</span></template>
-                </w-input>
-                <!-- <w-input v-model.number="form.amount"></w-input> -->
-              </w-form-item>
-            </w-col>
-            <w-col :span="12">
-              <w-form-item label="加减量"  prop="addfactor">
-                <w-input v-model.number="form.addfactor">
-                  <template slot="suf-append"><span style="padding: 0 5px;">{{addfactor}}</span></template>
-                </w-input>
-              </w-form-item>
-            </w-col>
-          </w-row>
-          <w-row>
-            <w-col :span="24">
-              <w-form-item label="备注" prop="remark">
-                <w-input v-model="form.remark"  showCounter
-                  placeholder="请填写备注"></w-input>
               </w-form-item>
             </w-col>
           </w-row>
@@ -371,7 +362,7 @@
         </w-modal>
       </w-form>
       <span slot="footer" class="dialog-footer">
-        <w-button @click="reset('out')">取 消</w-button>
+        <w-button @click="reset('form')">取 消</w-button>
         <w-button type="primary" @click="submit('out')">确 定</w-button>
       </span>
     </w-modal>
