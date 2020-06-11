@@ -335,12 +335,12 @@
                 <div class="opSetting">
                   <div @click="handelSelect">
                     <w-button :disabled="nowSelectData.length?false:true"
-                      class="w-icon-arrow-left"> 
+                      class="w-icon-arrow-right"> 
                     </w-button>
                   </div>
                   <div class="spacing" @click="handleRemoveSelect">
                     <w-button  :disabled="nowSelectRightData.length?false:true"
-                      class="w-icon-arrow-right">
+                      class="w-icon-arrow-left">
                     </w-button>
                   </div>
                 </div>
@@ -357,7 +357,7 @@
           </div>
           <span slot="footer" class="dialog-footer ">
             <w-button @click="reset('inner')">取消</w-button>
-            <w-button  @click="submit('inner')" type="primary" >确定</w-button>
+            <w-button :disabled="nowSelectData.length === 0?false:true" @click="submit('inner')" type="primary" >确定</w-button>
           </span>
         </w-modal>
       </w-form>

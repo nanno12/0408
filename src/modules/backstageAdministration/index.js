@@ -40,12 +40,12 @@ export default {
       costList: [],
       tableTitle:[
         {
-          prop:'MAIN_CODE' || 'DETAIL_CODE',
+          prop:'MAIN_CODE',
           label:'编码',
           width:'100px'
         },
         {
-          prop:'MAIN_NAME' || 'DETAIL_NAME',
+          prop:'MAIN_NAME',
           label:'名称',
         }
       ],
@@ -179,6 +179,9 @@ export default {
       nowSelectData: [], // 左边选中列表数据
       nowSelectRightData: [], // 右边选中列表数据
       selectArr:[],  // 右边列表
+      incoButtom:false,
+      oooo:[],
+      oooo1:[],
       buttonSize: 'large',
 
     };
@@ -197,16 +200,14 @@ export default {
           })
         })
     },
-    // 'amount' (n,o) {
-    //   if(n===o) {
-    //     this.form.amount = 11
-    //     this.form.addfactor = 22
-    //   } else {
-    //     this.form.amount = 111
-    //     this.form.addfactor = 222
-    //   }
-    //   console.log('n,o',n,o);
-    // },
+    'nowSelectData' (n,o) {
+      this.oooo = o
+      console.log('n,o',n,o);
+    },
+    'nowSelectRightData' (n,o) {
+      this.oooo1 = o
+      console.log('n,o',n,o);
+    },
     listMoulds (o, n) {
       if(this.mouldItemsRow.MOULD_CODE ) {
         this.$nextTick(function() {
@@ -224,8 +225,16 @@ export default {
 
     }
   },
-  created() {
+  async created() {
     this.getMouldsList()
+    // const res = await dataApi.getListMainTypes({checked:true})
+    // this.mainTypeData = res.data
+    // const res1 = await dataApi.getListMainTypes({checked:false})
+    // this.selectArr = res1.data
+    // const res = await dataApi.getListDetailTypes({maincode:'01',checked:true})
+    // this.mainTypeData = res.data
+    // const res1 = await dataApi.getListDetailTypes({maincode:'01',checked:false})
+    // this.selectArr = res1.data
 
   },
   mounted () {
@@ -238,30 +247,39 @@ export default {
     checkRightAll(val) {
       this.nowSelectRightData = val;
     },
-    handelSelect(){   
+    async handelSelect(){
+      this.incoButtom = false
       this.selectArr = this.handleConcatArr(this.selectArr, this.nowSelectData) 
       this.handleRemoveTabList(this.nowSelectData,  this.mainTypeData);
-      this.nowSelectData = [];
+      // this.nowSelectData = [];
    },
     // 取消
-    handleRemoveSelect() {
+    async handleRemoveSelect() {
+      this.incoButtom = true
+      
       this.mainTypeData = this.handleConcatArr(this.mainTypeData, this.nowSelectRightData) 
       this.handleRemoveTabList(this.nowSelectRightData,  this.selectArr);
-      this.nowSelectRightData = [];
+      // this.nowSelectRightData = [];
     },
     handleConcatArr(selectArr, nowSelectData) {
       let arr = [];
-      arr = arr.concat(selectArr, nowSelectData);   
-      console.log(arr,'selectArr, nowSelectData',selectArr, nowSelectData);
+      arr = arr.concat(selectArr, nowSelectData);  
+      console.log('this.nowSelectData',this.nowSelectData);
       return arr;
     },
     handleRemoveTabList(isNeedArr,  originalArr) {
-      console.log('isNeedArr',isNeedArr);
+      console.log('this.nowSelectData',this.nowSelectData);
       if(isNeedArr.length && originalArr.length) {
          for(let i=0; i<isNeedArr.length; i++) {
             for(let k=0; k<originalArr.length; k++) {
-              if(isNeedArr[i]["name"] === originalArr[k]["name"]) {
-                originalArr.splice(k, 1);   
+              if (this.classList === 'big') { 
+                if(isNeedArr[i]["MAIN_CODE"] === originalArr[k]["MAIN_CODE"]) {
+                  originalArr.splice(k, 1);   
+                }
+              } else {
+                if(isNeedArr[i]["DETAIL_CODE"] === originalArr[k]["DETAIL_CODE"]) {
+                  originalArr.splice(k, 1);   
+                }
               }
             }
          }
@@ -354,7 +372,6 @@ export default {
         this.selectArr = res1.data
       } else {
         console.log(this.form.maincode.MAIN_CODE);
-        
         const res = await dataApi.getListDetailTypes({maincode:this.form.maincode.MAIN_CODE,checked:true})
         this.mainTypeData = res.data
         const res1 = await dataApi.getListDetailTypes({maincode:this.form.maincode.MAIN_CODE,checked:false})
@@ -393,21 +410,29 @@ export default {
         this.addfactor = row.DETAIL_UNIT
         this.form = {...this.form}
       }
+      // this.form.maincode = {...this.form.maincode}
+      // this.form.detailcode = {...this.form.detailcode}
       console.log('this.form.maincode',this.form.maincode);
-      if (this.form.maincode.MAIN_CODE === '' ) {
-        const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
+      const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
+        console.log(this.form);
+
         const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
         console.log(find,'res',res.data.MAIN_CODE,res,this.form);
-        this.form.maincode.MAIN_CODE= find.MAIN_CODE
-        this.form.maincode.MAIN_NAME = find.MAIN_NAME
-        this.form.maincode = {...this.form.maincode}
-        this.getListMainTypes()
-        this.getListDetailTypes(res.data.MAIN_CODE)
+      if (this.form.maincode.MAIN_CODE === '' || this.form.maincode === {}) {
+        const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
+        console.log(this.form);
+
+        const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
+        console.log(find,'res',res.data.MAIN_CODE,res,this.form);
+        // this.form.maincode.MAIN_CODE= find.MAIN_CODE
+        // this.form.maincode.MAIN_NAME = find.MAIN_NAME
+        // this.form.maincode = {...this.form.maincode}
+        // this.getListMainTypes()
+        // this.getListDetailTypes(res.data.MAIN_CODE)
       }
     },
     // 点击模态框新增按钮事件
     async submit (t) {
-      console.log('subtt',t,this.modalTitle);
       if (t === 'out') {
         this.$refs.form.validateForm(async (valid) => {
           if (valid) {
@@ -428,42 +453,74 @@ export default {
         this.innerVisible = false
         this.visible = true
         this.modalTitle = MODAL_TITLE.ITEM
-        // let arr = []
-        this.costList = []
-        this.form.value2 = []
-        this.form.chargeItems = []
-        // this.form.item.itemPrice = ''
-        var obj = {};
-        this.selectionVal = this.selectionVal.reduce((item, next) => {
-            obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
-            return item;
-        }, []);
-        this.selectionVal.map(item => {
-          if (item) {
-            this.form.chargeItems.push({
-              chargeItemCode:item.CHARGE_CODE,	// --收费编码
-              chargeItemName:item.CHARGE_NAME,	// --收费项目名称
-              chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
-              chargeItemType:item.CHARGE_TYPE, //  --收费项目类型
-              chargeMtechFlag:Number(item.CHARGE_MTECH_FLAG), // --收费项目医技确认标志  0不需确认 1确认
-              chargeMainFlag:0     // --主项目标志  0非主项目 1主项目
-            })
-            // this.form.value2.push(item.CHARGE_NAME)
-            // arr.push(item.CHARGE_PRICE)
+        if (this.modalTitle!== MODAL_TITLE.SELECT_ITEM) {
+          if(this.incoButtom === false) {
+            console.log('incoButtom',this.incoButtom);
+            if (this.classList === 'big') {
+              await dataApi.gitAddMainComponentType({operation:'delete',maintypes:this.oooo})
+            } else {
+              await dataApi.getAddDetailComponentType(
+                { maincode:this.form.maincode.MAIN_CODE,
+                  operation:'add',
+                  details:this.nowSelectData
+                })
+            }
+          } else {
+            console.log(this.nowSelectRightData,'incoButtom',this.incoButtom);
+            if (this.classList === 'big') {
+              await dataApi.gitAddMainComponentType(
+                { operation:'add',
+                  maintypes:this.oooo1
+                })
+            } else {
+              await dataApi.getAddDetailComponentType(
+                { maincode:this.form.maincode.MAIN_CODE,
+                  operation:'add',
+                  details:this.oooo1
+                })
+            }
           }
-        })
-        console.log(this.form.chargeItems,'this.selectionVal',this.selectionVal);
+          this.getListMainTypes()
+          this.getListDetailTypes()
+          this.form.maincode.MAIN_CODE = ''
+          this.form.maincode = ''
+          console.log('7698',this.oooo1,this.oooo,this.form);
+        } else {
+          this.costList = []
+          this.form.value2 = []
+          this.form.chargeItems = []
+          var obj = {};
+          this.selectionVal = this.selectionVal.reduce((item, next) => {
+              obj[next.CHARGE_CODE] ? '' : obj[next.CHARGE_CODE] = true && item.push(next);
+              return item;
+          }, []);
+          this.selectionVal.map(item => {
+            if (item) {
+              this.form.chargeItems.push({
+                chargeItemCode:item.CHARGE_CODE,	// --收费编码
+                chargeItemName:item.CHARGE_NAME,	// --收费项目名称
+                chargeItemPrice:item.CHARGE_PRICE,	// --收费项目价格
+                chargeItemType:item.CHARGE_TYPE, //  --收费项目类型
+                chargeMtechFlag:Number(item.CHARGE_MTECH_FLAG), // --收费项目医技确认标志  0不需确认 1确认
+                chargeMainFlag:0     // --主项目标志  0非主项目 1主项目
+              })
+              // this.form.value2.push(item.CHARGE_NAME)
+              // arr.push(item.CHARGE_PRICE)
+            }
+          })
+          console.log(this.form.chargeItems,'this.selectionVal',this.selectionVal);
 
-        // let sumArr = arr.map(Number)
-        // // for方法
-        // let sum = 0;
-        // for (let i = 0, len = sumArr.length; i < len; i++) {
-        //     sum += sumArr[i]
-        // }
-        // this.form.item.itemPrice = sum
-        this.search = ''
-        this.$refs.costList.clearSelection()
-        console.log('inner');
+          // let sumArr = arr.map(Number)
+          // // for方法
+          // let sum = 0;
+          // for (let i = 0, len = sumArr.length; i < len; i++) {
+          //     sum += sumArr[i]
+          // }
+          // this.form.item.itemPrice = sum
+          this.search = ''
+          // this.$refs.costList.clearSelection()
+          console.log('inner');
+        }
       }
     },
     handleTagChoose (item) {
@@ -564,9 +621,9 @@ export default {
     },
     // 点击模态框取消按钮事件
     reset (formName) {
-      this.$nextTick(() => {
-        this.$refs[formName].resetFields();
-      })
+      // this.$nextTick(() => {
+      //   this.$refs[formName].resetFields();
+      // })
       this.$refs.form.clearValidate()
       this.form.mouldcode = '' // 模板代码
       this.form.mouldname = '' // 模板名称
@@ -631,10 +688,10 @@ export default {
     },
     // 新增按钮
     async handleAdd (t) {
-      this.$nextTick(() => {
-        this.$refs.form.resetFields();
-        this.$refs.form.clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs.form.resetFields();
+      //   this.$refs.form.clearValidate()
+      // })
       // this.form.mouldcode='' // 模板代码
       // this.form.mouldname='' // 模板名称
       // this.form.mouldtype='' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约

@@ -28,8 +28,8 @@ const url = {
   // getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
   // 新增
   getAddMould: WDEBUGAPI + '/clf/trfbase/addMould', // 新增申请单列表
-  gitAddMainComponentType: WDEBUGAPI + '/clf/trfbase/addMainComponentType', // 新增成分大类
-  getAddDetailComponentType: WDEBUGAPI + '/clf/trfbase/addDetailComponentType', // 新增成分小类信息
+  gitAddMainComponentType: WDEBUGAPI + '/clf/trfbase/addOrDeleteMainComponentType', // 新增成分大类
+  getAddDetailComponentType: WDEBUGAPI + '/clf/trfbase/addOrDeleteDetailComponentType', // 新增成分小类信息
   getAddMouldItem: WDEBUGAPI + '/clf/trfbase/addMouldItem', //新增项目列表
   // 删除
   getRemoveMouldItem: WDEBUGAPI + '/clf/trfbase/removeMouldItem', // 删除项目列表
