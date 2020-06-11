@@ -413,22 +413,14 @@ export default {
       // this.form.maincode = {...this.form.maincode}
       // this.form.detailcode = {...this.form.detailcode}
       console.log('this.form.maincode',this.form.maincode);
-      const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
-        console.log(this.form);
-
-        const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
-        console.log(find,'res',res.data.MAIN_CODE,res,this.form);
-      if (this.form.maincode.MAIN_CODE === '' || this.form.maincode === {}) {
+      if (this.form.maincode.MAIN_CODE === '') {
         const res = await dataApi.getByDetailType({detailcode: row.DETAIL_CODE})
-        console.log(this.form);
-
         const find =  this.mainTypesList.find(it => it.MAIN_CODE === res.data.MAIN_CODE)
-        console.log(find,'res',res.data.MAIN_CODE,res,this.form);
-        // this.form.maincode.MAIN_CODE= find.MAIN_CODE
-        // this.form.maincode.MAIN_NAME = find.MAIN_NAME
-        // this.form.maincode = {...this.form.maincode}
-        // this.getListMainTypes()
-        // this.getListDetailTypes(res.data.MAIN_CODE)
+        this.form.maincode.MAIN_CODE= find.MAIN_CODE
+        this.form.maincode.MAIN_NAME = find.MAIN_NAME
+        this.form.maincode = {...this.form.maincode}
+        this.getListMainTypes()
+        this.getListDetailTypes(res.data.MAIN_CODE)
       }
     },
     // 点击模态框新增按钮事件
