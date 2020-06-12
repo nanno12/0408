@@ -262,7 +262,7 @@
           top="10vh"
           class="modal-style"
           :close-on-click-modal="false"
-          :title=" MODAL_TITLE.SELECT_ITEM"
+          :title="classList === 'big'?'新增'+MODAL_TITLE.LARGE_CLASS:(classList === 'sma'?'新增'+MODAL_TITLE.SUB_CLASS:MODAL_TITLE.SELECT_ITEM)"
           :visible.sync="innerVisible"
           append-to-body>
           <div class="search-style clearfix" v-if="modalTitle=== MODAL_TITLE.SELECT_ITEM">
@@ -324,21 +324,26 @@
           <div v-else>
             <w-row>
               <w-col :span="11">
-                <p class="mg-bottom_10">已选择大类列表</p>
+                <p class="mg-bottom_10">已选择{{classList === 'big'?MODAL_TITLE.LARGE_CLASS:MODAL_TITLE.SUB_CLASS}}列表</p>
                 <win-table :listTable="classList === 'big'?tableTitle:tableTitle1"
                   :tableData="mainTypeData"
+                  :tableHeight="isShow.tableHeight"
+                  height="500px"
                   @handleSelectionChange="checkAll"
                   :isShow="isShow">
                 </win-table>
               </w-col>
-              <w-col :span="2">
+              <w-col :span="2" style="display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          height: 320px;">
                 <div class="opSetting">
-                  <div @click="handelSelect">
+                  <div @click="handelSelect" >
                     <w-button :disabled="nowSelectData.length?false:true"
                       class="w-icon-arrow-right"> 
                     </w-button>
                   </div>
-                  <div class="spacing" @click="handleRemoveSelect">
+                  <div class="spacing mg-top_10" @click="handleRemoveSelect">
                     <w-button  :disabled="nowSelectRightData.length?false:true"
                       class="w-icon-arrow-left">
                     </w-button>
@@ -346,9 +351,10 @@
                 </div>
               </w-col>
               <w-col :span="11">
-                <p class="mg-bottom_10">未选择大类列表</p>
+                <p class="mg-bottom_10">未选择{{classList === 'big'?MODAL_TITLE.LARGE_CLASS:MODAL_TITLE.SUB_CLASS}}列表</p>
                 <win-table :listTable="classList === 'big'?tableTitle:tableTitle1"
                   :tableData="selectArr"
+                  :tableHeight="isShow.tableHeight"
                   @handleSelectionChange="checkRightAll"
                   :isShow="isShow">
                 </win-table>

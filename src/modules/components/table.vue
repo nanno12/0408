@@ -2,6 +2,7 @@
   <div>
     <w-table :data="tableData" border style="width: 100%"
       @selection-change="handleSelectionChange"
+      :height="tableHeight"
       @row-click="handleRow" >
       <w-table-column v-if="isShow.selection" type="selection" width="40"></w-table-column>
       <w-table-column v-if="isShow.index" type="index" label="序号" align="center"  width="50"></w-table-column>
@@ -49,6 +50,12 @@
       // 这是数据源
       tableData: {
         type: Array,
+        default: function () {
+          return []
+        }
+      },
+      tableHeight: {
+        type: String,
         default: function () {
           return []
         }

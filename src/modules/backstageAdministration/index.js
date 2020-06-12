@@ -174,7 +174,8 @@ export default {
       listMoulds: [],
       isShow: {
         operation:true,
-        selection:true
+        selection:true,
+        tableHeight:'300px'
       },
       nowSelectData: [], // 左边选中列表数据
       nowSelectRightData: [], // 右边选中列表数据
@@ -227,15 +228,6 @@ export default {
   },
   async created() {
     this.getMouldsList()
-    // const res = await dataApi.getListMainTypes({checked:true})
-    // this.mainTypeData = res.data
-    // const res1 = await dataApi.getListMainTypes({checked:false})
-    // this.selectArr = res1.data
-    // const res = await dataApi.getListDetailTypes({maincode:'01',checked:true})
-    // this.mainTypeData = res.data
-    // const res1 = await dataApi.getListDetailTypes({maincode:'01',checked:false})
-    // this.selectArr = res1.data
-
   },
   mounted () {
   },
@@ -363,14 +355,19 @@ export default {
     // 模态框➕按钮事件
     async handlePlus (title) {
       this.classList = title
-      console.log('title',title);
+      console.log('title',title,this.modalTitle);
       this.innerVisible = true
+      this.modalType= this.MODAL_TITLE.ADD
       if (title === 'big') {
+        this.modalTitle=this.MODAL_TITLE.LARGE_CLASS
         const res = await dataApi.getListMainTypes({checked:true})
         this.mainTypeData = res.data
         const res1 = await dataApi.getListMainTypes({checked:false})
         this.selectArr = res1.data
+        console.log(this.modalTitle);
+
       } else {
+        this.modalTitle="成分小类"
         console.log(this.form.maincode.MAIN_CODE);
         const res = await dataApi.getListDetailTypes({maincode:this.form.maincode.MAIN_CODE,checked:true})
         this.mainTypeData = res.data
@@ -396,6 +393,14 @@ export default {
       this.form.detailcode = ''
       this.form.itemcode = ''
       this.form.itemname = ''
+    },
+    // 点击收费项目
+    async handleIputVal () {
+      this.innerVisible  = true
+      this.modalTitle = MODAL_TITLE.SELECT_ITEM
+      this.total = 0
+      console.log('this.modalTitle',this.modalTitle);
+      this.getCostList()
     },
     // copiedmouldcode
     async handleSelChange1(row) {
@@ -444,8 +449,10 @@ export default {
       } else {
         this.innerVisible = false
         this.visible = true
-        this.modalTitle = MODAL_TITLE.ITEM
-        if (this.modalTitle!== MODAL_TITLE.SELECT_ITEM) {
+        // if (this.innerVisible === false) {
+        // }
+        console.log('this.modalTitle',this.modalTitle);
+        if (this.modalTitle !== MODAL_TITLE.SELECT_ITEM) {
           if(this.incoButtom === false) {
             console.log('incoButtom',this.incoButtom);
             if (this.classList === 'big') {
@@ -478,6 +485,7 @@ export default {
           this.form.maincode = ''
           console.log('7698',this.oooo1,this.oooo,this.form);
         } else {
+          console.log('jhjkdhkjhtkj');
           this.costList = []
           this.form.value2 = []
           this.form.chargeItems = []
@@ -513,6 +521,7 @@ export default {
           // this.$refs.costList.clearSelection()
           console.log('inner');
         }
+        this.modalTitle = MODAL_TITLE.ITEM
       }
     },
     handleTagChoose (item) {
@@ -527,14 +536,6 @@ export default {
         }
       })
       console.log('item',item,this.form.chargeItems,this.radioValue);
-    },
-    // 点击收费项目
-    async handleIputVal () {
-      this.innerVisible  = true
-      this.modalTitle = MODAL_TITLE.SELECT_ITEM
-      this.total = 0
-      console.log('798459');
-      this.getCostList()
     },
     async submitFormData() {
       if(this.modalType === MODAL_TITLE.ADD ||  this.modalType === MODAL_TITLE.CLONE) {
@@ -613,23 +614,41 @@ export default {
     },
     // 点击模态框取消按钮事件
     reset (formName) {
-      // this.$nextTick(() => {
-      //   this.$refs[formName].resetFields();
-      // })
-      this.$refs.form.clearValidate()
-      this.form.mouldcode = '' // 模板代码
-      this.form.mouldname = '' // 模板名称
-      this.form.mouldtype = '' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
-      this.form.execdeptcode = '' // 执行科室代码
-      this.form.applydepts = '' // 申请科室代码
-      this.form.usearea = '' // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
-      console.log('tt',formName,this.form);
+      this.classList = ''
+      console.log('tt',this.form);
+      this.form.maincode = {...this.form.maincode}
+      this.form.detailcode = {...this.form.detailcode}
       if (formName === 'inner') {
         this.innerVisible = false
         this.visible = true
       } else {
         this.visible = false
       }
+      if (this.modalTitle === MODAL_TITLE.FORM) {
+        this.form.mouldcode = '' // 模板代码
+        this.form.mouldname = '' // 模板名称
+        this.form.mouldtype = '' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
+        this.form.execdeptcode = '' // 执行科室代码
+        this.form.applydepts = '' // 申请科室代码
+        this.form.usearea = '' // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
+      } else {
+        this.form.itemcode= '' // 项目代码
+        this.form.itemname='' // 项目名称
+        // this.form.maincode= ''
+        this.form.maincode.MAIN_CODE= ''
+        this.form.maincode.MAIN_NAME= '' // 成分大类代码
+        this.form.mainname='', // 成分大类名称
+        // this.form.detailcode=''
+        this.form.detailcode.DETAIL_CODE= ''
+        this.form.detailcode.DETAIL_NAME= ''
+        this.form.detailcode.MAIN_CODE= '' // 成分小类代码
+        this.form.chargeItems=[]
+        this.form.detailname='' // 成分小类名称
+        this.form.amount='1' // 默认数量
+        this.form.addfactor= '' // 增减因子
+        this.form.remark= '' // 备注
+      }
+      console.log('tt',this.form);
     },
     // 列表删除提示框确定按钮
     async handleConfirm (row,t,index) {
@@ -680,24 +699,14 @@ export default {
     },
     // 新增按钮
     async handleAdd (t) {
-      // this.$nextTick(() => {
-      //   this.$refs.form.resetFields();
-      //   this.$refs.form.clearValidate()
-      // })
-      // this.form.mouldcode='' // 模板代码
-      // this.form.mouldname='' // 模板名称
-      // this.form.mouldtype='' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
-      // this.form.execdeptcode='' // 执行科室代码
-      // this.form.applydepts='' // 申请科室代码
-      // this.form.usearea='' // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
       this.visible=true
       this.modalType = this.MODAL_TITLE.ADD
       if (t === 'left') {
         this.modalShow = true
         this.modalTitle = MODAL_TITLE.FORM
         // 执行科室接口
-        // const res = await dataApi.getDeptInfos({depttype:'3'})
-        // this.implement = res.data
+        const res = await dataApi.getDeptInfos({depttype:'3'})
+        this.implement = res.data
       } else {
         this.modalTitle = MODAL_TITLE.ITEM
         this.modalShow = false
@@ -705,10 +714,12 @@ export default {
         this.getListMainTypes () 
         this.getListDetailTypes()
       }
-      console.log('ttt', t,this.modalTitle);
     },
     // 修改按钮
     async onEditing (row,t) {
+      console.log('hfkjdsk',this.form);
+      this.form.maincode = {...this.form.maincode}
+      this.form.detailcode = {...this.form.detailcode}
       if (t === 'left' || t === 'clone') {
         this.modalShow = true
         this.modalTitle = MODAL_TITLE.FORM
@@ -735,14 +746,12 @@ export default {
         const res = await dataApi.getFindMouldItem({
           mouldcode:row.MOULD_CODE,
           itemcode:row.MOULD_ITEM_CODE})
-          console.log('res',res.data);
         this.getListMainTypes()
         this.getListDetailTypes(row.MAIN_CODE)
-        this.form.maincode.MAIN_CODE =  res.data.maincode || ''
-        this.form.maincode.MAIN_NAME =  res.data.mainname || ''
+        this.form.maincode.MAIN_CODE  =  res.data.maincode
+        this.form.maincode.MAIN_NAME =  res.data.mainname
         this.form.detailcode.DETAIL_CODE =  res.data.detailcode 
         this.form.detailcode.DETAIL_NAME =  res.data.detailname
-        this.form.detailcode.chargeitems= res.data.chargeItems,
         this.form.detailname = res.data.detailname
         this.form.mainname = res.data.mainname
         this.form.itemcode = res.data.itemcode
@@ -753,18 +762,17 @@ export default {
         this.form.remark = res.data.remark
         this.form.chargeItems = res.data.chargeItems
         // this.form.detailcode =  res.data.detailname
+        // this.form.maincode =  res.data.mainname
+
         this.form.maincode = {...this.form.maincode}
         this.form.detailcode = {...this.form.detailcode}
         this.oldItemcode = res.data.itemcode
         this.modalTitle = MODAL_TITLE.ITEM
-        
         this.modalType = this.MODAL_TITLE.EADIT
         this.modalShow = false
       }
       console.log('hfkjdsk',this.form);
       this.visible=true
-      
-      console.log(row);
     },
     handleTagClose (index) {
       this.form.chargeItems.splice(index, 1)
