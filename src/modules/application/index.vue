@@ -47,9 +47,10 @@
         <win-table :listTable=tableTitle
           @handleEdit="handleEdit"
           :tableData=rigthData
+          :tableHeight="isShow.tableHeight"
           @handleRow="handleRowR"
           @handleDelete="handleDelete"
-          style="height: calc(100vh - 160px); overflow-y: auto;"
+          style="overflow-y: auto;"
           :isShow=isShow></win-table>
           <div
              v-if="paginationBoxReflow">
@@ -97,7 +98,7 @@
             <w-col :span="24">
               <w-form-item label="包含元素" prop="name">
                 <template>
-                  <w-checkbox-group v-model="value" >
+                  <w-checkbox-group v-model="checkboxValue" >
                     <w-checkbox v-for="(item,index) in checkboxList" :key="index"
                     @change="handleChangeCheckbox(item,index)"
                     :label="item.label" :disabled="item.disabled">{{item.name}}</w-checkbox>
@@ -112,7 +113,9 @@
                 label="申请单模版"
                 prop="printTemplate" >
                 <template>
-                  <w-select v-model="form.printTemplate" placeholder="请选择申请单模版">
+                  <w-select 
+                    @change="handleChangePrintTemplate"
+                    v-model="form.printTemplate" placeholder="请选择申请单模版">
                     <w-option
                       v-for="(item,index) in printTemplateList"
                       :key="index"

@@ -615,9 +615,7 @@ export default {
     // 点击模态框取消按钮事件
     reset (formName) {
       this.classList = ''
-      console.log('tt',this.form);
-      this.form.maincode = {...this.form.maincode}
-      this.form.detailcode = {...this.form.detailcode}
+      console.log('tt',this.form,this.modalTitle,MODAL_TITLE.FORM);
       if (formName === 'inner') {
         this.innerVisible = false
         this.visible = true
@@ -625,13 +623,16 @@ export default {
         this.visible = false
       }
       if (this.modalTitle === MODAL_TITLE.FORM) {
+        this.$refs['form'].resetFields()
         this.form.mouldcode = '' // 模板代码
         this.form.mouldname = '' // 模板名称
         this.form.mouldtype = '' // 模板类型 1 常规备血，2 常规用血，3 紧急用血，4 自体输血，5 备血预约
         this.form.execdeptcode = '' // 执行科室代码
-        this.form.applydepts = '' // 申请科室代码
+        this.form.applydepts = [] // 申请科室代码
         this.form.usearea = '' // 开单类别） 0 门诊，1 住院， 2 体检 ，9 全部
       } else {
+        this.form.maincode = {...this.form.maincode}
+        this.form.detailcode = {...this.form.detailcode}
         this.form.itemcode= '' // 项目代码
         this.form.itemname='' // 项目名称
         // this.form.maincode= ''
@@ -648,7 +649,6 @@ export default {
         this.form.addfactor= '' // 增减因子
         this.form.remark= '' // 备注
       }
-      console.log('tt',this.form);
     },
     // 列表删除提示框确定按钮
     async handleConfirm (row,t,index) {

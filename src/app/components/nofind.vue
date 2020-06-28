@@ -15,6 +15,15 @@
 
       }
     },
+    created() {
+      let str = ['3','1','5','7']
+      let str1 = Math.min(str)
+    //  let array = ['name','age','red','name','pinck','green']
+    //  let arr1 = array.indexOf("name",3)
+    //  array.lastIndexOf("name")
+    //  let arr1 = array.splice(2,1,"pinck1","green2")//'age',
+     console.log('1aer',str1,Math.min(3,1,5,7),Math.min.apply(Math,str));
+    },
   }
 </script>
 <style lang="stylus" scoped>
