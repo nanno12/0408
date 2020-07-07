@@ -8,22 +8,20 @@ import httpUtils from '@/app/utils/httpUtils';
 import * as systemParam from '@/app/api/system-param';
 
 /**  模块主服务前缀，如果用到其他服务，可以应用下面的常量进行处理 */
-const MAIN_API_PREFIX = systemParam.SYS_BASE_API.APPLYFORM.url;
-const DEBUGAPI = 'http://172.17.1.211:20034'
-// const DEBUGAP = 'http://172.17.17.126:20008'
+const MANAGEMENT_API_PREFIX = systemParam.SYS_BASE_API.MANAGEMENT.url;
 const url = {
-  isHaveReName:DEBUGAPI + '/clf/pafbase/isHaveReName',
-  query: DEBUGAPI + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
-  addUpdateItem:DEBUGAPI + '/clf/pafbase/addOrUpdateItem', // 添加或修改申请单项目信息
-  findItemInfo:DEBUGAPI + '/clf/pafbase/findItemInfo', // 申请单项目详情查看，项目点击申请单编辑时候查询项目相关的数据
-  deleteTempItem:DEBUGAPI + '/clf/pafbase/deleteTempItem', // 删除申请单下的具体一个项目
-  findPafTemplate:DEBUGAPI + '/clf/pafbase/findPafTemplate', // 查看申请单模板
-  pafTemplate:DEBUGAPI +'/clf/pafbase/getPafTemplateDetails', // 查看申请单详情
-  pafTemplateitems:DEBUGAPI + '/clf/pafbase/getPafTemplateitems', // 获得申请单下的项目集合
-  copy: DEBUGAPI + '/clf/pafbase/copyTemplate2',  // 申请单模板复制
-  printTemplate: DEBUGAPI +'/clf/pafbase/findPrintTemplate', //打印模板集合
-  deletePafTemplate: DEBUGAPI + '/clf/pafbase/deletePafTemplate',  // 删除申请单模板,根据ID进行
-  addUpdateTemplate:DEBUGAPI + '/clf/pafbase/addOrUpdatePafTemplate' // 添加或者更新申请单模板，包含了医嘱检查项目信息
+  isHaveReName:MANAGEMENT_API_PREFIX + '/clf/pafbase/isHaveReName',
+  query: MANAGEMENT_API_PREFIX + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
+  addUpdateItem:MANAGEMENT_API_PREFIX + '/clf/pafbase/addOrUpdateItem', // 添加或修改申请单项目信息
+  findItemInfo:MANAGEMENT_API_PREFIX + '/clf/pafbase/findItemInfo', // 申请单项目详情查看，项目点击申请单编辑时候查询项目相关的数据
+  deleteTempItem:MANAGEMENT_API_PREFIX + '/clf/pafbase/deleteTempItem', // 删除申请单下的具体一个项目
+  findPafTemplate:MANAGEMENT_API_PREFIX + '/clf/pafbase/findPafTemplate', // 查看申请单模板
+  pafTemplate:MANAGEMENT_API_PREFIX +'/clf/pafbase/getPafTemplateDetails', // 查看申请单详情
+  pafTemplateitems:MANAGEMENT_API_PREFIX + '/clf/pafbase/getPafTemplateitems', // 获得申请单下的项目集合
+  copy: MANAGEMENT_API_PREFIX + '/clf/pafbase/copyTemplate2',  // 申请单模板复制
+  printTemplate: MANAGEMENT_API_PREFIX +'/clf/pafbase/findPrintTemplate', //打印模板集合
+  deletePafTemplate: MANAGEMENT_API_PREFIX + '/clf/pafbase/deletePafTemplate',  // 删除申请单模板,根据ID进行
+  addUpdateTemplate:MANAGEMENT_API_PREFIX + '/clf/pafbase/addOrUpdatePafTemplate' // 添加或者更新申请单模板，包含了医嘱检查项目信息
   // ceshi: DEBUGAP + 'Pacs/common/request/gethospitalinfo'
 
 };

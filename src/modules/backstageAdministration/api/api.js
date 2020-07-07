@@ -8,35 +8,30 @@ import httpUtils from '@/app/utils/httpUtils';
 import * as systemParam from '@/app/api/system-param';
 
 /**  模块主服务前缀，如果用到其他服务，可以应用下面的常量进行处理 */
-const MAIN_API_PREFIX = systemParam.SYS_BASE_API.APPLYFORM.url;
-const DEBUGAPI = 'http://172.17.1.211:20031'
-const WDEBUGAPI = 'http://172.17.1.211:20034'
+const MANAGEMENT_API_PREFIX = systemParam.SYS_BASE_API.MANAGEMENT.url;
 const url = {
   // 获取接口
-  query: WDEBUGAPI + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
-  getMouldItems: WDEBUGAPI +'/clf/trfbase/listMouldItems', //查询项目列表
-  getMoulds: WDEBUGAPI + '/clf/trfbase/listMoulds', // 查询申请单列表
-  getListDetailTypes: WDEBUGAPI + '/clf/trfbase/listDetailTypes', //获取成分小类数据
-  getListMainTypes: WDEBUGAPI + '/clf/trfbase/listMainTypes', //获取成分大类列表数据
-  getDeptInfos: WDEBUGAPI + '/clf/trfbase/listDeptInfos', // 获取科室列表
-  getFindMouldItem: WDEBUGAPI + '/clf/trfbase/findMouldItem', // 查询模板项目详情
-  getFindMould: WDEBUGAPI + '/clf/trfbase/findMould', // 查询模板详情
-  getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
-  getExists: WDEBUGAPI + '/clf/trfbase/exists ', // 
-  // getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
-  // getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
-  // getByDetailType: WDEBUGAPI + '/clf/trfbase/findMainTypeByDetailType', // 
+  query: MANAGEMENT_API_PREFIX + '/clf/pafbase/findChargeItems',  // 获取申请单项目对应的收费项目集合
+  getMouldItems: MANAGEMENT_API_PREFIX +'/clf/trfbase/listMouldItems', //查询项目列表
+  getMoulds: MANAGEMENT_API_PREFIX + '/clf/trfbase/listMoulds', // 查询申请单列表
+  getListDetailTypes: MANAGEMENT_API_PREFIX + '/clf/trfbase/listDetailTypes', //获取成分小类数据
+  getListMainTypes: MANAGEMENT_API_PREFIX + '/clf/trfbase/listMainTypes', //获取成分大类列表数据
+  getDeptInfos: MANAGEMENT_API_PREFIX + '/clf/trfbase/listDeptInfos', // 获取科室列表
+  getFindMouldItem: MANAGEMENT_API_PREFIX + '/clf/trfbase/findMouldItem', // 查询模板项目详情
+  getFindMould: MANAGEMENT_API_PREFIX + '/clf/trfbase/findMould', // 查询模板详情
+  getByDetailType: MANAGEMENT_API_PREFIX + '/clf/trfbase/findMainTypeByDetailType', // 
+  getExists: MANAGEMENT_API_PREFIX + '/clf/trfbase/exists ', // 
   // 新增
-  getAddMould: WDEBUGAPI + '/clf/trfbase/addMould', // 新增申请单列表
-  gitAddMainComponentType: WDEBUGAPI + '/clf/trfbase/addOrDeleteMainComponentType', // 新增成分大类
-  getAddDetailComponentType: WDEBUGAPI + '/clf/trfbase/addOrDeleteDetailComponentType', // 新增成分小类信息
-  getAddMouldItem: WDEBUGAPI + '/clf/trfbase/addMouldItem', //新增项目列表
+  getAddMould: MANAGEMENT_API_PREFIX + '/clf/trfbase/addMould', // 新增申请单列表
+  gitAddMainComponentType: MANAGEMENT_API_PREFIX + '/clf/trfbase/addOrDeleteMainComponentType', // 新增成分大类
+  getAddDetailComponentType: MANAGEMENT_API_PREFIX + '/clf/trfbase/addOrDeleteDetailComponentType', // 新增成分小类信息
+  getAddMouldItem: MANAGEMENT_API_PREFIX + '/clf/trfbase/addMouldItem', //新增项目列表
   // 删除
-  getRemoveMouldItem: WDEBUGAPI + '/clf/trfbase/removeMouldItem', // 删除项目列表
-  getRemoveMould: WDEBUGAPI + '/clf/trfbase/removeMould', // 删除申请单列表
+  getRemoveMouldItem: MANAGEMENT_API_PREFIX + '/clf/trfbase/removeMouldItem', // 删除项目列表
+  getRemoveMould: MANAGEMENT_API_PREFIX + '/clf/trfbase/removeMould', // 删除申请单列表
   // 修改保存
-  getModifyMouldItem: WDEBUGAPI + '/clf/trfbase/modifyMouldItem', // 保存修改指定模板项目的信息
-  getModifyMould: WDEBUGAPI + '/clf/trfbase/modifyMould', // 保存修改指定申请单模板的信息
+  getModifyMouldItem: MANAGEMENT_API_PREFIX + '/clf/trfbase/modifyMouldItem', // 保存修改指定模板项目的信息
+  getModifyMould: MANAGEMENT_API_PREFIX + '/clf/trfbase/modifyMould', // 保存修改指定申请单模板的信息
 
 };
 export default {

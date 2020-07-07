@@ -245,8 +245,6 @@ export default {
   },
   created() {
     this.list()
-    this.getPrintTemplate()
-    
   },
   
   methods: {
@@ -375,6 +373,7 @@ export default {
         case 'edit':
           this.visible = true
           this.h =  MODAL_TITLE.EADIT
+          this.getPrintTemplate()
           this.getPafTemplate(item.ID)
           break;
         case 'delete':
@@ -558,6 +557,7 @@ export default {
       switch(w) {
         case 'left':
           this.modalTitle = MODAL_TITLE.FORM
+          this.getPrintTemplate()
           break;
         case 'rigth':
           this.modalTitle = MODAL_TITLE.ITEM
