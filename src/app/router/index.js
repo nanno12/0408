@@ -9,9 +9,9 @@ const informationSpecimen = r => require.ensure([], () => r(require('@/modules/i
 const application = r =>require.ensure([], () =>r(require('../../modules/application/index.vue')),'application'); // 申请单
 const backstageAdministration = r => require.ensure([], () => r(require('@/modules/backstageAdministration/index.vue'), 'backstageAdministration')); // 项目配置
 const authorityAudit = r => require.ensure([], () => r(require('@/modules/authorityAudit/index.vue'), 'authorityAudit')); // 审核权限
+const bloodEvidence = r => require.ensure([], () => r(require('@/modules/bloodEvidence/index.vue')), 'bloodEvidence'); // 输血指证
 
 const userAudit = r => require.ensure([], () => r(require('@/modules/userAudit'), 'userAudit')); // 角色权限
-const bloodEvidence = r => require.ensure([], () => r(require('@/modules/bloodEvidence')), 'bloodEvidence'); // 输血指证
 const testProject = r => require.ensure([], () => r(require('@/modules/testProject')), 'testProject'); // 检验项目
 const bloodNumberBook = r => require.ensure([], () => r(require('@/modules/bloodNumberBook')), 'bloodNumberBook'); // 输血量字典
 const illnessBook = r => require.ensure([], () => r(require('@/modules/illnessBook')), 'illnessBook'); // 病种字典
@@ -26,9 +26,9 @@ const router = new Router({
     { path: '/application', name: 'application', component: application }, // 申请单
     { path: '/backstageAdministration', name: 'backstageAdministration', component: backstageAdministration }, // 后台管理
     { path: '/authorityAudit', name: 'authorityAudit', component: authorityAudit }, // 审核权限
+    { path: '/bloodEvidence', name: 'bloodEvidence', component: bloodEvidence }, // 输血指证
     
     { path: '/userAudit', name: 'userAudit', component: userAudit }, // 角色权限
-    { path: '/bloodEvidence', name: 'bloodEvidence', component: bloodEvidence }, // 输血指证
     { path: '/testProject', name: 'testProject', component: testProject }, // 检验项目
     { path: '/bloodNumberBook', name: 'bloodNumberBook', component: bloodNumberBook }, // 输血量字典
     { path: '/illnessBook', name: 'illnessBook', component: illnessBook }, // 病种字典

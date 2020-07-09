@@ -28,90 +28,49 @@ const mockUrl = process.env.NODE_ENV === 'production' ?
    config.build.assetsSubDirectory :
    config.dev.assetsPublicPath + config.dev.assetsSubDirectory;
 
-
 /** 发布模式配置，前后端采用集中部署，前端走Ngix服务模式,名称和前缀预定义 */
-const DEPOLY_API = "/clf/";
+const DEPOLY_API = "../clf/api/";
 // '/clf/trfbase/listApprovalFlows'
 const SYS_API_DEPOLY = {
-    /**  配置管理*/
-    MANAGEMENT: { url: DEPOLY_API, apiDesc: "配置管理" },
-  // /**  公共服务*/
-  // COMMON: { url: DEPOLY_API+"routine/", apiDesc: "公共服务" },
-  // /**  常规系统*/
-  // ROUTINE: { url: DEPOLY_API+"routine/", apiDesc: "常规系统" },
-  // /**  标本采集*/
-  // COLLECTION: { url: DEPOLY_API+"collection/", apiDesc: "标本采集" },
-  // /**  his服务地址*/
-  // HISSERVICE: { url: DEPOLY_API+"hisservice/", apiDesc: "his服务地址" },
-  // /**  智能服务*/
-  // INTELLIGENTSERVICE: { url: DEPOLY_API+"intelligentservice/", apiDesc: "智能服务" },
-  // /**  质量管理*/
-  // QUALITYCONTROL: { url: DEPOLY_API+"qualitycontrol/", apiDesc: "质量管理" },
-  // /**  标本流转*/
-  // SAMPLEDELIVERY: {  url: "api/sampledelivery/", apiDesc: "标本流转" },
-  // /**  微生物系统*/
-  // MICROBEMANAGE: { url: DEPOLY_API+"microbe/", apiDesc: " 微生物系统" },
-  //  /**  查询统计*/
-  // QUEYSTATISTICS: { url: "api/" + "querystatistics/", apiDesc: " 查询统计" },
-  // /** 申请单 */
-  // APPLYFORM: { url: "api/clf/", apiDesc: " 申请单" },
-  // /** 本地服务*/
-  // LOCAL: { url: mockUrl, apiDesc: "本地数据" },
-  // /**  主框架*/
-  // FRAME: { url: "../frame/"+DEPOLY_API+"/frameservice/", apiDesc: "主框架" },
-};
+ /**  配置管理*/
+ 
+ CLF: { url: DEPOLY_API+"clf/", apiDesc: "开单申请" },
 
+ TRF: { url: DEPOLY_API+"trf/", apiDesc: "用血申请" },
+
+ PAF: { url: DEPOLY_API+"paf/", apiDesc: "病理申请" },
+
+ API: { url: DEPOLY_API+"api/", apiDesc: "三方接口" },
+
+ CONFIG: { url: DEPOLY_API+"config/", apiDesc: "页面配置" },
+ };
 
 /** debug模式的时候，可以任意改地址入口，允许统一改，也允许单独改 */
-const DEBUGAPI = "http://172.17.1.211:20034";//9000服务
+const DEBUGAPI = "http://172.17.1.211:8300/clf/api/";//9000服务
 // const DEBUGAPI = "http://172.17.1.240:8000/lis/api/";//测试环境
-// const DEBUGAPI="http://172.17.13.71:10003/lis/";//xds
-// const DEBUGAPI = "http://172.17.17.209:20013/lis/";//dwl
-// const DEBUGAPI = "http://172.17.17.27:10002/lis/";//shenke
-// const DEBUGAPI = "http://172.17.29.69:10003/lis/";//znk
-// const DEBUGAPI = "http://172.17.24.103:10003/lis/";//hjh
-// const DEBUGAPI = "http://172.17.17.91:20016/lis/";//gyh
-// const DEBUGAPI = "http://172.17.17.182:10002/lis/";//tianye
 const SYS_API_DEBUG = {
   /**  配置管理*/
-  MANAGEMENT: { url: DEBUGAPI, apiDesc: "配置管理" },
-  // /**  公共服务*/
-  // COMMON: { url: DEBUGAPI+"routine/", apiDesc: "公共服务" },
-  // // COMMON: { url: DEBUGAPI, apiDesc: "常规系统" },
-  // /**  常规系统*/
-  // ROUTINE: { url: DEBUGAPI+"routine/", apiDesc: "常规系统" },
-  // // ROUTINE: { url: DEBUGAPI, apiDesc: "常规系统" },
-  // /**  标本采集*/
-  // COLLECTION: { url: DEBUGAPI+"collection/", apiDesc: "标本采集" },
-  // // COLLECTION: { url: DEBUGAPI, apiDesc: "标本采集" },
-  // /**  his服务地址*/
-  // HISSERVICE: { url: DEBUGAPI+"hisservice/", apiDesc: "his服务地址" },
-  // /**  智能服务*/
-  // INTELLIGENTSERVICE: { url: DEBUGAPI+"intelligentservice/", apiDesc: "智能服务" },
-  // /**  质量管理*/
-  // QUALITYCONTROL: { url: DEBUGAPI+"qualitycontrol/", apiDesc: "质量管理" },
-  // // QUALITYCONTROL: { url: DEBUGAPI, apiDesc: "质量管理" },
-  //  /**  标本流转*/
-  //  SAMPLEDELIVERY: { url: "http://172.17.1.211:9000/sampledelivery/api/sampledelivery/", apiDesc: "标本流转" },
-  // /**  微生物系统*/
-  // MICROBEMANAGE: { url: DEBUGAPI+"microbe/", apiDesc: " 微生物系统" },
-  // // MICROBEMANAGE: { url: DEBUGAPI, apiDesc: " 微生物系统" },
-  // /**  查询统计*/
-  // QUEYSTATISTICS: { url:"http://172.17.1.211:9000/querystatistics/api/"+"querystatistics/", apiDesc: " 查询统计" },
-  // // QUWEYSTATISTICS: { url: DEBUGAPI, apiDesc: " 查询统计" },
-  // /** 本地服务*/
-  // LOCAL: { url: mockUrl, apiDesc: "本地数据" },
-  // /**主框架*/
-  // FRAME: { url: 'http://172.17.1.211:9000/frame/api/frameservice/', apiDesc: "主框架" },
-  // /**  主框架*/
-  // FRAME: { url:DEBUGAPI, apiDesc: "主框架" },
-  // APPLYFORM: {url: "http://172.17.1.211:20031/api", apiDesc: "申请单"}
+  //172.17.1.211:20033
+  CLF: { url: `${DEBUGAPI}clf/`, apiDesc: "开单申请" },
+
+  //172.17.1.211:20032
+  PAF:{url:`${DEBUGAPI}paf/`,apiDesc:"病理申请"},
+
+  //172.17.1.211:20031
+  TRF:{url:`${DEBUGAPI}trf/`,apiDesc:"用血申请"},
+
+  //172.17.1.211:20036
+  API:{url:`${DEBUGAPI}api/`,apiDesc:"三方接口"},
+
+  //172.17.1.211:20034
+  CONFIG:{url:`${DEBUGAPI}config/`,apiDesc:"页面配置"}
 };
 
 
 /** 服务前缀*/
 let SYS_BASE_API = SYS_API_DEBUG;//服务器
-
 // npm run deploy 的时候，表示真正发布的时候，和Nginx一并部署。
 SYS_BASE_API = SYS_DEPLOY ? SYS_API_DEPOLY : SYS_BASE_API;
+console.log('SYS_API_DEBUG',SYS_BASE_API, SYS_DEPLOY,SYS_API_DEPOLY);
+
 export { SYS_BASE_API,SYS_SYSCODE };

@@ -8,15 +8,15 @@ import httpUtils from '@/app/utils/httpUtils';
 import * as systemParam from '@/app/api/system-param';
 
 /**  模块主服务前缀，如果用到其他服务，可以应用下面的常量进行处理 */
-const MANAGEMENT_API_PREFIX = systemParam.SYS_BASE_API.MANAGEMENT.url;
+const CONFIG_API = systemParam.SYS_BASE_API.CONFIG.url;
 
 const url = {
-  query: MANAGEMENT_API_PREFIX + '/clf/pafbase/findSpecimenDic',  // 查询标本，器官/系统、部位、名称等配置数据
-  add:MANAGEMENT_API_PREFIX + '/clf/pafbase/addSpecimenDic', // 添加
-  update:MANAGEMENT_API_PREFIX + '/clf/pafbase/updateSpecimenDic', // 修改
-  delete:MANAGEMENT_API_PREFIX + '/clf/pafbase/deleteSpecimenDic', // 删除
-  isHaveReName:MANAGEMENT_API_PREFIX + '/clf/pafbase/isHaveReName', // 根据名称，判断标本部位、申请单是否有重
-  isHaveReName2:MANAGEMENT_API_PREFIX +'/clf/pafbase/isHaveReName2'
+  query: `${CONFIG_API}pafbase/findSpecimenDic`,  // 查询标本，器官/系统、部位、名称等配置数据
+  add:`${CONFIG_API}pafbase/addSpecimenDic`, // 添加
+  update:`${CONFIG_API}pafbase/updateSpecimenDic`, // 修改
+  delete:`${CONFIG_API}pafbase/deleteSpecimenDic`, // 删除
+  isHaveReName:`${CONFIG_API}pafbase/isHaveReName`, // 根据名称，判断标本部位、申请单是否有重
+  isHaveReName2:`${CONFIG_API}pafbase/isHaveReName2`
 
 };
 export default {

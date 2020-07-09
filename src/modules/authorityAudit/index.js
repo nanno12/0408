@@ -1,7 +1,7 @@
 // import { debounce } from 'throttle-debounce'
 import apiData from './api/api'
+import { QUERY_PAGE} from '../constant'
 
-// import { MODAL_TITLE, QUERY_PAGE} from '../constant'
 export default {
   data() {
     let checkMax = (rule, value, callback) => {
@@ -23,12 +23,16 @@ export default {
       }
     };
     return {
+      QUERY_PAGE,
       visible: false,
       loading:true,
       modalTitle:'123',
       activeName2: 'first',
       operationVal: 1, // 加减量
       numVal: 1, // 默认数量
+      pagesize:20,
+      currentPage:1,
+      total:0,
       title: ' ', // 模态框标题
       value: '', // 描述值
       value2: '', // 模态框表格搜索
@@ -221,17 +225,23 @@ export default {
     //   }
     // },
     // 获取医生列表—用来添加的
-    async getQuerySelectDoctor(input) {
-      console.log(input);
+    async getQuerySelectDoctor(input,page) {
+      console.log(input,page);
+      if(page) {
+        input = this.value2
+      }
       this.loading = true;
       this.isName()
       const res = await apiData.querySelectDoctor({
         FLOW_NAME:this.flowLevelName,
         department:this.changSelectVa || '',
-        input
+        input,
+        page:page || 1,
+        pageSize:20
       })
       this.loading = false;
-      this.tableDataModal=res.data
+      this.total = res.data.count
+      this.tableDataModal=res.data.doctor
       console.log(this.listModal,'this.tableDataModal',this.tableDataModal);
 
     },
@@ -439,6 +449,13 @@ export default {
       this.visible = false
       
     },
+    // 当前页
+    currentChange(val) {
+      console.log('val',val);
+      this.QUERY_PAGE.pageIndex = val // 当前页
+      this.getQuerySelectDoctor('',val)  // 刷新
+    },
+
     // // 列表提示框确定按钮
     // handleConfirm (index) {
     //   console.log(12)

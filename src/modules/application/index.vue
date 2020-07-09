@@ -55,7 +55,7 @@
           <div
              v-if="paginationBoxReflow">
           <w-pagination
-            :total="total"
+            :total="total" 
             class="fr pd-top_16"
             @current-change="handleCurrentChange"
             :current-page="QUERY_PAGE.pageIndex"

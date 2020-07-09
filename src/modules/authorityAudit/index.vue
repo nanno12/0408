@@ -167,7 +167,7 @@
             height="500px"
             :row-key="getKey"
             v-loading="loading"
-            :border="true" class="mg-top_16" style="width: 100%"
+            :border="true" class="mg-y_16" style="width: 100%"
             @selection-change="handleSelectionChange">
             <w-table-column type="selection" width="50" 
               :reserve-selection="true">
@@ -177,6 +177,16 @@
             <w-table-column v-if="title === '新增医生'" prop="type" label="科室">
             </w-table-column>
           </w-table>
+          <div class="mg-bottom_20 pd-bottom_5">
+            <w-pagination
+              v-if="title !== '新增职称'"
+              :total="total"
+              class="fr "
+              :current-page="QUERY_PAGE.pageIndex"
+              @actived-change="currentChange"
+              :show="['prev', 'next', 'total']">
+            </w-pagination>
+          </div>
         </div>
       </w-form>
       <span

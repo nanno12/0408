@@ -1,81 +1,79 @@
 <template>
   <div class="home-page-wrap-ba home-page-body">
-    <w-row>
-      <w-col :span="4" class="blood">
-        <title-style class=" mg-right_16 pd-bottom_22 po_re">
-          <span slot="header">血液成分列表</span>
-        </title-style>
-        <ul class="tag-list">
-          <li :class="detailsShow===index ? 'styleHover' : '' "
-            class="tag-title"
-            :key="index"
-            v-for="(item, index) in bloodTagList"
-            @click="handleBloodTab(item, index)">
-            {{item.name}}
-          </li>
-        </ul>
-      </w-col>
-      <w-col :span="20" class="details">
-        <title-style class=" mg-right_16 pd-bottom_22 po_re">
-          <span slot="header">规则明细列表</span>
-          <w-input
-            class="po_ab top_-5"
-            style="left:120px"
-            sufAppendIsButton
-            v-model="value2" >
-            <template slot="suf-append">
-              <i class="w-icon-search"></i>
-            </template>
-          </w-input>
-          <w-button class="po_ab top_-5 right_0" @click="handleAdd"  type="text" plain>+ 新增</w-button>
-        </title-style>
-        <win-table :listTable=detailsTableTitle
-          v-if="detailsShow === 0"
-          :tableData=detailsList
-          :isShow=detailsIsShow>
-        </win-table>
-        <ul ref="element" class="rule_conditions">
-          <li  v-for="(item,index) in ruleConditionsList" :key="index" class="rule_conditions_list">
-            <w-checkbox-group v-model="ruleCheckboxData" @change="handleRuleCheckbox">
-              <w-checkbox :label="index"> 
-                <w-select placeholder="请选择科室类型" v-model="form.region" >
-                  <w-option
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    v-for="item in options" >
-                  </w-option>
-                </w-select>
-                <w-select placeholder="请选择科室类型" v-model="form.region" >
-                  <w-option
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    v-for="item in options" >
-                  </w-option>
-                </w-select>
-                <w-select placeholder="请选择科室类型" v-model="form.region" >
-                  <w-option
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    v-for="item in options" >
-                  </w-option>
-                </w-select>
-                <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
-                <w-button type="text" @click="handleRuleDele(item,index)" class="w-icon-delete"></w-button>
-              </w-checkbox>
-            </w-checkbox-group>
-          </li>
-          <li>
-            <w-button type="text" @click="handleRuleButton('add')" class="iconfont iconweibiaoti--">新增</w-button>
-            <w-button type="text" @click="handleRuleButton('item')" class="iconfont iconfenzu">分组</w-button>
-            <w-button type="text" @click="handleRuleButton('noItem')" class="iconfont iconquxiaofenzu">取消分组</w-button>
-          </li>
-        <canvas id="mycanvas" width="20" height="700"></canvas>
-        </ul>
-      </w-col>
-    </w-row>
+    <div class="blood">
+      <title-style class=" mg-right_16 pd-bottom_22 po_re">
+        <span slot="header">血液成分列表</span>
+      </title-style>
+      <ul class="tag-list">
+        <li :class="detailsShow===index ? 'styleHover' : '' "
+          class="tag-title"
+          :key="index"
+          v-for="(item, index) in bloodTagList"
+          @click="handleBloodTab(item, index)">
+          {{item.name}}
+        </li>
+      </ul>
+    </div>
+    <div class="details">
+      <title-style class=" mg-right_16 pd-bottom_22 po_re">
+        <span slot="header">规则明细列表</span>
+        <w-input
+          class="po_ab top_-5"
+          style="left:120px"
+          sufAppendIsButton
+          v-model="value2" >
+          <template slot="suf-append">
+            <i class="w-icon-search"></i>
+          </template>
+        </w-input>
+        <w-button class="po_ab top_-5 right_0" @click="handleAdd"  type="text" plain>+ 新增</w-button>
+      </title-style>
+      <win-table :listTable=detailsTableTitle
+        v-if="detailsShow === 0"
+        :tableData=detailsList
+        :isShow=detailsIsShow>
+      </win-table>
+      <!-- <ul ref="element" class="rule_conditions">
+        <li  v-for="(item,index) in ruleConditionsList" :key="index" class="rule_conditions_list">
+          <w-checkbox-group v-model="ruleCheckboxData" @change="handleRuleCheckbox">
+            <w-checkbox :label="index"> 
+              <w-select placeholder="请选择科室类型" v-model="form.region" >
+                <w-option
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in options" >
+                </w-option>
+              </w-select>
+              <w-select placeholder="请选择科室类型" v-model="form.region" >
+                <w-option
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in options" >
+                </w-option>
+              </w-select>
+              <w-select placeholder="请选择科室类型" v-model="form.region" >
+                <w-option
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in options" >
+                </w-option>
+              </w-select>
+              <w-input v-model="form.region" showCounter placeholder="请输入规则代码"></w-input>
+              <w-button type="text" @click="handleRuleDele(item,index)" class="w-icon-delete"></w-button>
+            </w-checkbox>
+          </w-checkbox-group>
+        </li>
+        <li>
+          <w-button type="text" @click="handleRuleButton('add')" class="iconfont iconweibiaoti--">新增</w-button>
+          <w-button type="text" @click="handleRuleButton('item')" class="iconfont iconfenzu">分组</w-button>
+          <w-button type="text" @click="handleRuleButton('noItem')" class="iconfont iconquxiaofenzu">取消分组</w-button>
+        </li>
+      <canvas id="mycanvas" width="20" height="700"></canvas>
+      </ul> -->
+    </div>
     <w-modal
       :close-on-click-modal="false"
       title="新增规则明细"
@@ -188,33 +186,43 @@ export default {
       ruleCheckboxData:[],
       detailsTableTitle:[
         {
-          label:'规则描述',
+          label:'规则代码',
           prop:'name',
-          width:'80px'
+          width:'100px'
+        },
+        {
+          label:'规则名称',
+          prop:'name'
         },
         {
           label:'合理性条件判断',
           prop:'name'
         },
         {
-          label:'无检验…',
-          prop:'name'
+          label:'是否合理',
+          prop:'name',
+          width:'80px'
         },
         {
-          label:'不合理对应操作',
-          prop:'name'
+          label:'使用年龄范围',
+          prop:'name',
+          width:'110px'
         },
         {
-          label:'科室',
-          prop:'name'
-        },
-        {
-          label:'病种',
-          prop:'name'
+          label:'判断顺序',
+          prop:'name',
+          width:'80px'
         },
         {
           label:'是否手术',
-          prop:'name'
+          prop:'name',
+          width:'80px'
+        },
+        {
+          label:'是否急诊',
+          prop:'name',
+          
+          width:'80px'
         }
       ],
       detailsList:[
@@ -226,10 +234,9 @@ export default {
         }
       ],
       detailsIsShow:{
-        index:true,
         copy:true,
         stop:true,
-        width:'180px'
+        width:'200px'
         // operation:true
       },
       bloodTagList: [
@@ -375,12 +382,15 @@ export default {
 <style lang="scss" scoped>
 
 .home-page-wrap-ba {
+  position: relative;
   // height: 100%;
   background: rgba(255, 255, 255, 1);
   .blood {
+    display: inline-block;
+    /* display: block; */
     .tag-title {
       text-align: center;
-      display: inline-block;
+      
       margin-bottom: 16px;
       width: 180px;
       height: 52px;
@@ -396,6 +406,12 @@ export default {
       }
   }
   .details {
+    width:calc(100% - 226px);
+    position: absolute;
+    top: 16px;
+    left: 0;
+    margin-left: 210px;
+    display: inline-block;
     .rule_conditions {
       position: relative;
       #mycanvas {

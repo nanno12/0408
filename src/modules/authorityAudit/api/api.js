@@ -8,20 +8,19 @@ import httpUtils from '@/app/utils/httpUtils';
 import * as systemParam from '@/app/api/system-param';
 
 /**  模块主服务前缀，如果用到其他服务，可以应用下面的常量进行处理 */
-const MANAGEMENT_API_PREFIX = systemParam.SYS_BASE_API.MANAGEMENT.url;
+const CONFIG_API = systemParam.SYS_BASE_API.CONFIG.url;
 const url = {
-  listApprovalFlows:MANAGEMENT_API_PREFIX + '/clf/trfbase/listApprovalFlows', // 1、查询审核流程列表
-  listApprovalFlowDetails: MANAGEMENT_API_PREFIX + '/clf/trfbase/listApprovalFlowDetails',  // 2、查询对应的职称信息
-  listTitle:MANAGEMENT_API_PREFIX + '/clf/trfbase/getTitle', // 3、获取职称—用来添加用的
-  titleOrDoctor:MANAGEMENT_API_PREFIX + '/clf/trfbase/addTitleOrDoctor', // 4、修改 新增职称或医生
-  approvalFlows:MANAGEMENT_API_PREFIX + '/clf/trfbase/addApprovalFlows', // 5、新增审核流程
-  selectDoctor:MANAGEMENT_API_PREFIX + '/clf/trfbase/selectDoctor', // 6、获取医生列表—用来添加的
-  updateApprovalFlows:MANAGEMENT_API_PREFIX +'/clf/trfbase/updateApprovalFlows', // 7、修改流程信息
-  deleteApprovalFlow:MANAGEMENT_API_PREFIX + '/clf/trfbase/approvalFlowDelete', // 8、删除
-  level: MANAGEMENT_API_PREFIX + '/clf/trfbase/getLevel',  // 9、获取审核等级
-  deptInfos: MANAGEMENT_API_PREFIX + '/clf/trfbase/listDeptInfos', // 获取科室列表
+  listApprovalFlows:`${CONFIG_API}trfbase/listApprovalFlows`, // 1、查询审核流程列表
+  listApprovalFlowDetails: `${CONFIG_API}trfbase/listApprovalFlowDetails`,  // 2、查询对应的职称信息
+  listTitle:`${CONFIG_API}trfbase/getTitle`, // 3、获取职称—用来添加用的
+  titleOrDoctor:`${CONFIG_API}trfbase/addTitleOrDoctor`, // 4、修改 新增职称或医生
+  approvalFlows:`${CONFIG_API}trfbase/addApprovalFlows`, // 5、新增审核流程
+  selectDoctor:`${CONFIG_API}trfbase/selectDoctor`, // 6、获取医生列表—用来添加的
+  updateApprovalFlows:`${CONFIG_API}trfbase/updateApprovalFlows`, // 7、修改流程信息
+  deleteApprovalFlow:`${CONFIG_API}trfbase/approvalFlowDelete`, // 8、删除
+  level: `${CONFIG_API}trfbase/getLevel`,  // 9、获取审核等级
+  deptInfos: `${CONFIG_API}trfbase/listDeptInfos`, // 获取科室列表
   // ceshi: DEBUGAP + 'Pacs/common/request/gethospitalinfo'
-
 };
 export default {
   // 1、查询审核流程列表

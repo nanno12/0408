@@ -343,8 +343,11 @@ export default {
         pageSize:20,
         // currentPager:1
       })
-      this.rigthData = res.data.itemList
-      this.total = res.data.itemSum
+      console.log('res.data',res.data);
+      if (res.data !== null){
+        this.rigthData = res.data.itemList
+        this.total = res.data.itemSum
+      }
     },
     
     async getcopy (id) {
